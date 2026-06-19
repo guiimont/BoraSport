@@ -1,0 +1,196 @@
+.page {
+  --club-color: #0f766e;
+  min-height: 100vh;
+  margin: 0;
+  background: #f7faf9;
+  color: #0f172a;
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+}
+
+.header {
+  border-bottom: 1px solid #dbe7e3;
+  background: #ffffff;
+}
+
+.identity {
+  display: flex;
+  width: min(100%, 1040px);
+  margin: 0 auto;
+  padding: 32px 20px;
+  align-items: center;
+  gap: 16px;
+}
+
+.logo,
+.logoFallback {
+  width: 72px;
+  height: 72px;
+  border-radius: 8px;
+  flex: 0 0 auto;
+}
+
+.logo {
+  object-fit: cover;
+  border: 1px solid #dbe7e3;
+  background: #ffffff;
+}
+
+.logoFallback {
+  display: grid;
+  place-items: center;
+  background: var(--club-color);
+  color: #ffffff;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.appName {
+  margin: 0 0 6px;
+  color: var(--club-color);
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0;
+  font-size: 36px;
+  line-height: 1.1;
+}
+
+.content {
+  width: min(100%, 1040px);
+  margin: 0 auto;
+  padding: 32px 20px 48px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.sectionHeader h2,
+.sectionHeader p {
+  margin: 0;
+}
+
+.sectionHeader h2 {
+  font-size: 24px;
+}
+
+.sectionHeader p {
+  color: #475569;
+}
+
+.slotList {
+  display: grid;
+  gap: 12px;
+}
+
+.slot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px;
+  border: 1px solid #dbe7e3;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.slotInfo {
+  min-width: 0;
+}
+
+.slot h3 {
+  margin: 0 0 14px;
+  font-size: 18px;
+}
+
+.details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 28px;
+  margin: 0;
+}
+
+.details div {
+  min-width: 120px;
+}
+
+.details dt {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.details dd {
+  margin: 4px 0 0;
+  color: #1e293b;
+}
+
+.reserveButton {
+  min-width: 112px;
+  min-height: 44px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--club-color);
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+  opacity: 0.55;
+}
+
+.emptyState {
+  padding: 28px;
+  border: 1px solid #dbe7e3;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.emptyState h3,
+.emptyState p {
+  margin: 0;
+}
+
+.emptyState p {
+  margin-top: 8px;
+  color: #475569;
+}
+
+@media (max-width: 640px) {
+  .identity {
+    padding: 24px 16px;
+  }
+
+  .logo,
+  .logoFallback {
+    width: 56px;
+    height: 56px;
+  }
+
+  .title {
+    font-size: 28px;
+  }
+
+  .content {
+    padding: 24px 16px 40px;
+  }
+
+  .sectionHeader,
+  .slot {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .reserveButton {
+    width: 100%;
+  }
+}
