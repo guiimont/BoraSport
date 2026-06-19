@@ -6,6 +6,7 @@ import {
   getClubBySlug,
 } from "../../../lib/saas/queries";
 
+import { ReservationSlots } from "./reservation-slots";
 import styles from "./page.module.css";
 
 type ClubPageProps = {
@@ -65,33 +66,11 @@ export default async function ClubPage({ params }: ClubPageProps) {
         </div>
 
         {slots.length > 0 ? (
-          <div className={styles.slotList}>
-            {slots.map((slot) => (
-              <article className={styles.slot} key={slot.id}>
-                <div className={styles.slotInfo}>
-                  <h3>{slot.title}</h3>
-                  <dl className={styles.details}>
-                    <div>
-                      <dt>Início</dt>
-                      <dd>{formatDateTime(slot.starts_at)}</dd>
-                    </div>
-                    <div>
-                      <dt>Fim</dt>
-                      <dd>{formatDateTime(slot.ends_at)}</dd>
-                    </div>
-                    <div>
-                      <dt>Capacidade</dt>
-                      <dd>{slot.capacity} aluno{slot.capacity === 1 ? "" : "s"}</dd>
-                    </div>
-                  </dl>
-                </div>
-
-                <button className={styles.reserveButton} type="button" disabled>
-                  Reservar
-                </button>
-              </article>
-            ))}
-          </div>
+          <ReservationSlots
+            clubId={club.id}
+            formatDateTime={formatDateTime}
+            slots={slots}
+          />
         ) : (
           <div className={styles.emptyState}>
             <h3>Nenhum horário disponível</h3>
