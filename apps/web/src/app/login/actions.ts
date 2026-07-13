@@ -1,0 +1,47 @@
+"use server";
+
+import { headers } from "next/headers";
+
+import { createClient } from "../../lib/saas/supabase-server";
+
+export type LoginState = {
+  error?: string;
+  success?: string;
+};
+
+function readText(formData: FormData, key: string) {
+  const value = formData.get(key);
+
+  return typeof value === "string" ? value.trim() : "";
+}
+
+export async function sendMagicLink(
+  _previousState: LoginState,
+  formData: FormData,
+): Promise<LoginState> {
+  const email = readText(formData, "email");
+  const next = readText(formData, "next") || "/admin";
+
+  if (!email) {
+    return { error: "Informe seu email." };
+  }
+
+  const headerStore = await headers();
+  const origin = headerStore.get("origin") || "http://localhost:3000";
+  const supabase = await createClient();
+
+  const { error } = await supabase.auth.signInWithOtp({
+    email,
+    options: {
+      emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent(next)}`,
+    },
+  });
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  return {
+    success: "Enviamos um link de acesso para seu email.",
+  };
+}

@@ -1,0 +1,160 @@
+:root {
+  --ink: #0e2633;
+  --muted: #657982;
+  --line: #d7e5e5;
+  --paper: #f4faf9;
+  --sand: #f3dfbd;
+  --aqua: #1aa69a;
+  --deep: #063b56;
+  --blue: #0d6f98;
+  --sun: #f4a43c;
+  --gold: #ffd06a;
+  --white: #ffffff;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: linear-gradient(180deg, #e6f5f4 0%, var(--paper) 42%, #ffffff 100%);
+  color: var(--ink);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+a { color: inherit; text-decoration: none; }
+button { font: inherit; }
+button, .ghost, .floatingAction {
+  align-items: center;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  font-weight: 850;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 16px;
+}
+
+.appShell { margin: 0 auto; max-width: 1180px; padding: 22px 24px 112px; }
+.topbar { align-items: center; display: grid; gap: 18px; grid-template-columns: 1fr auto 1fr; min-height: 62px; }
+.brand { align-items: center; display: inline-flex; font-size: 1.1rem; font-weight: 950; gap: 10px; }
+.brand span { align-items: center; background: var(--deep); border-radius: 8px; color: var(--gold); display: inline-flex; font-size: .8rem; height: 36px; justify-content: center; width: 36px; }
+.nav { align-items: center; background: rgba(255,255,255,.74); border: 1px solid var(--line); border-radius: 999px; display: flex; gap: 4px; padding: 6px; }
+.nav a { border-radius: 999px; color: var(--muted); font-size: .9rem; font-weight: 760; padding: 9px 13px; white-space: nowrap; }
+.nav a:hover { background: #e8f5f3; color: var(--ink); }
+.ghost { background: var(--white); border: 1px solid var(--line); justify-self: end; }
+
+.dashboardHero { display: grid; gap: 20px; grid-template-columns: minmax(0,1fr) 340px; margin-top: 20px; }
+.heroPhoto {
+  background-image: linear-gradient(90deg, rgba(6,59,86,.78), rgba(6,59,86,.18)), url("https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=80");
+  background-position: center;
+  background-size: cover;
+  border-radius: 8px;
+  min-height: 360px;
+  overflow: hidden;
+  position: relative;
+}
+.heroOverlay { bottom: 0; color: var(--white); left: 0; max-width: 720px; padding: 34px; position: absolute; }
+.eyebrow { color: var(--aqua); font-size: .76rem; font-weight: 950; letter-spacing: 0; margin: 0 0 10px; text-transform: uppercase; }
+.heroOverlay .eyebrow, .safetyPanel .eyebrow { color: var(--gold); }
+h1, h2, h3, p { margin-top: 0; }
+h1 { font-size: clamp(3rem, 6vw, 5.8rem); letter-spacing: 0; line-height: .94; margin-bottom: 0; }
+h2 { font-size: clamp(1.45rem, 2.4vw, 2rem); letter-spacing: 0; line-height: 1.08; margin-bottom: 0; }
+h3 { font-size: 1rem; line-height: 1.2; margin-bottom: 6px; }
+
+.nextRide, .seaPanel, .booking, .panel {
+  background: rgba(255,255,255,.9);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 18px 46px rgba(14,38,51,.08);
+}
+.nextRide { display: grid; gap: 18px; padding: 24px; }
+.timeLockup { align-items: end; display: flex; gap: 12px; }
+.timeLockup span { color: var(--blue); font-size: 4.5rem; font-weight: 950; letter-spacing: 0; line-height: .84; }
+.timeLockup strong { color: var(--sun); font-size: 1.2rem; margin-bottom: 8px; }
+.nextRide dl { display: grid; gap: 12px; margin: 0; }
+.nextRide div:has(dt) { background: #f4faf9; border: 1px solid var(--line); border-radius: 8px; padding: 12px; }
+dt { color: var(--muted); font-size: .76rem; font-weight: 850; text-transform: uppercase; }
+dd { font-weight: 850; margin: 4px 0 0; }
+
+.seaPanel, .booking, .panel { margin-top: 22px; padding: 22px; }
+.panelTitle { align-items: end; display: flex; gap: 18px; justify-content: space-between; margin-bottom: 18px; }
+.seaGrid { display: grid; gap: 12px; grid-template-columns: repeat(4,1fr); }
+.metric { background: linear-gradient(180deg, #f8fcfc, #eef8f6); border: 1px solid var(--line); border-radius: 8px; padding: 16px; }
+.metric span { color: var(--muted); display: block; font-size: .78rem; font-weight: 850; text-transform: uppercase; }
+.metric strong { color: var(--deep); display: block; font-size: 1.8rem; margin: 8px 0 2px; }
+.metric p, .slotCard p, .crewCard p, .feedCard p, .partnerCard p { color: var(--muted); margin-bottom: 0; }
+
+.daysRail { display: grid; gap: 10px; grid-auto-flow: column; grid-auto-columns: minmax(116px, 1fr); overflow-x: auto; padding-bottom: 4px; }
+.dayBlock { background: #f9fcfc; border: 1px solid var(--line); color: var(--ink); display: grid; gap: 5px; min-height: 126px; padding: 14px; text-align: left; }
+.dayBlock span { color: var(--muted); font-size: .8rem; font-weight: 850; text-transform: uppercase; }
+.dayBlock strong { font-size: 1.7rem; line-height: 1; }
+.dayBlock small { color: var(--blue); font-weight: 850; }
+.dayBlock em { color: var(--aqua); font-size: .82rem; font-style: normal; font-weight: 900; }
+.dayBlock.full { opacity: .58; }
+.dayBlock.full em { color: #b35b39; }
+
+.boatFilters { display: grid; gap: 10px; grid-template-columns: repeat(4,1fr); margin-top: 18px; }
+.boatFilters button { background: var(--deep); color: var(--white); display: grid; gap: 2px; min-height: 64px; }
+.boatFilters span { font-size: 1.15rem; font-weight: 950; }
+.boatFilters small { color: rgba(255,255,255,.7); font-weight: 760; }
+.slotGrid { display: grid; gap: 12px; grid-template-columns: repeat(3,1fr); margin-top: 18px; }
+.slotCard { background: #f8fcfc; border: 1px solid var(--line); border-radius: 8px; display: grid; gap: 16px; min-height: 164px; padding: 16px; }
+.slotCard span { color: var(--sun); font-size: 1.55rem; font-weight: 950; }
+.slotCard strong { color: var(--aqua); font-size: 1.25rem; }
+.slotCard small { color: var(--muted); font-weight: 850; }
+
+.contentGrid { display: grid; gap: 22px; grid-template-columns: minmax(0,1fr) 360px; }
+.crewGrid { display: grid; gap: 12px; grid-template-columns: repeat(4,1fr); }
+.crewCard { background: #f8fcfc; border: 1px solid var(--line); border-radius: 8px; min-height: 136px; padding: 14px; }
+.crewCard span { align-items: center; background: var(--sand); border-radius: 50%; color: var(--deep); display: flex; font-weight: 950; height: 42px; justify-content: center; margin-bottom: 18px; width: 42px; }
+.safetyPanel { background: var(--deep); color: var(--white); }
+.safetyPanel ul { color: rgba(255,255,255,.82); display: grid; gap: 12px; line-height: 1.45; margin: 18px 0 0; padding-left: 20px; }
+
+.feedGrid, .partnerGrid { display: grid; gap: 14px; grid-template-columns: repeat(3,1fr); }
+.feedCard {
+  align-items: end;
+  background-position: center;
+  background-size: cover;
+  border-radius: 8px;
+  color: var(--white);
+  display: flex;
+  min-height: 220px;
+  overflow: hidden;
+}
+.feedCard div { background: linear-gradient(180deg, transparent, rgba(6,59,86,.84)); padding: 76px 16px 16px; width: 100%; }
+.feedCard p { color: rgba(255,255,255,.76); }
+.photo1 { background-image: url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=80"); }
+.photo2 { background-image: url("https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=900&q=80"); }
+.photo3 { background-image: url("https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=900&q=80"); }
+.partnerCard { background: #f8fcfc; border: 1px solid var(--line); border-radius: 8px; min-height: 154px; padding: 16px; }
+.partnerCard span { background: linear-gradient(135deg, var(--sun), var(--aqua)); border-radius: 8px; display: block; height: 42px; margin-bottom: 22px; width: 42px; }
+
+.floatingAction {
+  background: var(--sun);
+  bottom: 24px;
+  box-shadow: 0 18px 42px rgba(169,91,24,.28);
+  color: var(--ink);
+  font-size: 1.02rem;
+  min-height: 56px;
+  position: fixed;
+  right: 24px;
+  z-index: 20;
+}
+
+@media (max-width: 920px) {
+  .topbar, .dashboardHero, .contentGrid { grid-template-columns: 1fr; }
+  .nav { justify-self: start; overflow-x: auto; width: 100%; }
+  .ghost { display: none; }
+  .seaGrid, .slotGrid, .feedGrid, .partnerGrid { grid-template-columns: repeat(2,1fr); }
+  .crewGrid, .boatFilters { grid-template-columns: repeat(2,1fr); }
+}
+
+@media (max-width: 560px) {
+  .appShell { padding: 16px 16px 104px; }
+  .heroPhoto { min-height: 420px; }
+  .heroOverlay { padding: 22px; }
+  h1 { font-size: 3rem; }
+  .seaGrid, .slotGrid, .feedGrid, .partnerGrid, .crewGrid { grid-template-columns: 1fr; }
+  .timeLockup span { font-size: 3.8rem; }
+  .floatingAction { bottom: 16px; left: 16px; right: 16px; width: auto; }
+}

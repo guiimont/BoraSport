@@ -1,0 +1,543 @@
+.page {
+  background: var(--club-background);
+  color: #0e2633;
+  min-height: 100vh;
+}
+
+.hero {
+  background: linear-gradient(135deg, var(--club-primary), var(--club-secondary));
+  color: #ffffff;
+}
+
+.heroInner,
+.content {
+  margin: 0 auto;
+  max-width: 1120px;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.heroInner {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: minmax(0, 1fr) 380px;
+  padding-bottom: 24px;
+  padding-top: 24px;
+}
+
+.eyebrow {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.76rem;
+  font-weight: 900;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.title {
+  font-size: clamp(2rem, 5vw, 3.6rem);
+  line-height: 0.98;
+  margin: 8px 0 0;
+}
+
+.lead {
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.98rem;
+  line-height: 1.55;
+  margin: 12px 0 0;
+  max-width: 680px;
+}
+
+.contextNav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.contextLink,
+.contextLinkPrimary {
+  align-items: center;
+  border-radius: 8px;
+  display: inline-flex;
+  font-weight: 900;
+  min-height: 42px;
+  padding: 0 14px;
+  text-decoration: none;
+}
+
+.contextLinkPrimary {
+  background: var(--club-accent);
+  color: #111827;
+}
+
+.contextLink {
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  color: #ffffff;
+}
+
+.contextLink:hover,
+.contextLinkPrimary:hover {
+  transform: translateY(-1px);
+}
+
+.nextCard,
+.card,
+.slotCard {
+  background: #ffffff;
+  border: 1px solid #d7e0e0;
+  border-radius: 8px;
+  box-shadow: 0 12px 34px rgba(14, 38, 51, 0.08);
+}
+
+.nextCard {
+  align-self: end;
+  color: #0e2633;
+  padding: 16px;
+}
+
+.nextLabel,
+.introLabel,
+.participantsLabel {
+  color: var(--club-secondary);
+  font-size: 0.76rem;
+  font-weight: 900;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.nextTitle {
+  font-size: 1.35rem;
+  line-height: 1.15;
+  margin: 8px 0 0;
+}
+
+.muted,
+.nextTime,
+.introText,
+.slotMeta,
+.participantsText {
+  color: #60737c;
+}
+
+.nextTime,
+.slotMeta,
+.participantsText {
+  font-size: 0.92rem;
+  margin: 5px 0 0;
+}
+
+.statGrid {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 14px;
+}
+
+.statGridThree {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.stat {
+  background: #f3f7f7;
+  border: 1px solid #e0e8e8;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.statCenter {
+  text-align: center;
+}
+
+.stat span {
+  color: #657982;
+  display: block;
+  font-size: 0.74rem;
+  font-weight: 850;
+}
+
+.stat strong {
+  display: block;
+  font-size: 0.94rem;
+  margin-top: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.crewLine,
+.participantsRow,
+.weekRow {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.weekWorkout {
+  align-items: flex-start;
+  background: #f7fbfb;
+  border: 1px solid #e0e8e8;
+  border-radius: 8px;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  padding: 14px;
+}
+
+.weekWorkout h3 {
+  font-size: 1.05rem;
+  line-height: 1.2;
+  margin: 6px 0 0;
+}
+
+.weekWorkout p {
+  color: #60737c;
+  line-height: 1.45;
+  margin: 6px 0 0;
+}
+
+.crewLine {
+  background: #f8fbfb;
+  border: 1px solid #e0e8e8;
+  border-radius: 8px;
+  margin-top: 12px;
+  padding: 10px;
+}
+
+.avatarStack {
+  display: flex;
+  flex: 0 0 auto;
+}
+
+.avatar {
+  align-items: center;
+  background: #dfe8e8;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  color: #273b45;
+  display: flex;
+  font-size: 0.78rem;
+  font-weight: 900;
+  height: 36px;
+  justify-content: center;
+  margin-left: -8px;
+  overflow: hidden;
+  width: 36px;
+}
+
+.avatar:first-child {
+  margin-left: 0;
+}
+
+.avatar img {
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.avatarMore {
+  background: #063b56;
+  color: #ffffff;
+}
+
+.content {
+  padding-bottom: 44px;
+  padding-top: 14px;
+}
+
+.tabsBar {
+  background: rgba(244, 247, 247, 0.94);
+  border-bottom: 1px solid #d7e0e0;
+  margin: 0 -16px;
+  padding: 10px 16px;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.tabsScroller {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+}
+
+.tabButton {
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid #d7e0e0;
+  border-radius: 8px;
+  color: #516771;
+  cursor: pointer;
+  flex: 0 0 auto;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 850;
+  min-height: 40px;
+  padding: 0 14px;
+}
+
+.tabButtonActive {
+  background: #ffffff;
+  border-color: var(--club-primary);
+  color: var(--club-primary);
+  box-shadow: 0 8px 18px rgba(14, 38, 51, 0.08);
+}
+
+.intro {
+  margin: 18px 0;
+}
+
+.introText {
+  font-size: 0.94rem;
+  line-height: 1.5;
+  margin: 5px 0 0;
+  max-width: 720px;
+}
+
+.agendaHeader {
+  align-items: end;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.sectionTitle {
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+.slotList {
+  display: grid;
+  gap: 12px;
+}
+
+.slotCard {
+  overflow: hidden;
+}
+
+.slotMain {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: minmax(0, 1fr) 310px;
+  padding: 16px;
+}
+
+.slotTime {
+  color: var(--club-secondary);
+  font-size: 0.9rem;
+  font-weight: 900;
+  margin: 0;
+}
+
+.slotTitle {
+  font-size: 1.25rem;
+  line-height: 1.15;
+  margin: 5px 0 0;
+}
+
+.participantsRow {
+  border-top: 1px solid #edf2f2;
+  margin: 0 16px;
+  padding: 13px 0;
+}
+
+.slotAction {
+  background: #f7fbfb;
+  border-top: 1px solid #edf2f2;
+  padding: 14px 16px;
+}
+
+.reserveButton {
+  background: var(--club-primary);
+  border: 0;
+  border-radius: 8px;
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.94rem;
+  font-weight: 900;
+  min-height: 46px;
+  width: 100%;
+}
+
+.reserveButton:disabled {
+  background: #b8c4c4;
+  cursor: not-allowed;
+}
+
+.emptyState {
+  background: #ffffff;
+  border: 1px dashed #cbd8d8;
+  border-radius: 8px;
+  color: #60737c;
+  padding: 18px;
+}
+
+.card {
+  padding: 16px;
+}
+
+.locationPanel {
+  align-items: end;
+  background: #ffffff;
+  border: 1px solid #d7e0e0;
+  border-radius: 8px;
+  box-shadow: 0 12px 34px rgba(14, 38, 51, 0.08);
+  display: grid;
+  gap: 14px;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 460px);
+  margin-bottom: 14px;
+  padding: 16px;
+}
+
+.locationForm {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.locationInput {
+  background: #fbfdfd;
+  border: 1px solid #cbdcdf;
+  border-radius: 8px;
+  color: #0e2633;
+  font: inherit;
+  min-height: 44px;
+  min-width: 0;
+  padding: 0 12px;
+}
+
+.locationInput:focus {
+  border-color: var(--club-secondary);
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.12);
+  outline: none;
+}
+
+.locationButton {
+  background: var(--club-primary);
+  border: 0;
+  border-radius: 8px;
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 900;
+  min-height: 44px;
+  padding: 0 14px;
+}
+
+.locationButton:disabled {
+  background: #b8c4c4;
+  cursor: not-allowed;
+}
+
+.errorText {
+  color: #b42318;
+  font-size: 0.9rem;
+  font-weight: 800;
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+.locationResolved {
+  color: #60737c;
+  font-size: 0.86rem;
+  font-weight: 750;
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+.conditionGrid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: minmax(0, 1fr) 300px;
+}
+
+.windyFrame {
+  background: #eef4f4;
+  border: 1px solid #d7e0e0;
+  border-radius: 8px;
+  height: 360px;
+  overflow: hidden;
+}
+
+.windyFrame iframe {
+  border: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.tileGrid {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.tileGridTwo {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.tile {
+  background: #f7fbfb;
+  border: 1px solid #e0e8e8;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.tile p {
+  color: #60737c;
+  font-size: 0.9rem;
+  line-height: 1.42;
+  margin: 0;
+}
+
+.tile strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.conditionFootnote {
+  color: #60737c;
+  font-size: 0.84rem;
+  line-height: 1.45;
+  margin: 14px 0 0;
+}
+
+.badge {
+  background: #eef4f4;
+  border-radius: 8px;
+  color: #273b45;
+  flex: 0 0 auto;
+  font-size: 0.8rem;
+  font-weight: 850;
+  padding: 7px 9px;
+}
+
+@media (max-width: 820px) {
+  .heroInner,
+  .slotMain,
+  .locationPanel,
+  .locationForm,
+  .conditionGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .nextCard {
+    align-self: stretch;
+  }
+
+  .statGridThree,
+  .tileGridTwo {
+    grid-template-columns: 1fr;
+  }
+
+  .agendaHeader,
+  .participantsRow,
+  .weekWorkout,
+  .weekRow {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}

@@ -1,63 +1,44 @@
 "use server";
 
-import { createReservation } from "../../../lib/saas/mutations";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
-export type ReservationActionState = {
-  message: string;
-  status: "idle" | "success" | "error";
-  slotId?: string;
-};
+import { createBooking, ensureProfile } from "../../../lib/saas/mutations";
+import { createClient } from "../../../lib/saas/supabase-server";
 
-const initialError = "Não foi possível solicitar a reserva. Tente novamente.";
+export async function reserveSlot(formData: FormData) {
+  const companyId = String(formData.get("company_id") || "");
+  const slotId = String(formData.get("slot_id") || "");
 
-function readRequiredString(formData: FormData, key: string) {
-  const value = formData.get(key);
-
-  if (typeof value !== "string") {
-    return "";
+  if (!companyId || !slotId) {
+    return;
   }
 
-  return value.trim();
-}
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-export async function requestReservation(
-  _previousState: ReservationActionState,
-  formData: FormData,
-): Promise<ReservationActionState> {
-  const clubId = readRequiredString(formData, "club_id");
-  const slotId = readRequiredString(formData, "slot_id");
-  const customerName = readRequiredString(formData, "customer_name");
-  const customerPhone = readRequiredString(formData, "customer_phone");
-  const customerEmail = readRequiredString(formData, "customer_email");
-
-  if (!clubId || !slotId || !customerName || !customerPhone) {
-    return {
-      message: "Informe nome e telefone para solicitar a reserva.",
-      status: "error",
-      slotId,
-    };
+  if (!user) {
+    redirect("/login?next=/");
   }
 
-  try {
-    await createReservation({
-      club_id: clubId,
-      slot_id: slotId,
-      customer_name: customerName,
-      customer_phone: customerPhone,
-      customer_email: customerEmail || null,
-      status: "pending",
-    });
+  await ensureProfile({
+    avatarUrl: (user.user_metadata?.avatar_url as string | undefined) || null,
+    email: user.email,
+    name:
+      (user.user_metadata?.name as string | undefined) ||
+      (user.user_metadata?.full_name as string | undefined) ||
+      "",
+    userId: user.id,
+  });
 
-    return {
-      message: "Reserva solicitada com sucesso. O clube irá confirmar seu horário.",
-      status: "success",
-      slotId,
-    };
-  } catch {
-    return {
-      message: initialError,
-      status: "error",
-      slotId,
-    };
-  }
+  await createBooking({
+    company_id: companyId,
+    slot_id: slotId,
+    user_id: user.id,
+    status: "confirmed",
+  });
+
+  revalidatePath("/clube/[slug]", "page");
 }

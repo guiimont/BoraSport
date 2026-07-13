@@ -1,126 +1,157 @@
 "use client";
 
-import { useActionState, useState } from "react";
-
-import type { Slot } from "../../../types/saas";
-import { requestReservation, type ReservationActionState } from "./actions";
-import styles from "./page.module.css";
+import type { ActivityExperience } from "../../../lib/saas/activity-presets";
+import type {
+  CompanySlot,
+  SlotParticipant,
+  VocabularyConfig,
+} from "../../../types/saas";
+import { reserveSlot } from "./actions";
+import styles from "./club-page.module.css";
 
 type ReservationSlotsProps = {
-  clubId: string;
-  formatDateTime: (value: string) => string;
-  slots: Slot[];
+  companyId: string;
+  experience: ActivityExperience;
+  participantsBySlot: Record<string, SlotParticipant[]>;
+  slots: CompanySlot[];
+  vocabulary: Required<VocabularyConfig>;
 };
 
-const initialState: ReservationActionState = {
-  message: "",
-  status: "idle",
-};
+function formatDateTime(value: string) {
+  return new Intl.DateTimeFormat("pt-BR", {
+    weekday: "short",
+    day: "2-digit",
+    month: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(value));
+}
+
+function formatCurrency(value?: number | string | null) {
+  if (value === null || value === undefined) {
+    return null;
+  }
+
+  const amount = Number(value);
+
+  if (amount === 0) {
+    return "Incluso";
+  }
+
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(amount);
+}
+
+function AvatarStack({ participants }: { participants: SlotParticipant[] }) {
+  return (
+    <div className={styles.avatarStack}>
+      {participants.slice(0, 5).map((participant) => (
+        <span
+          className={styles.avatar}
+          key={`${participant.slot_id}-${participant.user_id}`}
+          title={participant.name}
+        >
+          {participant.avatar_url ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img alt={participant.name} src={participant.avatar_url} />
+          ) : (
+            participant.name.slice(0, 1).toUpperCase()
+          )}
+        </span>
+      ))}
+    </div>
+  );
+}
 
 export function ReservationSlots({
-  clubId,
-  formatDateTime,
+  companyId,
+  experience,
+  participantsBySlot,
   slots,
+  vocabulary,
 }: ReservationSlotsProps) {
-  const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
-  const [state, formAction, isPending] = useActionState(
-    requestReservation,
-    initialState,
-  );
+  if (slots.length === 0) {
+    return (
+      <div className={styles.emptyState}>
+        Nenhum {vocabulary.service_label.toLowerCase()} disponivel para os
+        proximos dias.
+      </div>
+    );
+  }
 
   return (
     <div className={styles.slotList}>
       {slots.map((slot) => {
-        const isSelected = selectedSlotId === slot.id;
-        const messageBelongsToSlot = state.slotId === slot.id;
+        const remaining = Math.max(
+          0,
+          Number(slot.spots_total || 0) - Number(slot.spots_occupied || 0),
+        );
+        const price = formatCurrency(slot.services?.price);
+        const isFull = remaining === 0;
+        const participants = participantsBySlot[slot.id] || [];
 
         return (
-          <article className={styles.slot} key={slot.id}>
-            <div className={styles.slotSummary}>
-              <div className={styles.slotInfo}>
-                <h3>{slot.title}</h3>
-                <dl className={styles.details}>
-                  <div>
-                    <dt>Início</dt>
-                    <dd>{formatDateTime(slot.starts_at)}</dd>
-                  </div>
-                  <div>
-                    <dt>Fim</dt>
-                    <dd>{formatDateTime(slot.ends_at)}</dd>
-                  </div>
-                  <div>
-                    <dt>Capacidade</dt>
-                    <dd>
-                      {slot.capacity} aluno{slot.capacity === 1 ? "" : "s"}
-                    </dd>
-                  </div>
-                </dl>
+          <article className={styles.slotCard} key={slot.id}>
+            <div className={styles.slotMain}>
+              <div>
+                <p className={styles.slotTime}>
+                  {formatDateTime(slot.start_time)}
+                </p>
+                <h3 className={styles.slotTitle}>
+                  {slot.services?.name || vocabulary.service_label}
+                </h3>
+                <p className={styles.slotMeta}>
+                  {vocabulary.resource_label}:{" "}
+                  {slot.resources?.name || "A definir"}
+                </p>
               </div>
 
-              <button
-                className={styles.reserveButton}
-                onClick={() => setSelectedSlotId(isSelected ? null : slot.id)}
-                type="button"
-              >
-                Reservar
-              </button>
+              <div className={styles.statGridThree}>
+                <div className={`${styles.stat} ${styles.statCenter}`}>
+                  <span>Vagas</span>
+                  <strong>
+                    {remaining}/{slot.spots_total}
+                  </strong>
+                </div>
+                <div className={`${styles.stat} ${styles.statCenter}`}>
+                  <span>Duracao</span>
+                  <strong>{slot.services?.duration_minutes || "--"} min</strong>
+                </div>
+                <div className={`${styles.stat} ${styles.statCenter}`}>
+                  <span>Valor</span>
+                  <strong>{price || "--"}</strong>
+                </div>
+              </div>
             </div>
 
-            {isSelected ? (
-              <form action={formAction} className={styles.reservationForm}>
-                <input name="club_id" type="hidden" value={clubId} />
-                <input name="slot_id" type="hidden" value={slot.id} />
+            <div className={styles.participantsRow}>
+              <div>
+                <p className={styles.participantsLabel}>
+                  {experience.communityTitle}
+                </p>
+                <p className={styles.participantsText}>
+                  {participants.length > 0
+                    ? `${participants.length} ${experience.participantLabel} confirmados`
+                    : `Seja o primeiro entre os ${experience.participantLabel}.`}
+                </p>
+              </div>
 
-                <label>
-                  Nome do aluno
-                  <input
-                    autoComplete="name"
-                    name="customer_name"
-                    required
-                    type="text"
-                  />
-                </label>
+              <AvatarStack participants={participants} />
+            </div>
 
-                <label>
-                  Telefone
-                  <input
-                    autoComplete="tel"
-                    name="customer_phone"
-                    required
-                    type="tel"
-                  />
-                </label>
-
-                <label>
-                  E-mail
-                  <input
-                    autoComplete="email"
-                    name="customer_email"
-                    type="email"
-                  />
-                </label>
-
-                <button
-                  className={styles.submitButton}
-                  disabled={isPending}
-                  type="submit"
-                >
-                  {isPending ? "Enviando..." : "Solicitar reserva"}
-                </button>
-
-                {messageBelongsToSlot && state.status !== "idle" ? (
-                  <p
-                    className={
-                      state.status === "success"
-                        ? styles.successMessage
-                        : styles.errorMessage
-                    }
-                  >
-                    {state.message}
-                  </p>
-                ) : null}
-              </form>
-            ) : null}
+            <form action={reserveSlot} className={styles.slotAction}>
+              <input name="company_id" type="hidden" value={companyId} />
+              <input name="slot_id" type="hidden" value={slot.id} />
+              <button
+                className={styles.reserveButton}
+                disabled={isFull}
+                type="submit"
+              >
+                {isFull ? "Lotado" : `Reservar ${vocabulary.service_label}`}
+              </button>
+            </form>
           </article>
         );
       })}

@@ -1,42 +1,141 @@
-export type Club = {
+export type JsonObject = Record<string, string | number | boolean | null>;
+
+export type VocabularyConfig = {
+  booking_label?: string;
+  professional_label?: string;
+  resource_label?: string;
+  service_label?: string;
+};
+
+export type ThemeColors = {
+  accent?: string;
+  background?: string;
+  primary?: string;
+  secondary?: string;
+};
+
+export type Company = {
   id: string;
   name: string;
   slug: string;
   logo_url: string | null;
-  primary_color: string | null;
-  created_at: string;
+  theme_colors: ThemeColors;
+  vocabulary_config: VocabularyConfig;
+  type_de_negocio: string | null;
+  created_at: string | null;
+  updated_at: string | null;
 };
 
-export type Slot = {
+export type Resource = {
   id: string;
-  club_id: string;
-  title: string;
-  starts_at: string;
-  ends_at: string;
-  capacity: number;
+  company_id: string;
+  name: string;
+  capacity_maxima: number;
   is_active: boolean;
   created_at: string;
+  updated_at: string;
 };
 
-export type ReservationStatus = "pending" | "confirmed" | "cancelled";
-
-export type Reservation = {
+export type Service = {
   id: string;
-  club_id: string;
-  slot_id: string;
-  customer_name: string;
-  customer_phone: string;
-  customer_email: string | null;
-  status: ReservationStatus;
+  company_id: string;
+  name: string;
+  description: string | null;
+  duration_minutes: number;
+  price: number;
+  is_active: boolean;
   created_at: string;
+  updated_at: string;
 };
 
-export type NewClub = Omit<Club, "id" | "created_at">;
-
-export type NewSlot = Omit<Slot, "id" | "created_at" | "is_active"> & {
-  is_active?: boolean;
+export type CompanySlot = {
+  id: string;
+  company_id: string;
+  service_id: string;
+  resource_id: string | null;
+  professional_id: string | null;
+  start_time: string;
+  end_time: string;
+  spots_total: number;
+  spots_occupied: number;
+  spots_available?: number;
+  services: Pick<
+    Service,
+    "description" | "duration_minutes" | "id" | "name" | "price"
+  > | null;
+  resources: Pick<Resource, "capacity_maxima" | "id" | "name"> | null;
 };
 
-export type NewReservation = Omit<Reservation, "id" | "created_at" | "status"> & {
-  status?: ReservationStatus;
+export type WeeklyWorkout = {
+  id: string;
+  company_id: string;
+  week_start_date: string;
+  weekday: number;
+  title: string;
+  description: string | null;
+  attachment_url: string | null;
+  attachment_name: string | null;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type LandingPage = {
+  id: string;
+  company_id: string;
+  slug: string;
+  template_key: string;
+  title: string;
+  subtitle: string | null;
+  hero_image_url: string | null;
+  cta_label: string;
+  cta_href: string | null;
+  sections: JsonObject[];
+  is_published: boolean;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type SlotParticipant = {
+  avatar_url: string | null;
+  company_id: string;
+  name: string;
+  slot_id: string;
+  user_id: string;
+};
+
+export type BookingStatus = "confirmed" | "cancelled" | "attended" | "missed";
+export type MembershipRole = "admin" | "client" | "professional";
+
+export type Membership = {
+  id: string;
+  user_id: string;
+  company_id: string;
+  role: MembershipRole;
+  created_at: string;
+  updated_at: string;
+};
+
+export type Profile = {
+  avatar_url: string | null;
+  created_at: string;
+  id: string;
+  name: string;
+  phone: string | null;
+  updated_at: string;
+};
+
+export type Booking = {
+  id: string;
+  slot_id: string;
+  user_id: string;
+  company_id: string;
+  status: BookingStatus;
+  created_at: string;
+  updated_at: string;
+};
+
+export type NewBooking = Pick<Booking, "company_id" | "slot_id" | "user_id"> & {
+  status?: BookingStatus;
 };

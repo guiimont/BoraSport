@@ -1,37 +1,43 @@
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  // Em runtime no browser, vamos usar window.location.host.
-  // Mas como layout.tsx roda no servidor também, precisamos de um fallback seguro.
-  // Para o MVP, carregamos o CSS no client (script pequeno) para garantir host correto.
+import Script from "next/script";
+import type { ReactNode } from "react";
+import "./globals.css";
 
+const edgeBaseUrl = process.env.NEXT_PUBLIC_EDGE_BASE_URL || "";
+const tenantAssetsScript = `
+  (function () {
+    var edge = ${JSON.stringify(edgeBaseUrl)};
+    if (!edge) return;
+
+    var baseUrl = edge.replace(/\\/$/, "");
+    var host = window.location.host;
+
+    var css = document.createElement("link");
+    css.rel = "stylesheet";
+    css.href = baseUrl + "/theme.css?host=" + encodeURIComponent(host);
+    document.head.appendChild(css);
+
+    var manifest = document.createElement("link");
+    manifest.rel = "manifest";
+    manifest.href = baseUrl + "/manifest.webmanifest?host=" + encodeURIComponent(host);
+    document.head.appendChild(manifest);
+  })();
+`;
+
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="pt-BR">
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function () {
-                var edge = ${JSON.stringify(process.env.NEXT_PUBLIC_EDGE_BASE_URL || "")};
-                if (!edge) return;
-
-                var host = window.location.host;
-                var cssHref = edge.replace(/\\/$/, "") + "/theme.css?host=" + encodeURIComponent(host);
-
-                var link = document.createElement("link");
-                link.rel = "stylesheet";
-                link.href = cssHref;
-                document.head.appendChild(link);
-
-                var manifestHref = edge.replace(/\\/$/, "") + "/manifest.webmanifest?host=" + encodeURIComponent(host);
-                var manifest = document.createElement("link");
-                manifest.rel = "manifest";
-                manifest.href = manifestHref;
-                document.head.appendChild(manifest);
-              })();
-            `,
-          }}
-        />
-      </head>
-      <body>{children}</body>
+      <body suppressHydrationWarning>
+        {edgeBaseUrl ? (
+          <Script
+            dangerouslySetInnerHTML={{
+              __html: tenantAssetsScript,
+            }}
+            id="tenant-assets"
+            strategy="beforeInteractive"
+          />
+        ) : null}
+        {children}
+      </body>
     </html>
   );
 }
