@@ -16,7 +16,7 @@ function SubmitButton() {
 
   return (
     <button className={styles.formButton} disabled={pending} type="submit">
-      {pending ? "Enviando..." : "Solicitar demonstracao"}
+      {pending ? "Enviando..." : "Solicitar demonstração"}
     </button>
   );
 }
@@ -38,11 +38,14 @@ export function CommercialLeadForm() {
   return (
     <form action={formAction} className={styles.leadForm}>
       <div className={styles.honeypot} aria-hidden="true">
-        <label htmlFor="companyWebsite">Site da empresa</label>
+        <label htmlFor="contactFaxConfirmation">Confirmação de fax</label>
         <input
           autoComplete="off"
-          id="companyWebsite"
-          name="companyWebsite"
+          aria-hidden="true"
+          data-1p-ignore="true"
+          data-lpignore="true"
+          id="contactFaxConfirmation"
+          name="contactFaxConfirmation"
           tabIndex={-1}
           type="text"
         />
@@ -71,7 +74,7 @@ export function CommercialLeadForm() {
       </label>
 
       <label className={styles.formField}>
-        Funcao no clube
+        Função no clube
         <input
           autoComplete="organization-title"
           name="role"
@@ -129,7 +132,7 @@ export function CommercialLeadForm() {
       <label className={styles.consentField}>
         <input name="consent" required type="checkbox" />
         <span>
-          Autorizo o contato do BoraSport para conversar sobre a operacao do meu
+          Autorizo o contato do BoraSport para conversar sobre a operação do meu
           clube.
         </span>
       </label>

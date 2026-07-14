@@ -38,11 +38,11 @@ export async function submitCommercialLead(
   _previousState: CommercialLeadState,
   formData: FormData,
 ): Promise<CommercialLeadState> {
-  const honeypot = readText(formData, "companyWebsite");
+  const honeypot = readText(formData, "contactFaxConfirmation");
 
   if (honeypot) {
     return {
-      message: "Recebemos sua solicitacao.",
+      message: "Recebemos sua solicitação.",
       success: true,
     };
   }
@@ -67,7 +67,7 @@ export async function submitCommercialLead(
   }
 
   if (role.length < 2) {
-    errors.role = "Informe sua funcao no clube.";
+    errors.role = "Informe sua função no clube.";
   }
 
   if (cityState.length < 2) {
@@ -75,15 +75,15 @@ export async function submitCommercialLead(
   }
 
   if (phone.length < 8) {
-    errors.phone = "Informe um WhatsApp valido.";
+    errors.phone = "Informe um WhatsApp válido.";
   }
 
   if (!isValidEmail(email)) {
-    errors.email = "Informe um e-mail valido.";
+    errors.email = "Informe um e-mail válido.";
   }
 
   if (message.length > 1200) {
-    errors.message = "Use no maximo 1200 caracteres.";
+    errors.message = "Use no máximo 1200 caracteres.";
   }
 
   if (!consent) {
@@ -115,7 +115,7 @@ export async function submitCommercialLead(
 
     if (!error) {
       return {
-        message: "Recebemos sua solicitacao. Vamos entrar em contato.",
+        message: "Recebemos sua solicitação. Vamos entrar em contato.",
         success: true,
       };
     }
@@ -124,7 +124,7 @@ export async function submitCommercialLead(
   }
 
   return {
-    message: "Nao foi possivel enviar agora. Tente novamente em instantes.",
+    message: "Não foi possível enviar agora. Tente novamente em instantes.",
     success: false,
   };
 }
