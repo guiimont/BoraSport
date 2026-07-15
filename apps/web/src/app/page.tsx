@@ -5,78 +5,78 @@ import { CommercialLeadForm } from "./commercial-lead-form";
 import styles from "./home.module.css";
 
 export const metadata: Metadata = {
-  title: "BoraSport | Gestao completa para clubes de va'a",
+  title: "BoraSport | Gestão completa para clubes de va'a",
   description:
-    "Agenda, reservas, canoas, treinos, remadores e comunicacao em uma plataforma criada para clubes de va'a.",
+    "Agenda, reservas, canoas, treinos, remadores e comunicação em uma plataforma criada para clubes de va'a.",
 };
 
 const problemItems = [
   "Reservas espalhadas em grupos",
-  "Alteracoes de ultima hora",
+  "Alterações de última hora",
   "Dificuldade para organizar canoas e vagas",
-  "Informacoes dos remadores fragmentadas",
-  "Comunicacao descentralizada",
-  "Falta de visao da operacao",
+  "Informações dos remadores fragmentadas",
+  "Comunicação descentralizada",
+  "Falta de visão da operação",
 ];
 
 const resources = [
   {
     title: "Agenda e reservas",
     items: [
-      "Horarios organizados",
-      "Vagas disponiveis",
-      "Confirmacoes",
+      "Horários organizados",
+      "Vagas disponíveis",
+      "Confirmações",
       "Cancelamentos",
       "Controle de vagas",
     ],
   },
   {
-    title: "Gestao de canoas",
+    title: "Gestão de canoas",
     items: [
-      "Organizacao das canoas",
+      "Organização das canoas",
       "Capacidade",
       "Disponibilidade",
-      "Distribuicao dos remadores",
+      "Distribuição dos remadores",
       "Controle operacional",
     ],
   },
   {
-    title: "Treinos e presenca",
+    title: "Treinos e presença",
     items: [
       "Planejamento",
       "Participantes",
-      "Presenca",
-      "Historico",
-      "Observacoes do treinador",
+      "Presença",
+      "Histórico",
+      "Observações do treinador",
     ],
   },
   {
-    title: "Gestao de remadores",
+    title: "Gestão de remadores",
     items: [
       "Cadastro",
       "Perfil",
-      "Experiencia",
-      "Frequencia",
-      "Historico esportivo",
+      "Experiência",
+      "Frequência",
+      "Histórico esportivo",
     ],
   },
   {
-    title: "Comunicacao do clube",
+    title: "Comunicação do clube",
     items: [
-      "Informacoes centralizadas",
+      "Informações centralizadas",
       "Avisos",
-      "Alteracoes",
+      "Alterações",
       "Eventos",
       "Relacionamento com a comunidade",
     ],
   },
   {
-    title: "Presenca digital",
+    title: "Presença digital",
     items: [
-      "Pagina do clube",
-      "Informacoes",
-      "Horarios",
-      "Captacao",
+      "Página do clube",
+      "Informações",
+      "Horários",
+      "Captação",
       "Identidade visual",
     ],
   },
@@ -85,25 +85,25 @@ const resources = [
 const profiles = [
   {
     label: "Para o remador",
-    text: "Reserve seus treinos, acompanhe sua rotina e permaneca conectado ao clube.",
+    text: "Reserve seus treinos, acompanhe sua rotina e permaneça conectado ao clube.",
   },
   {
     label: "Para o treinador",
-    text: "Organize canoas, participantes, presenca e planejamento em um unico lugar.",
+    text: "Organize canoas, participantes, presença e planejamento em um único lugar.",
   },
   {
     label: "Para o gestor",
-    text: "Tenha visao da operacao, das pessoas e da rotina do clube sem depender de planilhas.",
+    text: "Tenha visão da operação, das pessoas e da rotina do clube sem depender de planilhas.",
   },
 ];
 
 const steps = [
   {
     title: "Configure seu clube",
-    text: "Defina identidade, canoas, horarios e informacoes essenciais da operacao.",
+    text: "Defina identidade, canoas, horários e informações essenciais da operação.",
   },
   {
-    title: "Organize a operacao",
+    title: "Organize a operação",
     text: "Publique treinos, acompanhe vagas e mantenha reservas em uma rotina clara.",
   },
   {
@@ -116,22 +116,27 @@ export default function HomePage() {
   return (
     <main className={styles.page}>
       <header className={styles.header}>
-        <Link aria-label="BoraSport inicio" className={styles.brand} href="/">
+        <Link aria-label="BoraSport início" className={styles.brand} href="/">
           <span aria-hidden="true">B</span>
           BoraSport
         </Link>
 
-        <nav aria-label="Navegacao principal" className={styles.nav}>
-          <a href="#visao">Visao geral</a>
+        <nav aria-label="Navegação principal" className={styles.nav}>
+          <a href="#visao">Visão geral</a>
           <a href="#recursos">Recursos</a>
           <a href="#clube">Para o clube</a>
           <a href="#como-funciona">Como funciona</a>
           <a href="#contato">Contato</a>
         </nav>
 
-        <a className={styles.headerCta} href="#contato">
-          Solicitar demonstracao
-        </a>
+        <div className={styles.headerActions}>
+          <Link className={styles.headerLogin} href="/login">
+            Entrar
+          </Link>
+          <a className={styles.headerCta} href="#contato">
+            Solicitar demonstração
+          </a>
+        </div>
       </header>
 
       <section className={styles.hero} id="visao">
@@ -143,16 +148,16 @@ export default function HomePage() {
         </div>
 
         <div className={styles.heroContent}>
-          <p className={styles.eyebrow}>Gestao especializada em va'a</p>
-          <h1>Seu clube organizado. Suas canoas na agua. Sua comunidade mais forte.</h1>
+          <p className={styles.eyebrow}>Gestão especializada em va'a</p>
+          <h1>Seu clube organizado. Suas canoas na água. Sua comunidade mais forte.</h1>
           <p className={styles.heroLead}>
-            O BoraSport reune agenda, reservas, canoas, treinos, remadores e
-            comunicacao em uma plataforma criada para a realidade do va'a.
+            O BoraSport reúne agenda, reservas, canoas, treinos, remadores e
+            comunicação em uma plataforma criada para a realidade do va'a.
           </p>
 
           <div className={styles.actions}>
             <a className={styles.primaryButton} href="#contato">
-              Solicitar demonstracao
+              Solicitar demonstração
             </a>
             <a className={styles.secondaryButton} href="#recursos">
               Conhecer a plataforma
@@ -166,9 +171,9 @@ export default function HomePage() {
             <strong>Hoje</strong>
           </div>
           <div className={styles.nextTraining}>
-            <span>Proximo treino</span>
+            <span>Próximo treino</span>
             <strong>05:45</strong>
-            <p>Treino tecnico - V6 Hoku</p>
+            <p>Treino técnico - V6 Hoku</p>
           </div>
           <div className={styles.sceneGrid}>
             <div>
@@ -198,12 +203,12 @@ export default function HomePage() {
 
       <section className={styles.problemSection}>
         <div className={styles.sectionHeader}>
-          <p className={styles.eyebrow}>Operacao real</p>
+          <p className={styles.eyebrow}>Operação real</p>
           <h2>Menos planilhas. Menos mensagens perdidas. Mais tempo no mar.</h2>
           <p>
             Clubes de va'a precisam lidar com rotina, pessoas, canoas e
-            comunicacao em movimento. O BoraSport organiza essa base em uma
-            experiencia simples para quem opera e para quem rema.
+            comunicação em movimento. O BoraSport organiza essa base em uma
+            experiência simples para quem opera e para quem rema.
           </p>
         </div>
 
@@ -222,8 +227,8 @@ export default function HomePage() {
           <p className={styles.eyebrow}>Plataforma</p>
           <h2>Recursos para organizar a rotina do clube.</h2>
           <p>
-            Uma base profissional para estruturar a operacao, melhorar a
-            experiencia dos remadores e apoiar a gestao do va'a.
+            Uma base profissional para estruturar a operação, melhorar a
+            experiência dos remadores e apoiar a gestão do va'a.
           </p>
         </div>
 
@@ -243,8 +248,8 @@ export default function HomePage() {
 
       <section className={styles.profileSection} id="clube">
         <div className={styles.sectionHeader}>
-          <p className={styles.eyebrow}>Experiencia por perfil</p>
-          <h2>Cada pessoa ve o que precisa para agir.</h2>
+          <p className={styles.eyebrow}>Experiência por perfil</p>
+          <h2>Cada pessoa vê o que precisa para agir.</h2>
         </div>
 
         <div className={styles.profileGrid}>
@@ -260,7 +265,7 @@ export default function HomePage() {
       <section className={styles.stepsSection} id="como-funciona">
         <div className={styles.sectionHeader}>
           <p className={styles.eyebrow}>Como funciona</p>
-          <h2>Da configuracao a comunidade em uma jornada clara.</h2>
+          <h2>Da configuração à comunidade em uma jornada clara.</h2>
         </div>
 
         <div className={styles.stepsGrid}>
@@ -277,12 +282,12 @@ export default function HomePage() {
       <section className={styles.differenceSection}>
         <div>
           <p className={styles.eyebrow}>Diferencial</p>
-          <h2>Nao adaptamos uma ferramenta generica. Criamos uma plataforma para o va'a.</h2>
+          <h2>Não adaptamos uma ferramenta genérica. Criamos uma plataforma para o va'a.</h2>
         </div>
         <p>
-          A linguagem, a operacao e a experiencia foram pensadas para clubes de
-          va'a: canoas, remadores, treinos, mar, comunicacao e uma comunidade que
-          precisa remar na mesma direcao.
+          A linguagem, a operação e a experiência foram pensadas para clubes de
+          va'a: canoas, remadores, treinos, mar, comunicação e uma comunidade que
+          precisa remar na mesma direção.
         </p>
       </section>
 
@@ -292,10 +297,10 @@ export default function HomePage() {
           <h2>Leve o BoraSport para o seu clube</h2>
           <p>
             Preencha seus dados para conhecer a plataforma e conversar sobre a
-            operacao do seu clube.
+            operação do seu clube.
           </p>
           <div className={styles.finalCallout}>
-            Seu clube nasceu do mar. A gestao dele tambem pode evoluir.
+            Seu clube nasceu do mar. A gestão dele também pode evoluir.
           </div>
         </div>
 
@@ -307,8 +312,8 @@ export default function HomePage() {
           <strong>BoraSport</strong>
           <p>Plataforma especializada em va'a.</p>
         </div>
-        <nav aria-label="Links do rodape">
-          <a href="#visao">Visao geral</a>
+        <nav aria-label="Links do rodapé">
+          <a href="#visao">Visão geral</a>
           <a href="#recursos">Recursos</a>
           <a href="#clube">Para o clube</a>
           <a href="#contato">Contato</a>

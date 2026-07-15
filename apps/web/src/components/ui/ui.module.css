@@ -223,6 +223,9 @@
   align-items: center;
   display: grid;
   gap: clamp(24px, 5vw, 64px);
+  grid-template-areas:
+    "copy panel"
+    "return panel";
   grid-template-columns: minmax(0, 0.95fr) minmax(360px, 460px);
   max-width: var(--container-lg);
   position: relative;
@@ -233,6 +236,7 @@
 .authCopy {
   display: grid;
   gap: var(--space-5);
+  grid-area: copy;
   max-width: 700px;
 }
 
@@ -266,7 +270,13 @@
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-card-strong);
   color: var(--text-primary);
+  grid-area: panel;
   padding: clamp(20px, 4vw, 28px);
+}
+
+.authReturn {
+  grid-area: return;
+  margin-top: calc(var(--space-8) * -1);
 }
 
 @keyframes spin {
@@ -287,11 +297,19 @@
 
 @media (max-width: 860px) {
   .authShell {
+    grid-template-areas:
+      "copy"
+      "panel"
+      "return";
     grid-template-columns: 1fr;
   }
 
   .authCopy {
     max-width: none;
+  }
+
+  .authReturn {
+    margin-top: 0;
   }
 }
 

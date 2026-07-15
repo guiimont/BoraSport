@@ -38,7 +38,7 @@ export function LoginForm({ next }: LoginFormProps) {
           autoComplete="email"
           className={styles.input}
           name="email"
-          placeholder="voce@empresa.com"
+          placeholder="voce@email.com"
           type="email"
         />
       </Field>

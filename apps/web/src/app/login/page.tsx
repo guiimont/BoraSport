@@ -13,7 +13,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   return (
     <AuthShell
       eyebrow="Acesso BoraSport"
-      lead="Entre com seu e-mail para acessar sua rotina no clube, acompanhar remadas e seguir para as áreas liberadas para sua conta."
+      lead="Acesse sua agenda, acompanhe os treinos e entre nas áreas do seu clube."
       title="Entre para remar com mais clareza."
     >
       <LoginForm next={next || "/"} />

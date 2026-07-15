@@ -34,13 +34,16 @@ export function AuthShell({
           <p className={styles.authEyebrow}>{eyebrow}</p>
           <h1>{title}</h1>
           <p>{lead}</p>
-          <ActionLink href="/" variant="ghost">
-            Voltar para a página inicial
-          </ActionLink>
           {aside}
         </div>
 
         <div className={styles.authPanel}>{children}</div>
+
+        <div className={styles.authReturn}>
+          <ActionLink href="/" variant="ghost">
+            Voltar para a página inicial
+          </ActionLink>
+        </div>
       </section>
     </main>
   );

@@ -66,6 +66,7 @@
 }
 
 .headerCta,
+.headerLogin,
 .primaryButton,
 .secondaryButton,
 .formButton {
@@ -81,12 +82,25 @@
   padding: 0 18px;
 }
 
+.headerActions {
+  align-items: center;
+  display: inline-flex;
+  gap: 10px;
+  padding: 0;
+}
+
 .headerCta,
 .primaryButton,
 .formButton {
   background: #22d2d6;
   color: #052033;
   box-shadow: 0 14px 34px rgba(34, 210, 214, 0.22);
+}
+
+.headerLogin {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  color: #ffffff;
 }
 
 .secondaryButton {
@@ -511,6 +525,7 @@
 .consentField input:focus-visible,
 .primaryButton:focus-visible,
 .secondaryButton:focus-visible,
+.headerLogin:focus-visible,
 .headerCta:focus-visible,
 .formButton:focus-visible,
 .nav a:focus-visible,
@@ -597,6 +612,10 @@
     padding-bottom: 4px;
   }
 
+  .headerActions {
+    justify-self: end;
+  }
+
   .hero {
     min-height: auto;
   }
@@ -628,6 +647,11 @@
 
   .headerCta {
     display: none;
+  }
+
+  .headerLogin {
+    min-height: 38px;
+    padding: 0 14px;
   }
 
   .hero h1 {
