@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 
+import { Alert, Button, Field, Spinner } from "../../components/ui";
 import { type LoginState, sendMagicLink } from "./actions";
 import styles from "./login.module.css";
 
@@ -16,13 +17,9 @@ function SubmitButton() {
   const { pending } = useFormStatus();
 
   return (
-    <button
-      className={styles.button}
-      disabled={pending}
-      type="submit"
-    >
-      {pending ? "Enviando..." : "Receber link de acesso"}
-    </button>
+    <Button disabled={pending} type="submit">
+      {pending ? <Spinner label="Enviando" /> : "Receber link de acesso"}
+    </Button>
   );
 }
 
@@ -33,8 +30,10 @@ export function LoginForm({ next }: LoginFormProps) {
     <form action={formAction} className={styles.form}>
       <input name="next" type="hidden" value={next} />
 
-      <label className={styles.label}>
-        Email
+      <Field
+        help="Vamos enviar um link seguro para este endereço."
+        label="E-mail"
+      >
         <input
           autoComplete="email"
           className={styles.input}
@@ -42,16 +41,16 @@ export function LoginForm({ next }: LoginFormProps) {
           placeholder="voce@empresa.com"
           type="email"
         />
-      </label>
+      </Field>
 
       <SubmitButton />
 
       {state.success ? (
-        <p className={styles.success}>{state.success}</p>
+        <Alert tone="success">{state.success}</Alert>
       ) : null}
 
       {state.error ? (
-        <p className={styles.error}>{state.error}</p>
+        <Alert tone="error">{state.error}</Alert>
       ) : null}
     </form>
   );

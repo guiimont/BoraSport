@@ -1,5 +1,5 @@
 import { LoginForm } from "./login-form";
-import styles from "./login.module.css";
+import { AuthShell } from "../../components/ui";
 
 type LoginPageProps = {
   searchParams: Promise<{
@@ -11,17 +11,12 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   const { next } = await searchParams;
 
   return (
-    <main className={styles.page}>
-      <section className={styles.panel}>
-        <p className={styles.eyebrow}>Acesso Bora</p>
-        <h1>Entrar na plataforma</h1>
-        <p className={styles.muted}>
-          Use seu email para acessar os tenants onde voce e aluno, profissional
-          ou administrador.
-        </p>
-
-        <LoginForm next={next || "/"} />
-      </section>
-    </main>
+    <AuthShell
+      eyebrow="Acesso BoraSport"
+      lead="Entre com seu e-mail para acessar sua rotina no clube, acompanhar remadas e seguir para as áreas liberadas para sua conta."
+      title="Entre para remar com mais clareza."
+    >
+      <LoginForm next={next || "/"} />
+    </AuthShell>
   );
 }

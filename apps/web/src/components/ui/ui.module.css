@@ -1,0 +1,320 @@
+.brandMark {
+  align-items: center;
+  color: var(--text-inverse);
+  display: inline-flex;
+  font-weight: 900;
+  gap: var(--space-3);
+  white-space: nowrap;
+}
+
+.brandMarkDark {
+  color: var(--text-primary);
+}
+
+.brandSymbol {
+  align-items: center;
+  background: linear-gradient(135deg, var(--color-sea-500), var(--color-star-400));
+  border-radius: var(--radius-sm);
+  color: var(--color-ocean-950);
+  display: inline-flex;
+  font-size: 0.82rem;
+  height: 38px;
+  justify-content: center;
+  width: 38px;
+}
+
+.brandText {
+  font-size: 1.05rem;
+}
+
+.button {
+  align-items: center;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-weight: 850;
+  justify-content: center;
+  min-height: 46px;
+  padding: 0 18px;
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    opacity var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.button:hover {
+  transform: translateY(-1px);
+}
+
+.button:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.64;
+  transform: none;
+}
+
+.buttonprimary {
+  background: var(--color-sea-500);
+  border: 1px solid var(--color-sea-500);
+  box-shadow: 0 14px 34px rgba(34, 210, 214, 0.22);
+  color: #052033;
+}
+
+.buttonsecondary {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  color: var(--text-inverse);
+}
+
+.buttonghost {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.field {
+  color: #244252;
+  display: grid;
+  font-size: 0.92rem;
+  font-weight: 800;
+  gap: var(--space-2);
+}
+
+.fieldLabel {
+  color: inherit;
+}
+
+.fieldHelp {
+  color: var(--text-secondary);
+  font-size: 0.84rem;
+  font-weight: 650;
+  line-height: 1.45;
+}
+
+.fieldError {
+  color: var(--state-error-text);
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.alert {
+  border-radius: var(--radius-sm);
+  font-size: 0.92rem;
+  font-weight: 800;
+  line-height: 1.45;
+  margin: 0;
+  padding: var(--space-3);
+}
+
+.alertsuccess {
+  background: var(--state-success-bg);
+  color: var(--state-success-text);
+}
+
+.alerterror {
+  background: var(--state-error-bg);
+  color: var(--state-error-text);
+}
+
+.alertinfo {
+  background: var(--state-info-bg);
+  color: var(--state-info-text);
+}
+
+.alertwarning {
+  background: var(--state-warning-bg);
+  color: var(--state-warning-text);
+}
+
+.spinnerWrap {
+  align-items: center;
+  display: inline-flex;
+  gap: var(--space-2);
+}
+
+.spinner {
+  animation: spin 900ms linear infinite;
+  border: 2px solid rgba(5, 32, 51, 0.18);
+  border-radius: 50%;
+  border-top-color: #052033;
+  height: 16px;
+  width: 16px;
+}
+
+.authPage {
+  background:
+    radial-gradient(circle at 14% 8%, rgba(34, 210, 214, 0.2), transparent 28rem),
+    radial-gradient(circle at 84% 16%, rgba(248, 217, 133, 0.12), transparent 24rem),
+    linear-gradient(180deg, var(--color-ocean-950) 0%, var(--color-ocean-900) 54%, #092d44 100%);
+  color: var(--text-inverse);
+  display: grid;
+  min-height: 100vh;
+  overflow: hidden;
+  padding: clamp(18px, 4vw, 56px);
+  place-items: center;
+  position: relative;
+}
+
+.authBackdrop {
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+.authBackdrop::before {
+  background:
+    linear-gradient(180deg, rgba(4, 24, 39, 0), rgba(4, 24, 39, 0.78)),
+    repeating-linear-gradient(170deg, transparent 0 44px, rgba(255, 255, 255, 0.035) 45px 46px);
+  content: "";
+  inset: 0;
+  position: absolute;
+}
+
+.authStarOne,
+.authStarTwo {
+  background: var(--color-star-400);
+  border-radius: var(--radius-pill);
+  box-shadow: 0 0 24px rgba(248, 217, 133, 0.65);
+  height: 5px;
+  position: absolute;
+  width: 5px;
+}
+
+.authStarOne {
+  left: 14%;
+  top: 18%;
+}
+
+.authStarTwo {
+  right: 18%;
+  top: 24%;
+}
+
+.authRoute {
+  border: 1px solid rgba(34, 210, 214, 0.3);
+  border-bottom: 0;
+  border-left: 0;
+  border-radius: 50%;
+  height: 260px;
+  position: absolute;
+  right: 12%;
+  top: 12%;
+  transform: rotate(-18deg);
+  width: 430px;
+}
+
+.authHorizon {
+  background: linear-gradient(90deg, transparent, rgba(34, 210, 214, 0.72), transparent);
+  bottom: 22%;
+  height: 1px;
+  left: 0;
+  position: absolute;
+  right: 0;
+}
+
+.authShell {
+  align-items: center;
+  display: grid;
+  gap: clamp(24px, 5vw, 64px);
+  grid-template-columns: minmax(0, 0.95fr) minmax(360px, 460px);
+  max-width: var(--container-lg);
+  position: relative;
+  width: 100%;
+  z-index: 1;
+}
+
+.authCopy {
+  display: grid;
+  gap: var(--space-5);
+  max-width: 700px;
+}
+
+.authCopy h1 {
+  font-size: clamp(2.8rem, 7vw, 6.4rem);
+  letter-spacing: 0;
+  line-height: 0.92;
+  margin: var(--space-1) 0 0;
+}
+
+.authCopy p {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: clamp(1rem, 2vw, 1.18rem);
+  line-height: 1.65;
+  margin: 0;
+  max-width: 620px;
+}
+
+.authEyebrow {
+  color: var(--color-star-400) !important;
+  font-size: 0.78rem !important;
+  font-weight: 900;
+  letter-spacing: 0;
+  margin-top: var(--space-8) !important;
+  text-transform: uppercase;
+}
+
+.authPanel {
+  background: rgba(237, 252, 252, 0.96);
+  border: 1px solid rgba(34, 210, 214, 0.36);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-card-strong);
+  color: var(--text-primary);
+  padding: clamp(20px, 4vw, 28px);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button:hover {
+    transform: none;
+  }
+
+  .spinner {
+    animation: none;
+  }
+}
+
+@media (max-width: 860px) {
+  .authShell {
+    grid-template-columns: 1fr;
+  }
+
+  .authCopy {
+    max-width: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .authPage {
+    padding: var(--space-4);
+    place-items: start center;
+  }
+
+  .authCopy {
+    gap: var(--space-4);
+  }
+
+  .authCopy h1 {
+    font-size: clamp(2.6rem, 15vw, 4.2rem);
+  }
+
+  .authPanel {
+    padding: var(--space-5);
+    width: 100%;
+  }
+
+  .button {
+    width: 100%;
+  }
+}
