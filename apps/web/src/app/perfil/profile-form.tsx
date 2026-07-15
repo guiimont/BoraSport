@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
 
+import { Alert, Button, Field, Spinner } from "../../components/ui";
 import type { Profile } from "../../types/saas";
 import { type ProfileState, saveProfile } from "./actions";
 import styles from "./profile.module.css";
@@ -18,13 +19,9 @@ function SubmitButton() {
   const { pending } = useFormStatus();
 
   return (
-    <button
-      className={styles.submit}
-      disabled={pending}
-      type="submit"
-    >
-      {pending ? "Salvando..." : "Salvar perfil"}
-    </button>
+    <Button disabled={pending} type="submit">
+      {pending ? <Spinner label="Salvando" /> : "Salvar perfil"}
+    </Button>
   );
 }
 
@@ -37,7 +34,8 @@ export function ProfileForm({ email, profile }: ProfileFormProps) {
 
   return (
     <form action={formAction} className={styles.form}>
-      <span className={styles.avatarLarge}>
+      <div className={styles.avatarField}>
+        <span className={styles.avatarLarge}>
           {previewUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -47,30 +45,36 @@ export function ProfileForm({ email, profile }: ProfileFormProps) {
           ) : (
             displayName.slice(0, 1).toUpperCase()
           )}
-      </span>
+        </span>
+        <p>
+          Esta é a imagem usada para identificar você nas reservas e listas de
+          participantes quando o clube exibe presença.
+        </p>
+      </div>
 
-      <label className={styles.field}>
-        Nome publico
+      <Field label="Nome público">
         <input
           className={styles.input}
           defaultValue={profile?.name || ""}
           name="name"
           placeholder="Seu nome"
         />
-      </label>
+      </Field>
 
-      <label className={styles.field}>
-        Telefone
+      <Field label="Telefone">
         <input
+          autoComplete="tel"
           className={styles.input}
           defaultValue={profile?.phone || ""}
           name="phone"
           placeholder="(00) 00000-0000"
         />
-      </label>
+      </Field>
 
-      <label className={styles.field}>
-        Foto do perfil
+      <Field
+        help="Use uma foto quadrada ou de rosto. O app recorta em formato circular nas listas de confirmados."
+        label="Foto do perfil"
+      >
         <input
           accept="image/*"
           className={styles.fileInput}
@@ -82,14 +86,12 @@ export function ProfileForm({ email, profile }: ProfileFormProps) {
           }}
           type="file"
         />
-        <p className={styles.hint}>
-          Use uma foto quadrada ou de rosto. O app recorta em formato circular
-          nas listas de confirmados.
-        </p>
-      </label>
+      </Field>
 
-      <label className={styles.field}>
-        URL da foto alternativa
+      <Field
+        help="Opcional. Use quando a foto já estiver publicada em uma URL segura."
+        label="URL da foto alternativa"
+      >
         <input
           className={styles.input}
           name="avatarUrl"
@@ -97,20 +99,16 @@ export function ProfileForm({ email, profile }: ProfileFormProps) {
           placeholder="https://..."
           value={avatarUrl}
         />
-      </label>
+      </Field>
 
       <SubmitButton />
 
       {state.success ? (
-        <p className={styles.success}>
-          {state.success}
-        </p>
+        <Alert tone="success">{state.success}</Alert>
       ) : null}
 
       {state.error ? (
-        <p className={styles.error}>
-          {state.error}
-        </p>
+        <Alert tone="error">{state.error}</Alert>
       ) : null}
     </form>
   );

@@ -27,14 +27,14 @@ function getReadableProfileError(error: unknown) {
   const message = error instanceof Error ? error.message : String(error);
 
   if (/bucket not found/i.test(message)) {
-    return "Nao foi possivel enviar a foto porque o bucket profile-avatars ainda nao existe no Supabase. Rode a migration supabase/migrations/20260703160000_profile_avatars_storage.sql no SQL Editor e tente novamente.";
+    return "Não foi possível enviar a foto porque o bucket profile-avatars ainda não existe no Supabase. Rode a migration supabase/migrations/20260703160000_profile_avatars_storage.sql no SQL Editor e tente novamente.";
   }
 
   if (/row-level security|policy|permission/i.test(message)) {
-    return "Nao foi possivel salvar por uma regra de seguranca do Supabase. Confirme se voce esta logado e se as policies de profiles/storage foram aplicadas.";
+    return "Não foi possível salvar por uma regra de segurança do Supabase. Confirme se você está logado e se as policies de profiles/storage foram aplicadas.";
   }
 
-  return `Nao foi possivel salvar. ${message}`;
+  return `Não foi possível salvar. ${message}`;
 }
 
 export async function saveProfile(
@@ -68,7 +68,7 @@ export async function saveProfile(
     revalidatePath("/perfil");
     revalidatePath("/clube/[slug]", "page");
 
-    return { success: "Perfil salvo. Sua foto ja pode aparecer nas reservas." };
+    return { success: "Perfil salvo. Sua foto já pode aparecer nas reservas." };
   } catch (error) {
     return { error: getReadableProfileError(error) };
   }

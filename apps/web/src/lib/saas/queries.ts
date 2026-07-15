@@ -4,6 +4,7 @@ import type {
   CompanySlot,
   LandingPage,
   MembershipRole,
+  MembershipWithCompany,
   Profile,
   Resource,
   Service,
@@ -414,6 +415,45 @@ export async function getCurrentProfile(): Promise<Profile | null> {
   }
 
   return (data as Profile | null) ?? null;
+}
+
+export async function getCurrentUserMemberships(): Promise<MembershipWithCompany[]> {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return [];
+  }
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("memberships")
+    .select(
+      `
+        id,
+        user_id,
+        company_id,
+        role,
+        created_at,
+        updated_at,
+        companies:company_id (
+          id,
+          name,
+          slug,
+          logo_url
+        )
+      `,
+    )
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    return [];
+  }
+
+  return (data ?? []).map((membership) => ({
+    ...membership,
+    companies: firstJoin(membership.companies),
+  })) as MembershipWithCompany[];
 }
 
 export async function getUserCompanyRole(

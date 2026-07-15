@@ -117,6 +117,10 @@ export type Membership = {
   updated_at: string;
 };
 
+export type MembershipWithCompany = Membership & {
+  companies: Pick<Company, "id" | "logo_url" | "name" | "slug"> | null;
+};
+
 export type Profile = {
   avatar_url: string | null;
   created_at: string;
