@@ -2,6 +2,7 @@
 
 import { headers } from "next/headers";
 
+import { buildAuthCallbackUrl, sanitizeInternalPath } from "../../lib/saas/auth-redirect";
 import { createClient } from "../../lib/saas/supabase-server";
 
 export type LoginState = {
@@ -20,20 +21,20 @@ export async function sendMagicLink(
   formData: FormData,
 ): Promise<LoginState> {
   const email = readText(formData, "email");
-  const next = readText(formData, "next") || "/admin";
+  const next = sanitizeInternalPath(readText(formData, "next"), "/");
 
   if (!email) {
     return { error: "Informe seu email." };
   }
 
   const headerStore = await headers();
-  const origin = headerStore.get("origin") || "http://localhost:3000";
+  const emailRedirectTo = buildAuthCallbackUrl(headerStore, next);
   const supabase = await createClient();
 
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
-      emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent(next)}`,
+      emailRedirectTo,
     },
   });
 
