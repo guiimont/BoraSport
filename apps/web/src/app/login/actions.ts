@@ -1,8 +1,6 @@
 "use server";
 
-import { headers } from "next/headers";
-
-import { buildAuthCallbackUrl, sanitizeInternalPath } from "../../lib/saas/auth-redirect";
+import { sanitizeInternalPath } from "../../lib/saas/auth-redirect";
 import { createClient } from "../../lib/saas/supabase-server";
 
 export type LoginState = {
@@ -44,10 +42,4 @@ export async function signInWithPassword(
     redirectTo: next,
     success: "Acesso confirmado.",
   };
-}
-
-export async function getPasswordRecoveryRedirect(next = "/auth/reset") {
-  const headerStore = await headers();
-
-  return buildAuthCallbackUrl(headerStore, next);
 }
