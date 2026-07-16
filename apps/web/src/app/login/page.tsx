@@ -16,7 +16,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
       lead="Acesse sua agenda, acompanhe os treinos e entre nas áreas do seu clube."
       title="Entre para remar com mais clareza."
     >
-      <LoginForm next={next || "/"} />
+      <LoginForm next={next || "/perfil"} />
     </AuthShell>
   );
 }

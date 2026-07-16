@@ -1,6 +1,7 @@
 "use server";
 
 import { sanitizeInternalPath } from "../../lib/saas/auth-redirect";
+import { consumeStoredInviteIfPresent } from "../../lib/saas/invite-session";
 import { createClient } from "../../lib/saas/supabase-server";
 
 export type LoginState = {
@@ -21,7 +22,7 @@ export async function signInWithPassword(
 ): Promise<LoginState> {
   const email = readText(formData, "email");
   const password = readText(formData, "password");
-  const next = sanitizeInternalPath(readText(formData, "next"), "/");
+  const next = sanitizeInternalPath(readText(formData, "next"), "/perfil");
 
   if (!email || !password) {
     return { error: "Informe e-mail e senha." };
@@ -36,6 +37,15 @@ export async function signInWithPassword(
 
   if (error) {
     return { error: "E-mail ou senha inválidos." };
+  }
+
+  const inviteResult = await consumeStoredInviteIfPresent();
+
+  if (inviteResult?.redirectTo) {
+    return {
+      redirectTo: inviteResult.redirectTo,
+      success: inviteResult.success || "Acesso confirmado.",
+    };
   }
 
   return {

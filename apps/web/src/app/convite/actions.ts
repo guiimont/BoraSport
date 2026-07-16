@@ -1,22 +1,24 @@
 "use server";
 
-import { cookies, headers } from "next/headers";
+import { headers } from "next/headers";
 
-import { buildAuthCallbackUrl } from "../../lib/saas/auth-redirect";
+import { getRequestOrigin } from "../../lib/saas/auth-redirect";
+import {
+  cleanInviteToken,
+  clearInviteCookies,
+  consumeStoredInvite,
+  getInviteContextFromToken,
+  getInviteCookieMaxAge,
+  getInviteNameCookieMaxAge,
+  readInviteTokenCookie,
+  writeInviteNameCookie,
+  writeInviteTokenCookie,
+  type InviteContext,
+  type InviteConsumptionResult,
+} from "../../lib/saas/invite-session";
 import { createClient } from "../../lib/saas/supabase-server";
 
-const inviteTokenCookie = "bora_invite_token";
-const inviteNameCookie = "bora_invite_name";
-const maxTokenLength = 256;
-const maxCookieAgeSeconds = 60 * 60 * 24 * 14;
-
-export type InviteContext = {
-  companyName?: string;
-  companySlug?: string;
-  error?: string;
-  expiresAt?: string;
-  status: "active" | "expired" | "invalid" | "revoked" | "used";
-};
+export type { InviteContext } from "../../lib/saas/invite-session";
 
 export type InviteFormState = {
   error?: string;
@@ -24,105 +26,14 @@ export type InviteFormState = {
   success?: string;
 };
 
-function isProduction() {
-  return process.env.NODE_ENV === "production";
-}
-
-function getCookieOptions(maxAge: number) {
-  return {
-    httpOnly: true,
-    maxAge,
-    path: "/",
-    sameSite: "lax" as const,
-    secure: isProduction(),
-  };
-}
-
-function cleanToken(value: string) {
-  const token = value.trim();
-
-  if (
-    !token ||
-    token.length > maxTokenLength ||
-    !/^[A-Za-z0-9_-]+$/.test(token)
-  ) {
-    return "";
-  }
-
-  return token;
-}
-
 function readText(formData: FormData, key: string) {
   const value = formData.get(key);
 
   return typeof value === "string" ? value.trim() : "";
 }
 
-async function clearInviteCookies() {
-  const cookieStore = await cookies();
-
-  cookieStore.delete(inviteTokenCookie);
-  cookieStore.delete(inviteNameCookie);
-}
-
-async function readInviteTokenCookie() {
-  const cookieStore = await cookies();
-
-  return cleanToken(cookieStore.get(inviteTokenCookie)?.value || "");
-}
-
-async function readInviteNameCookie() {
-  const cookieStore = await cookies();
-
-  return cookieStore.get(inviteNameCookie)?.value?.trim() || "";
-}
-
-function mapInviteError(message: string) {
-  if (message.includes("invite_expired")) {
-    return "Este convite expirou. Peça um novo convite ao clube.";
-  }
-
-  if (message.includes("invite_revoked")) {
-    return "Este convite foi revogado pelo clube.";
-  }
-
-  if (message.includes("invite_used")) {
-    return "Este convite já foi utilizado.";
-  }
-
-  if (message.includes("authentication_required")) {
-    return "Entre com sua conta para concluir o convite.";
-  }
-
-  return "Não foi possível concluir o convite. Reabra o link recebido pelo clube e tente novamente.";
-}
-
-async function getInviteContextFromToken(token: string): Promise<InviteContext> {
-  const supabase = await createClient();
-  const { data, error } = await supabase.rpc(
-    "get_company_invite_public_context",
-    { p_token: token },
-  );
-
-  if (error) {
-    return {
-      error: "Não foi possível validar o convite neste momento.",
-      status: "invalid",
-    };
-  }
-
-  const context = Array.isArray(data) ? data[0] : data;
-
-  return {
-    companyName: context?.company_name || undefined,
-    companySlug: context?.company_slug || undefined,
-    expiresAt: context?.expires_at || undefined,
-    status: context?.status || "invalid",
-  };
-}
-
 export async function storeInviteToken(tokenValue: string): Promise<InviteContext> {
-  const token = cleanToken(tokenValue);
+  const token = cleanInviteToken(tokenValue);
 
   if (!token) {
     await clearInviteCookies();
@@ -141,12 +52,7 @@ export async function storeInviteToken(tokenValue: string): Promise<InviteContex
     return context;
   }
 
-  const expiresAt = new Date(context.expiresAt).getTime();
-  const secondsUntilExpiration = Math.floor((expiresAt - Date.now()) / 1000);
-  const maxAge = Math.max(
-    0,
-    Math.min(secondsUntilExpiration, maxCookieAgeSeconds),
-  );
+  const maxAge = getInviteCookieMaxAge(context.expiresAt);
 
   if (maxAge <= 0) {
     await clearInviteCookies();
@@ -157,8 +63,7 @@ export async function storeInviteToken(tokenValue: string): Promise<InviteContex
     };
   }
 
-  const cookieStore = await cookies();
-  cookieStore.set(inviteTokenCookie, token, getCookieOptions(maxAge));
+  await writeInviteTokenCookie(token, maxAge);
 
   return context;
 }
@@ -173,9 +78,7 @@ export async function getStoredInviteContext(): Promise<InviteContext> {
     };
   }
 
-  const context = await getInviteContextFromToken(token);
-
-  return context;
+  return getInviteContextFromToken(token);
 }
 
 export async function signUpWithInvite(
@@ -216,16 +119,13 @@ export async function signUpWithInvite(
     };
   }
 
-  const cookieStore = await cookies();
-  const expiresAt = context.expiresAt ? new Date(context.expiresAt).getTime() : 0;
-  const maxAge = Math.max(
-    60,
-    Math.min(Math.floor((expiresAt - Date.now()) / 1000), maxCookieAgeSeconds),
-  );
-  cookieStore.set(inviteNameCookie, name, getCookieOptions(maxAge));
+  await writeInviteNameCookie(name, getInviteNameCookieMaxAge(context.expiresAt));
 
   const headerStore = await headers();
-  const emailRedirectTo = buildAuthCallbackUrl(headerStore, "/convite");
+  const emailRedirectTo = new URL(
+    "/auth/callback/convite",
+    getRequestOrigin(headerStore),
+  ).toString();
   const supabase = await createClient();
   const { error } = await supabase.auth.signUp({
     email,
@@ -253,66 +153,10 @@ export async function signUpWithInvite(
 
   return {
     success:
-      "Enviamos um e-mail de confirmação. Abra o link no mesmo navegador para concluir o vínculo com o clube.",
+      "Enviamos um e-mail de confirmação. Abra o link neste navegador para concluir o vínculo com o clube automaticamente.",
   };
 }
 
 export async function acceptStoredInvite(): Promise<InviteFormState> {
-  const token = await readInviteTokenCookie();
-  const storedName = await readInviteNameCookie();
-
-  if (!token) {
-    return {
-      error: "Reabra o convite original enviado pelo clube para concluir.",
-    };
-  }
-
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return {
-      error: "Entre com sua conta para concluir o convite.",
-    };
-  }
-
-  const fallbackName =
-    storedName ||
-    (typeof user.user_metadata?.name === "string"
-      ? user.user_metadata.name
-      : "") ||
-    user.email ||
-    "Remador BoraSport";
-
-  const { data, error } = await supabase.rpc("consume_company_invite", {
-    p_name: fallbackName,
-    p_token: token,
-  });
-
-  if (error) {
-    const message = mapInviteError(error.message);
-
-    if (
-      message.includes("expirou") ||
-      message.includes("revogado") ||
-      message.includes("utilizado") ||
-      message.includes("Reabra")
-    ) {
-      await clearInviteCookies();
-    }
-
-    return { error: message };
-  }
-
-  await clearInviteCookies();
-
-  const result = Array.isArray(data) ? data[0] : data;
-  const companySlug = result?.company_slug;
-
-  return {
-    redirectTo: companySlug ? `/clube/${companySlug}` : "/perfil",
-    success: "Convite aceito. Seu acesso ao clube foi ativado.",
-  };
+  return consumeStoredInvite() as Promise<InviteConsumptionResult>;
 }
