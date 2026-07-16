@@ -11,13 +11,13 @@
 }
 
 .input {
-  background: #f8fcfc;
-  border: 1px solid #c7dde2;
-  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(141, 77, 255, 0.18);
+  border-radius: var(--radius-md);
   color: var(--text-primary);
   font: inherit;
-  min-height: 46px;
-  padding: 0 13px;
+  min-height: 48px;
+  padding: 0 14px;
   transition:
     border-color var(--transition-fast),
     box-shadow var(--transition-fast);
@@ -25,6 +25,6 @@
 
 .input:focus-visible {
   border-color: var(--color-sea-500);
-  box-shadow: var(--shadow-focus);
+  box-shadow: var(--shadow-focus), 0 0 18px rgba(141, 77, 255, 0.16);
   outline: none;
 }

@@ -7,9 +7,10 @@
 
 .profilePanel,
 .card {
-  background: var(--surface-card);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(246, 252, 252, 0.96));
+  border: 1px solid rgba(141, 77, 255, 0.14);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
 }
 
@@ -32,7 +33,7 @@
 }
 
 .eyebrow {
-  color: #0b7f98;
+  color: var(--color-violet-700);
   font-size: 0.78rem;
   font-weight: 900;
   letter-spacing: 0;
@@ -61,7 +62,7 @@
   align-items: center;
   background:
     linear-gradient(var(--surface-card), var(--surface-card)) padding-box,
-    linear-gradient(135deg, var(--color-sea-500), var(--color-star-400)) border-box;
+    linear-gradient(135deg, var(--color-sea-500), var(--color-violet-500), var(--color-star-400)) border-box;
   border: 2px solid transparent;
   border-radius: 50%;
   color: var(--color-ocean-800);
@@ -101,9 +102,9 @@
 
 .avatarField {
   align-items: center;
-  background: #f8fcfc;
-  border: 1px solid #d7e8eb;
-  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.64);
+  border: 1px solid rgba(141, 77, 255, 0.14);
+  border-radius: var(--radius-md);
   display: grid;
   gap: var(--space-4);
   grid-template-columns: auto minmax(0, 1fr);
@@ -116,9 +117,9 @@
 
 .input,
 .fileInput {
-  background: #f8fcfc;
-  border: 1px solid #c7dde2;
-  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(141, 77, 255, 0.16);
+  border-radius: var(--radius-md);
   color: var(--text-primary);
   font: inherit;
   min-height: 46px;
@@ -132,7 +133,7 @@
 .input:focus-visible,
 .fileInput:focus-visible {
   border-color: var(--color-sea-500);
-  box-shadow: var(--shadow-focus);
+  box-shadow: var(--shadow-focus), 0 0 18px rgba(141, 77, 255, 0.14);
   outline: none;
 }
 

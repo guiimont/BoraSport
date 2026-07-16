@@ -1,6 +1,14 @@
 import Script from "next/script";
+import { Manrope } from "next/font/google";
 import type { ReactNode } from "react";
 import "./globals.css";
+
+const manrope = Manrope({
+  display: "swap",
+  subsets: ["latin"],
+  variable: "--font-manrope",
+  weight: ["400", "500", "600", "700", "800"],
+});
 
 const edgeBaseUrl = process.env.NEXT_PUBLIC_EDGE_BASE_URL || "";
 const tenantAssetsScript = `
@@ -26,7 +34,7 @@ const tenantAssetsScript = `
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="pt-BR">
-      <body suppressHydrationWarning>
+      <body className={manrope.variable} suppressHydrationWarning>
         {edgeBaseUrl ? (
           <Script
             dangerouslySetInnerHTML={{

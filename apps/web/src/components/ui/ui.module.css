@@ -2,8 +2,9 @@
   align-items: center;
   color: var(--text-inverse);
   display: inline-flex;
-  font-weight: 900;
+  font-weight: 850;
   gap: var(--space-3);
+  letter-spacing: 0;
   white-space: nowrap;
 }
 
@@ -13,8 +14,10 @@
 
 .brandSymbol {
   align-items: center;
-  background: linear-gradient(135deg, var(--color-sea-500), var(--color-star-400));
-  border-radius: var(--radius-sm);
+  background:
+    linear-gradient(135deg, rgba(31, 216, 229, 0.95), rgba(141, 77, 255, 0.92) 56%, rgba(248, 217, 133, 0.95));
+  border-radius: 12px;
+  box-shadow: 0 0 28px rgba(141, 77, 255, 0.28);
   color: var(--color-ocean-950);
   display: inline-flex;
   font-size: 0.82rem;
@@ -29,7 +32,7 @@
 
 .button {
   align-items: center;
-  border-radius: var(--radius-sm);
+  border-radius: 12px;
   cursor: pointer;
   display: inline-flex;
   font: inherit;
@@ -42,6 +45,7 @@
     border-color var(--transition-fast),
     color var(--transition-fast),
     opacity var(--transition-fast),
+    box-shadow var(--transition-fast),
     transform var(--transition-fast);
 }
 
@@ -61,26 +65,26 @@
 }
 
 .buttonprimary {
-  background: var(--color-sea-500);
-  border: 1px solid var(--color-sea-500);
-  box-shadow: 0 14px 34px rgba(34, 210, 214, 0.22);
-  color: #052033;
+  background: linear-gradient(135deg, var(--color-sea-500), var(--color-violet-500));
+  border: 1px solid rgba(123, 243, 245, 0.48);
+  box-shadow: 0 18px 42px rgba(31, 216, 229, 0.18), 0 0 30px rgba(141, 77, 255, 0.2);
+  color: #04121f;
 }
 
 .buttonsecondary {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.26);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(182, 140, 255, 0.36);
   color: var(--text-inverse);
 }
 
 .buttonghost {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   color: rgba(255, 255, 255, 0.82);
 }
 
 .field {
-  color: #244252;
+  color: var(--color-ink);
   display: grid;
   font-size: 0.92rem;
   font-weight: 800;
@@ -105,7 +109,8 @@
 }
 
 .alert {
-  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
   font-size: 0.92rem;
   font-weight: 800;
   line-height: 1.45;
@@ -115,21 +120,25 @@
 
 .alertsuccess {
   background: var(--state-success-bg);
+  border-color: rgba(7, 92, 91, 0.14);
   color: var(--state-success-text);
 }
 
 .alerterror {
   background: var(--state-error-bg);
+  border-color: rgba(159, 63, 32, 0.16);
   color: var(--state-error-text);
 }
 
 .alertinfo {
   background: var(--state-info-bg);
+  border-color: rgba(7, 92, 107, 0.14);
   color: var(--state-info-text);
 }
 
 .alertwarning {
   background: var(--state-warning-bg);
+  border-color: rgba(122, 74, 0, 0.16);
   color: var(--state-warning-text);
 }
 
@@ -150,9 +159,10 @@
 
 .authPage {
   background:
-    radial-gradient(circle at 14% 8%, rgba(34, 210, 214, 0.2), transparent 28rem),
-    radial-gradient(circle at 84% 16%, rgba(248, 217, 133, 0.12), transparent 24rem),
-    linear-gradient(180deg, var(--color-ocean-950) 0%, var(--color-ocean-900) 54%, #092d44 100%);
+    radial-gradient(circle at 18% 12%, rgba(141, 77, 255, 0.26), transparent 29rem),
+    radial-gradient(circle at 82% 18%, rgba(31, 216, 229, 0.16), transparent 27rem),
+    radial-gradient(circle at 48% 92%, rgba(248, 217, 133, 0.08), transparent 34rem),
+    linear-gradient(180deg, #060812 0%, var(--color-ocean-950) 48%, #091a2b 100%);
   color: var(--text-inverse);
   display: grid;
   min-height: 100vh;
@@ -170,8 +180,8 @@
 
 .authBackdrop::before {
   background:
-    linear-gradient(180deg, rgba(4, 24, 39, 0), rgba(4, 24, 39, 0.78)),
-    repeating-linear-gradient(170deg, transparent 0 44px, rgba(255, 255, 255, 0.035) 45px 46px);
+    linear-gradient(180deg, rgba(4, 24, 39, 0), rgba(4, 24, 39, 0.82)),
+    repeating-linear-gradient(168deg, transparent 0 44px, rgba(255, 255, 255, 0.032) 45px 46px);
   content: "";
   inset: 0;
   position: absolute;
@@ -198,7 +208,7 @@
 }
 
 .authRoute {
-  border: 1px solid rgba(34, 210, 214, 0.3);
+  border: 1px solid rgba(141, 77, 255, 0.34);
   border-bottom: 0;
   border-left: 0;
   border-radius: 50%;
@@ -211,7 +221,7 @@
 }
 
 .authHorizon {
-  background: linear-gradient(90deg, transparent, rgba(34, 210, 214, 0.72), transparent);
+  background: linear-gradient(90deg, transparent, rgba(31, 216, 229, 0.52), rgba(141, 77, 255, 0.42), transparent);
   bottom: 22%;
   height: 1px;
   left: 0;
@@ -265,10 +275,11 @@
 }
 
 .authPanel {
-  background: rgba(237, 252, 252, 0.96);
-  border: 1px solid rgba(34, 210, 214, 0.36);
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-card-strong);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(237, 252, 252, 0.94));
+  border: 1px solid rgba(141, 77, 255, 0.28);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card-strong), var(--shadow-violet-glow);
   color: var(--text-primary);
   grid-area: panel;
   padding: clamp(20px, 4vw, 28px);
@@ -339,7 +350,7 @@
 
 .memberPage {
   background:
-    linear-gradient(180deg, rgba(4, 24, 39, 0) 0, var(--color-sky-50) 360px),
+    linear-gradient(180deg, rgba(4, 24, 39, 0) 0, #edf7f8 380px),
     var(--color-sky-50);
   color: var(--text-primary);
   min-height: 100vh;
@@ -347,8 +358,9 @@
 
 .memberHero {
   background:
-    radial-gradient(circle at 12% 0, rgba(34, 210, 214, 0.2), transparent 26rem),
-    linear-gradient(135deg, var(--color-ocean-950), var(--color-ocean-800));
+    radial-gradient(circle at 12% 0, rgba(141, 77, 255, 0.26), transparent 26rem),
+    radial-gradient(circle at 82% 12%, rgba(31, 216, 229, 0.18), transparent 28rem),
+    linear-gradient(135deg, #060812, var(--color-ocean-950) 52%, var(--color-ocean-800));
   color: var(--text-inverse);
   overflow: hidden;
   padding: clamp(18px, 4vw, 34px);
@@ -457,9 +469,9 @@
 }
 
 .memberIdentity {
-  background: rgba(237, 252, 252, 0.96);
-  border: 1px solid rgba(34, 210, 214, 0.34);
-  border-radius: var(--radius-sm);
+  background: rgba(237, 252, 252, 0.95);
+  border: 1px solid rgba(141, 77, 255, 0.28);
+  border-radius: var(--radius-lg);
   box-shadow: 0 20px 52px rgba(0, 0, 0, 0.2);
   color: var(--text-primary);
   display: grid;
