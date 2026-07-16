@@ -175,10 +175,6 @@ export async function getStoredInviteContext(): Promise<InviteContext> {
 
   const context = await getInviteContextFromToken(token);
 
-  if (context.status !== "active") {
-    await clearInviteCookies();
-  }
-
   return context;
 }
 

@@ -8,7 +8,7 @@ create table if not exists public.company_invitations (
   company_id uuid not null references public.companies(id) on delete cascade,
   role public.membership_role not null default 'client',
   token_hash text not null,
-  created_by uuid not null references auth.users(id) on delete restrict,
+  created_by uuid references auth.users(id) on delete set null,
   used_by uuid references auth.users(id) on delete set null,
   accepted_email text,
   expires_at timestamptz not null,
@@ -29,7 +29,6 @@ create table if not exists public.company_invitations (
     or
     (
       used_at is not null
-      and used_by is not null
       and accepted_email is not null
     )
   )
@@ -74,6 +73,7 @@ with check (
   and accepted_email is null
   and revoked_at is null
   and expires_at > now()
+  and expires_at <= now() + interval '30 days'
   and public.has_company_role(company_id, array['admin']::public.membership_role[])
 );
 
