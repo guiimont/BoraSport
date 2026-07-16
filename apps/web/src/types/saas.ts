@@ -121,6 +121,22 @@ export type MembershipWithCompany = Membership & {
   companies: Pick<Company, "id" | "logo_url" | "name" | "slug"> | null;
 };
 
+export type CompanyInvitationStatus = "active" | "expired" | "revoked" | "used";
+
+export type CompanyInvitation = {
+  accepted_email: string | null;
+  company_id: string;
+  created_at: string;
+  created_by: string;
+  expires_at: string;
+  id: string;
+  revoked_at: string | null;
+  role: MembershipRole;
+  updated_at: string;
+  used_at: string | null;
+  used_by: string | null;
+};
+
 export type Profile = {
   avatar_url: string | null;
   created_at: string;

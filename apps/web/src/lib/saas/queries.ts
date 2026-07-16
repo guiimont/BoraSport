@@ -1,6 +1,7 @@
 import type {
   Booking,
   Company,
+  CompanyInvitation,
   CompanySlot,
   LandingPage,
   MembershipRole,
@@ -489,4 +490,29 @@ export async function companyHasMembers(companyId: string): Promise<boolean> {
   }
 
   return (count ?? 0) > 0;
+}
+
+export async function getCompanyInvitations(
+  companyId: string,
+): Promise<CompanyInvitation[]> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("company_invitations")
+    .select(
+      "id,company_id,role,created_by,used_by,accepted_email,expires_at,revoked_at,used_at,created_at,updated_at",
+    )
+    .eq("company_id", companyId)
+    .order("created_at", { ascending: false })
+    .limit(30);
+
+  if (error) {
+    if (error.code === "42P01") {
+      return [];
+    }
+
+    throw error;
+  }
+
+  return (data ?? []) as CompanyInvitation[];
 }

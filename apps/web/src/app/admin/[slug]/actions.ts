@@ -1,19 +1,23 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 
 import {
+  createCompanyInvitation,
   createMembership,
   createResource,
   createService,
   createSlot,
   createSlotsSkippingDuplicates,
   ensureProfile,
+  revokeCompanyInvitation,
   updateCompanyConfiguration,
   upsertLandingPage,
   upsertWeeklyWorkout,
 } from "../../../lib/saas/mutations";
 import { getCurrentUser, getUserCompanyRole } from "../../../lib/saas/queries";
+import { getRequestOrigin } from "../../../lib/saas/auth-redirect";
 import type { VocabularyConfig } from "../../../types/saas";
 
 export type CompanyConfigurationState = {
@@ -24,6 +28,10 @@ export type CompanyConfigurationState = {
 export type AdminFormState = {
   error?: string;
   success?: string;
+};
+
+export type InvitationFormState = AdminFormState & {
+  inviteLink?: string;
 };
 
 const defaultVocabulary: Required<VocabularyConfig> = {
@@ -99,6 +107,31 @@ async function assertCanManageTenant(companyId: string) {
   }
 
   return null;
+}
+
+async function assertCanAdminTenant(companyId: string) {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return {
+      error: "Sessao expirada. Entre novamente para salvar.",
+      user: null,
+    };
+  }
+
+  const role = await getUserCompanyRole(companyId, user.id);
+
+  if (role !== "admin") {
+    return {
+      error: "Somente administradores podem gerenciar convites.",
+      user: null,
+    };
+  }
+
+  return {
+    error: null,
+    user,
+  };
 }
 
 function getReadableError(error: unknown) {
@@ -687,4 +720,83 @@ export async function claimCompanyAsAdmin(
   return {
     success: "Tenant assumido. Voce agora e admin.",
   };
+}
+
+export async function createClientInvitation(
+  _previousState: InvitationFormState,
+  formData: FormData,
+): Promise<InvitationFormState> {
+  const companyId = readText(formData, "companyId", "");
+  const slug = readText(formData, "slug", "");
+  const expiresInDays = Math.min(
+    30,
+    Math.max(1, Math.floor(readNumber(formData, "expiresInDays", 7))),
+  );
+
+  if (!companyId || !slug) {
+    return { error: "Nao foi possivel identificar o tenant." };
+  }
+
+  const access = await assertCanAdminTenant(companyId);
+
+  if (access.error || !access.user) {
+    return { error: access.error || "Permissao negada." };
+  }
+
+  const expiresAt = new Date(
+    Date.now() + expiresInDays * 24 * 60 * 60 * 1000,
+  ).toISOString();
+
+  try {
+    const { rawToken } = await createCompanyInvitation({
+      companyId,
+      createdBy: access.user.id,
+      expiresAt,
+    });
+    const headerStore = await headers();
+    const origin = getRequestOrigin(headerStore);
+    const inviteLink = `${origin}/convite#token=${rawToken}`;
+
+    revalidateTenantPages(slug);
+
+    return {
+      inviteLink,
+      success:
+        "Convite criado. Copie o link agora; ele nao sera exibido novamente.",
+    };
+  } catch (error) {
+    return {
+      error: `Nao foi possivel gerar o convite. ${getReadableError(error)}`,
+    };
+  }
+}
+
+export async function revokeClientInvitation(
+  _previousState: AdminFormState,
+  formData: FormData,
+): Promise<AdminFormState> {
+  const companyId = readText(formData, "companyId", "");
+  const slug = readText(formData, "slug", "");
+  const invitationId = readText(formData, "invitationId", "");
+
+  if (!companyId || !slug || !invitationId) {
+    return { error: "Nao foi possivel identificar o convite." };
+  }
+
+  const access = await assertCanAdminTenant(companyId);
+
+  if (access.error) {
+    return { error: access.error };
+  }
+
+  try {
+    await revokeCompanyInvitation(invitationId);
+    revalidateTenantPages(slug);
+
+    return { success: "Convite revogado." };
+  } catch (error) {
+    return {
+      error: `Nao foi possivel revogar. ${getReadableError(error)}`,
+    };
+  }
 }

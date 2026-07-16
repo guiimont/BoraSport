@@ -1,4 +1,5 @@
 import type {
+  CompanyInvitation,
   JsonObject,
   LandingPage,
   MembershipRole,
@@ -6,6 +7,7 @@ import type {
   WeeklyWorkout,
   VocabularyConfig,
 } from "../../types/saas";
+import { createHash, randomBytes } from "node:crypto";
 import { createClient } from "./supabase-server";
 
 export async function createBooking(data: NewBooking) {
@@ -509,4 +511,67 @@ export async function createMembership({
   }
 
   return membership;
+}
+
+function createRawInvitationToken() {
+  return randomBytes(32).toString("base64url");
+}
+
+function hashInvitationToken(token: string) {
+  return createHash("sha256").update(token, "utf8").digest("hex");
+}
+
+export type CreateCompanyInvitationInput = {
+  companyId: string;
+  createdBy: string;
+  expiresAt: string;
+};
+
+export type CreatedCompanyInvitation = {
+  invitation: CompanyInvitation;
+  rawToken: string;
+};
+
+export async function createCompanyInvitation({
+  companyId,
+  createdBy,
+  expiresAt,
+}: CreateCompanyInvitationInput): Promise<CreatedCompanyInvitation> {
+  const rawToken = createRawInvitationToken();
+  const tokenHash = hashInvitationToken(rawToken);
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("company_invitations")
+    .insert({
+      company_id: companyId,
+      created_by: createdBy,
+      expires_at: expiresAt,
+      role: "client",
+      token_hash: tokenHash,
+    })
+    .select(
+      "id,company_id,role,created_by,used_by,accepted_email,expires_at,revoked_at,used_at,created_at,updated_at",
+    )
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return {
+    invitation: data as CompanyInvitation,
+    rawToken,
+  };
+}
+
+export async function revokeCompanyInvitation(invitationId: string) {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("revoke_company_invite", {
+    p_invitation_id: invitationId,
+  });
+
+  if (error) {
+    throw error;
+  }
 }

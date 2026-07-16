@@ -5,6 +5,7 @@ import {
   companyHasMembers,
   getCompanyBookings,
   getCompanyBySlug,
+  getCompanyInvitations,
   getCompanyLandingPage,
   getCompanyResources,
   getCompanyServices,
@@ -18,6 +19,7 @@ import { CompanyConfigurationForm } from "./company-configuration-form";
 import { LandingPageForm } from "./landing-page-form";
 import styles from "./admin.module.css";
 import { TenantCatalogForms } from "./tenant-catalog-forms";
+import { TenantInvitations } from "./tenant-invitations";
 
 type AdminPageProps = {
   params: Promise<{
@@ -141,13 +143,15 @@ export default async function AdminPage({ params }: AdminPageProps) {
     notFound();
   }
 
-  const [resources, services, slots, bookings, landingPage] = await Promise.all([
-    getCompanyResources(company.id),
-    getCompanyServices(company.id),
-    getCompanySlots(company.id),
-    getCompanyBookings(company.id),
-    getCompanyLandingPage(company.id),
-  ]);
+  const [resources, services, slots, bookings, landingPage, invitations] =
+    await Promise.all([
+      getCompanyResources(company.id),
+      getCompanyServices(company.id),
+      getCompanySlots(company.id),
+      getCompanyBookings(company.id),
+      getCompanyLandingPage(company.id),
+      getCompanyInvitations(company.id),
+    ]);
 
   const vocabulary = normalizeVocabulary(company.vocabulary_config);
   const userLabel = getUserLabel(user);
@@ -293,6 +297,14 @@ export default async function AdminPage({ params }: AdminPageProps) {
           slug={company.slug}
           vocabulary={vocabulary}
         />
+
+        {role === "admin" ? (
+          <TenantInvitations
+            companyId={company.id}
+            invitations={invitations}
+            slug={company.slug}
+          />
+        ) : null}
 
         <section className={styles.twoColumn}>
           <article className={styles.panel}>
