@@ -101,8 +101,14 @@ export type SlotParticipant = {
   avatar_url: string | null;
   company_id: string;
   name: string;
+  public_profile_id: string;
   slot_id: string;
-  user_id: string;
+};
+
+export type PublicSportProfile = {
+  avatar_url: string | null;
+  name: string;
+  public_id: string;
 };
 
 export type BookingStatus = "confirmed" | "cancelled" | "attended" | "missed";

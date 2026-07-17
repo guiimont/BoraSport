@@ -1,18 +1,22 @@
 "use client";
 
+import Link from "next/link";
+
 import type { ActivityExperience } from "../../../lib/saas/activity-presets";
 import type {
   CompanySlot,
   SlotParticipant,
   VocabularyConfig,
 } from "../../../types/saas";
-import { reserveSlot } from "./actions";
+import { cancelSlotReservation, reserveSlot } from "./actions";
 import styles from "./club-page.module.css";
 
 type ReservationSlotsProps = {
   companyId: string;
+  currentUserBookedSlotIds: string[];
   experience: ActivityExperience;
   participantsBySlot: Record<string, SlotParticipant[]>;
+  slug: string;
   slots: CompanySlot[];
   vocabulary: Required<VocabularyConfig>;
 };
@@ -44,34 +48,48 @@ function formatCurrency(value?: number | string | null) {
   }).format(amount);
 }
 
-function AvatarStack({ participants }: { participants: SlotParticipant[] }) {
+function ParticipantList({ participants }: { participants: SlotParticipant[] }) {
   return (
-    <div className={styles.avatarStack}>
-      {participants.slice(0, 5).map((participant) => (
-        <span
-          className={styles.avatar}
-          key={`${participant.slot_id}-${participant.user_id}`}
+    <div className={styles.participantList}>
+      {participants.slice(0, 8).map((participant) => (
+        <Link
+          aria-label={`Abrir perfil esportivo público de ${participant.name}`}
+          className={styles.participantChip}
+          href={`/remadores/${participant.public_profile_id}`}
+          key={`${participant.slot_id}-${participant.public_profile_id}`}
           title={participant.name}
         >
-          {participant.avatar_url ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img alt={participant.name} src={participant.avatar_url} />
-          ) : (
-            participant.name.slice(0, 1).toUpperCase()
-          )}
-        </span>
+          <span className={styles.avatar}>
+            {participant.avatar_url ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img alt="" src={participant.avatar_url} />
+            ) : (
+              participant.name.slice(0, 1).toUpperCase()
+            )}
+          </span>
+          <span>{participant.name}</span>
+        </Link>
       ))}
+      {participants.length > 8 ? (
+        <span className={styles.participantsText}>
+          +{participants.length - 8} confirmados
+        </span>
+      ) : null}
     </div>
   );
 }
 
 export function ReservationSlots({
   companyId,
+  currentUserBookedSlotIds,
   experience,
   participantsBySlot,
+  slug,
   slots,
   vocabulary,
 }: ReservationSlotsProps) {
+  const bookedSlotIds = new Set(currentUserBookedSlotIds);
+
   if (slots.length === 0) {
     return (
       <div className={styles.emptyState}>
@@ -91,6 +109,11 @@ export function ReservationSlots({
         const price = formatCurrency(slot.services?.price);
         const isFull = remaining === 0;
         const participants = participantsBySlot[slot.id] || [];
+        const isBookedByCurrentUser = bookedSlotIds.has(slot.id);
+        const occupied = Math.min(
+          Number(slot.spots_occupied || 0),
+          Number(slot.spots_total || 0),
+        );
 
         return (
           <article className={styles.slotCard} key={slot.id}>
@@ -108,11 +131,17 @@ export function ReservationSlots({
                 </p>
               </div>
 
-              <div className={styles.statGridThree}>
+              <div className={styles.statGridFour}>
                 <div className={`${styles.stat} ${styles.statCenter}`}>
-                  <span>Vagas</span>
+                  <span>Ocupação</span>
                   <strong>
-                    {remaining}/{slot.spots_total}
+                    {occupied}/{slot.spots_total}
+                  </strong>
+                </div>
+                <div className={`${styles.stat} ${styles.statCenter}`}>
+                  <span>Restam</span>
+                  <strong>
+                    {remaining} {remaining === 1 ? "vaga" : "vagas"}
                   </strong>
                 </div>
                 <div className={`${styles.stat} ${styles.statCenter}`}>
@@ -138,20 +167,39 @@ export function ReservationSlots({
                 </p>
               </div>
 
-              <AvatarStack participants={participants} />
+              {participants.length > 0 ? (
+                <ParticipantList participants={participants} />
+              ) : (
+                <span className={styles.slotStatus}>Sem participantes ainda</span>
+              )}
             </div>
 
-            <form action={reserveSlot} className={styles.slotAction}>
-              <input name="company_id" type="hidden" value={companyId} />
-              <input name="slot_id" type="hidden" value={slot.id} />
-              <button
-                className={styles.reserveButton}
-                disabled={isFull}
-                type="submit"
-              >
-                {isFull ? "Lotado" : `Reservar ${vocabulary.service_label}`}
-              </button>
-            </form>
+            {isBookedByCurrentUser ? (
+              <form action={cancelSlotReservation} className={styles.slotAction}>
+                <input name="company_id" type="hidden" value={companyId} />
+                <input name="slot_id" type="hidden" value={slot.id} />
+                <input name="slug" type="hidden" value={slug} />
+                <button
+                  className={`${styles.reserveButton} ${styles.cancelButton}`}
+                  type="submit"
+                >
+                  Cancelar reserva
+                </button>
+              </form>
+            ) : (
+              <form action={reserveSlot} className={styles.slotAction}>
+                <input name="company_id" type="hidden" value={companyId} />
+                <input name="slot_id" type="hidden" value={slot.id} />
+                <input name="slug" type="hidden" value={slug} />
+                <button
+                  className={styles.reserveButton}
+                  disabled={isFull}
+                  type="submit"
+                >
+                  {isFull ? "Lotado" : `Reservar ${vocabulary.service_label}`}
+                </button>
+              </form>
+            )}
           </article>
         );
       })}

@@ -11,6 +11,7 @@ import {
   getCompanySlotParticipants,
   getCompanySlots,
   getCompanyWeeklyWorkouts,
+  getCurrentUserConfirmedBookingSlotIds,
 } from "../../../lib/saas/queries";
 
 import { ClubTabs } from "./club-tabs";
@@ -50,10 +51,12 @@ export default async function ClubPage({ params }: ClubPageProps) {
     notFound();
   }
 
-  const [slots, participantsBySlot, weeklyWorkouts] = await Promise.all([
+  const [slots, participantsBySlot, weeklyWorkouts, currentUserBookedSlotIds] =
+    await Promise.all([
     getCompanySlots(company.id),
     getCompanySlotParticipants(company.id),
     getCompanyWeeklyWorkouts(company.id),
+    getCurrentUserConfirmedBookingSlotIds(company.id),
   ]);
   const nextSlot = slots[0];
   const nextParticipants = nextSlot ? participantsBySlot[nextSlot.id] || [] : [];
@@ -122,18 +125,19 @@ export default async function ClubPage({ params }: ClubPageProps) {
                   </p>
                   <div className={styles.avatarStack}>
                     {nextParticipants.slice(0, 5).map((participant) => (
-                      <span
+                      <Link
                         className={styles.avatar}
-                        key={`${participant.slot_id}-${participant.user_id}`}
+                        href={`/remadores/${participant.public_profile_id}`}
+                        key={`${participant.slot_id}-${participant.public_profile_id}`}
                         title={participant.name}
                       >
                         {participant.avatar_url ? (
                           // eslint-disable-next-line @next/next/no-img-element
-                          <img alt={participant.name} src={participant.avatar_url} />
+                          <img alt="" src={participant.avatar_url} />
                         ) : (
                           participant.name.slice(0, 1).toUpperCase()
                         )}
-                      </span>
+                      </Link>
                     ))}
                   </div>
                 </div>
@@ -145,8 +149,10 @@ export default async function ClubPage({ params }: ClubPageProps) {
 
       <ClubTabs
         companyId={company.id}
+        currentUserBookedSlotIds={currentUserBookedSlotIds}
         experience={experience}
         participantsBySlot={participantsBySlot}
+        slug={company.slug}
         slots={slots}
         weeklyWorkouts={weeklyWorkouts}
         vocabulary={vocabulary}

@@ -7,6 +7,7 @@ import type {
   MembershipRole,
   MembershipWithCompany,
   Profile,
+  PublicSportProfile,
   Resource,
   Service,
   SlotParticipant,
@@ -198,7 +199,7 @@ export async function getCompanySlotParticipants(
   const restRows = await getRowsViaRest<SlotParticipant>(
     "public_slot_participants",
     {
-      select: "company_id,slot_id,user_id,name,avatar_url",
+      select: "company_id,slot_id,public_profile_id,name,avatar_url",
       company_id: `eq.${companyId}`,
     },
   );
@@ -211,6 +212,45 @@ export async function getCompanySlotParticipants(
   }
 
   return grouped;
+}
+
+export async function getCurrentUserConfirmedBookingSlotIds(
+  companyId: string,
+): Promise<string[]> {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return [];
+  }
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("bookings")
+    .select("slot_id")
+    .eq("company_id", companyId)
+    .eq("user_id", user.id)
+    .eq("status", "confirmed");
+
+  if (error) {
+    return [];
+  }
+
+  return (data ?? []).map((booking) => booking.slot_id);
+}
+
+export async function getPublicSportProfile(
+  publicId: string,
+): Promise<PublicSportProfile | null> {
+  const restRows = await getRowsViaRest<PublicSportProfile>(
+    "public_sport_profiles",
+    {
+      select: "public_id,name,avatar_url",
+      public_id: `eq.${publicId}`,
+      limit: "1",
+    },
+  );
+
+  return restRows?.[0] ?? null;
 }
 
 function getCurrentWeekStartDate() {

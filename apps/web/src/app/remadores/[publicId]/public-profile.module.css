@@ -1,0 +1,98 @@
+.page {
+  align-items: center;
+  background:
+    radial-gradient(circle at 16% 12%, rgba(141, 77, 255, 0.2), transparent 26rem),
+    radial-gradient(circle at 82% 10%, rgba(31, 216, 229, 0.16), transparent 25rem),
+    linear-gradient(180deg, #060812 0%, var(--color-ocean-950) 54%, #07111e 100%);
+  color: var(--text-inverse);
+  display: grid;
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  padding: clamp(24px, 6vw, 72px);
+}
+
+.card {
+  background: linear-gradient(180deg, rgba(20, 19, 31, 0.94), rgba(10, 17, 30, 0.97));
+  border: 1px solid rgba(182, 140, 255, 0.22);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-night-card), 0 0 44px rgba(31, 216, 229, 0.08);
+  display: grid;
+  gap: var(--space-5);
+  justify-items: center;
+  margin: 0 auto;
+  max-width: 560px;
+  padding: clamp(24px, 5vw, 42px);
+  text-align: center;
+  width: min(100%, 560px);
+}
+
+.avatarFrame {
+  align-items: center;
+  background:
+    linear-gradient(#091a2b, #101827) padding-box,
+    linear-gradient(135deg, var(--color-sea-500), var(--color-violet-500), var(--color-star-400)) border-box;
+  border: 3px solid transparent;
+  border-radius: 50%;
+  color: var(--color-sea-300);
+  display: flex;
+  font-size: clamp(2.2rem, 9vw, 4.2rem);
+  font-weight: 900;
+  height: clamp(112px, 28vw, 164px);
+  justify-content: center;
+  overflow: hidden;
+  width: clamp(112px, 28vw, 164px);
+}
+
+.avatarFrame img {
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.content {
+  display: grid;
+  gap: 10px;
+}
+
+.eyebrow {
+  color: var(--color-star-400);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.content h1 {
+  color: #ffffff;
+  font-size: clamp(2rem, 9vw, 3.4rem);
+  line-height: 1;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.content p {
+  color: rgba(238, 248, 247, 0.68);
+  line-height: 1.62;
+  margin: 0;
+}
+
+.backLink {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(182, 140, 255, 0.34);
+  border-radius: 12px;
+  color: #ffffff;
+  display: inline-flex;
+  font-weight: 800;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 16px;
+  text-decoration: none;
+}
+
+.backLink:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}

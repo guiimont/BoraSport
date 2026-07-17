@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
 import type { ActivityExperience } from "../../../lib/saas/activity-presets";
@@ -15,8 +16,10 @@ import { ReservationSlots } from "./reservation-slots";
 
 type ClubTabsProps = {
   companyId: string;
+  currentUserBookedSlotIds: string[];
   experience: ActivityExperience;
   participantsBySlot: Record<string, SlotParticipant[]>;
+  slug: string;
   slots: CompanySlot[];
   weeklyWorkouts: WeeklyWorkout[];
   vocabulary: Required<VocabularyConfig>;
@@ -442,18 +445,19 @@ function AvatarStack({ participants }: { participants: SlotParticipant[] }) {
   return (
     <div className={styles.avatarStack}>
       {participants.slice(0, 6).map((participant) => (
-        <span
+        <Link
           className={styles.avatar}
-          key={`${participant.slot_id}-${participant.user_id}`}
+          href={`/remadores/${participant.public_profile_id}`}
+          key={`${participant.slot_id}-${participant.public_profile_id}`}
           title={participant.name}
         >
           {participant.avatar_url ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img alt={participant.name} src={participant.avatar_url} />
+            <img alt="" src={participant.avatar_url} />
           ) : (
             participant.name.slice(0, 1).toUpperCase()
           )}
-        </span>
+        </Link>
       ))}
       {participants.length > 6 ? (
         <span className={`${styles.avatar} ${styles.avatarMore}`}>
@@ -466,8 +470,10 @@ function AvatarStack({ participants }: { participants: SlotParticipant[] }) {
 
 export function ClubTabs({
   companyId,
+  currentUserBookedSlotIds,
   experience,
   participantsBySlot,
+  slug,
   slots,
   weeklyWorkouts,
   vocabulary,
@@ -514,8 +520,10 @@ export function ClubTabs({
       {activeTab === "agenda" ? (
         <AgendaPanel
           companyId={companyId}
+          currentUserBookedSlotIds={currentUserBookedSlotIds}
           experience={experience}
           participantsBySlot={participantsBySlot}
+          slug={slug}
           slots={slots}
           vocabulary={vocabulary}
         />
@@ -688,14 +696,18 @@ function ConditionPanel({ experience }: { experience: ActivityExperience }) {
 
 function AgendaPanel({
   companyId,
+  currentUserBookedSlotIds,
   experience,
   participantsBySlot,
+  slug,
   slots,
   vocabulary,
 }: {
   companyId: string;
+  currentUserBookedSlotIds: string[];
   experience: ActivityExperience;
   participantsBySlot: Record<string, SlotParticipant[]>;
+  slug: string;
   slots: CompanySlot[];
   vocabulary: Required<VocabularyConfig>;
 }) {
@@ -710,8 +722,10 @@ function AgendaPanel({
 
       <ReservationSlots
         companyId={companyId}
+        currentUserBookedSlotIds={currentUserBookedSlotIds}
         experience={experience}
         participantsBySlot={participantsBySlot}
+        slug={slug}
         slots={slots}
         vocabulary={vocabulary}
       />
