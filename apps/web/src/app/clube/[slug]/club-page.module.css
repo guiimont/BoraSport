@@ -438,11 +438,12 @@ a.avatar {
 
 .v6Composition {
   background:
-    radial-gradient(circle at 48% 36%, rgba(31, 216, 229, 0.055), transparent 42%),
+    radial-gradient(circle at 64% 48%, rgba(31, 216, 229, 0.055), transparent 38%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.032), rgba(255, 255, 255, 0.014));
   border: 1px solid rgba(184, 198, 205, 0.12);
   border-radius: 16px;
-  height: clamp(116px, 34vw, 140px);
+  box-sizing: border-box;
+  height: clamp(280px, 86vw, 360px);
   isolation: isolate;
   min-width: 0;
   overflow: hidden;
@@ -453,15 +454,15 @@ a.avatar {
 .v6Diagram {
   display: block;
   filter: drop-shadow(0 0 12px rgba(31, 216, 229, 0.045));
-  height: 78px;
-  left: 8px;
+  height: calc(100% - 20px);
+  left: 50%;
   margin: 0 auto;
   max-width: 100%;
   pointer-events: none;
   position: absolute;
-  right: 8px;
-  top: 11px;
-  width: calc(100% - 16px);
+  top: 10px;
+  transform: translateX(-50%);
+  width: min(78%, 224px);
   z-index: 0;
 }
 
@@ -484,17 +485,21 @@ a.avatar {
 }
 
 .v6Seats {
-  align-items: start;
+  align-items: center;
   display: grid;
-  gap: clamp(2px, 0.7vw, 6px);
-  grid-template-columns: repeat(var(--seat-count), minmax(0, 1fr));
+  gap: clamp(2px, 0.9vw, 5px);
+  grid-template-rows: repeat(var(--seat-count), minmax(0, 1fr));
+  box-sizing: border-box;
   height: 100%;
-  margin: 0 auto;
-  max-width: 670px;
+  left: 63%;
+  margin: 0;
+  max-height: 300px;
   min-width: 0;
-  padding: clamp(24px, 7vw, 30px) clamp(15px, 5vw, 54px) 0;
-  position: relative;
-  width: 100%;
+  padding: clamp(42px, 14vw, 58px) 0 clamp(42px, 14vw, 58px);
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  width: clamp(46px, 14vw, 64px);
   z-index: 1;
 }
 
@@ -515,6 +520,7 @@ a.avatar {
   justify-items: center;
   min-width: 0;
   padding: 0;
+  position: relative;
   text-align: center;
   text-decoration: none;
 }
@@ -553,9 +559,9 @@ a.avatar {
   color: rgba(238, 248, 247, 0.86);
   font-size: 0.86rem;
   font-weight: 950;
-  height: clamp(30px, 8.8vw, 42px);
+  height: clamp(34px, 10.4vw, 46px);
   overflow: hidden;
-  width: clamp(30px, 8.8vw, 42px);
+  width: clamp(34px, 10.4vw, 46px);
 }
 
 .canoeAvatar {
@@ -574,8 +580,8 @@ a.avatar {
   background: rgba(255, 255, 255, 0.035);
   border: 1px dashed rgba(190, 202, 208, 0.34);
   box-shadow: inset 0 0 12px rgba(31, 216, 229, 0.04);
-  height: clamp(28px, 8vw, 38px);
-  width: clamp(28px, 8vw, 38px);
+  height: clamp(32px, 9.5vw, 42px);
+  width: clamp(32px, 9.5vw, 42px);
 }
 
 .canoeName {
@@ -583,15 +589,29 @@ a.avatar {
   display: block;
   font-size: clamp(0.62rem, 2.25vw, 0.72rem);
   font-weight: 850;
+  left: calc(100% + 6px);
   line-height: 1.08;
-  max-width: 100%;
+  max-width: clamp(40px, 18vw, 64px);
   min-height: 1.35em;
   overflow-wrap: anywhere;
+  position: absolute;
+  text-align: left;
   text-wrap: balance;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .emptySeat .canoeName {
   color: rgba(238, 248, 247, 0.46);
+}
+
+.compactParticipantsGrid .canoeName {
+  left: auto;
+  max-width: 100%;
+  position: static;
+  text-align: center;
+  top: auto;
+  transform: none;
 }
 
 .compactParticipantsGrid {
