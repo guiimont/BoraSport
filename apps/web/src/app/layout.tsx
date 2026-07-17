@@ -33,8 +33,8 @@ const tenantAssetsScript = `
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="pt-BR">
-      <body className={manrope.variable} suppressHydrationWarning>
+    <html className={manrope.variable} lang="pt-BR">
+      <body className={manrope.className} suppressHydrationWarning>
         {edgeBaseUrl ? (
           <Script
             dangerouslySetInnerHTML={{

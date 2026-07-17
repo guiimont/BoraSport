@@ -306,13 +306,10 @@
 
 .tabsScroller {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   max-width: 100%;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  padding-bottom: 4px;
-  padding-right: clamp(28px, 12vw, 84px);
-  scroll-padding-inline: 16px;
+  min-width: 0;
 }
 
 .tabButton {
@@ -321,12 +318,17 @@
   border-radius: 12px;
   color: rgba(238, 248, 247, 0.72);
   cursor: pointer;
-  flex: 0 0 auto;
+  flex: 1 1 128px;
   font: inherit;
   font-size: 0.92rem;
   font-weight: 800;
+  justify-content: center;
+  line-height: 1.2;
   min-height: 42px;
+  min-width: 0;
+  overflow-wrap: normal;
   padding: 0 15px;
+  text-align: center;
 }
 
 .tabButtonActive {
@@ -619,17 +621,18 @@
     margin-left: calc(var(--space-4) * -1);
     margin-right: calc(var(--space-4) * -1);
     padding-left: var(--space-4);
-    padding-right: 0;
-    width: calc(100% + var(--space-8));
+    padding-right: var(--space-4);
+    width: auto;
   }
 
   .tabsScroller {
-    padding-right: 88px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .tabButton {
     min-height: 40px;
-    padding: 0 13px;
+    padding: 0 10px;
   }
 
   .sectionTitle {

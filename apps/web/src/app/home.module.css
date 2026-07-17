@@ -4,8 +4,15 @@
     radial-gradient(circle at 82% 14%, rgba(31, 216, 229, 0.14), transparent 28rem),
     linear-gradient(180deg, #05070d 0%, #07111e 44%, #070a12 100%);
   color: var(--text-inverse);
+  font-family: var(--font-sans);
   min-height: 100vh;
-  overflow-x: hidden;
+  width: 100%;
+}
+
+.page *,
+.page *::before,
+.page *::after {
+  box-sizing: border-box;
 }
 
 .header {
@@ -30,16 +37,18 @@
   align-items: center;
   display: inline-flex;
   font-size: 1.05rem;
-  font-weight: 850;
+  font-weight: 800;
   gap: 10px;
   letter-spacing: 0;
-  white-space: nowrap;
+  min-width: 0;
 }
 
 .nav {
   display: flex;
+  flex-wrap: wrap;
   gap: 6px;
   justify-content: center;
+  min-width: 0;
 }
 
 .nav a,
@@ -47,7 +56,9 @@
   color: rgba(255, 255, 255, 0.72);
   font-size: 0.92rem;
   font-weight: 750;
+  line-height: 1.25;
   padding: 10px;
+  text-align: center;
 }
 
 .nav a:hover,
@@ -66,7 +77,7 @@
   cursor: pointer;
   display: inline-flex;
   font: inherit;
-  font-weight: 850;
+  font-weight: 800;
   justify-content: center;
   min-height: 46px;
   padding: 0 18px;
@@ -87,7 +98,10 @@
 .headerActions {
   align-items: center;
   display: inline-flex;
+  flex-wrap: wrap;
   gap: 10px;
+  justify-content: flex-end;
+  min-width: 0;
   padding: 0;
 }
 
@@ -162,7 +176,7 @@
   right: 16%;
   top: 12%;
   transform: rotate(-18deg);
-  width: 430px;
+  width: clamp(180px, 72vw, 430px);
 }
 
 .horizon {
@@ -176,16 +190,23 @@
 
 .heroContent {
   max-width: 980px;
+  min-width: 0;
   padding-top: clamp(20px, 4vw, 70px);
 }
 
 .eyebrow {
   color: var(--color-violet-300);
   font-size: 0.78rem;
-  font-weight: 900;
+  font-weight: 800;
   letter-spacing: 0.08em;
   margin: 0 0 14px;
   text-transform: uppercase;
+}
+
+.hero h1 {
+  font-family: var(--font-sans);
+  overflow-wrap: anywhere;
+  text-wrap: balance;
 }
 
 .hero h1 {
@@ -223,6 +244,7 @@
   justify-self: end;
   margin-top: 46px;
   max-width: 520px;
+  min-width: 0;
   padding: 18px;
   width: min(100%, 520px);
 }
@@ -241,7 +263,7 @@
 .participants span {
   color: rgba(238, 248, 247, 0.62);
   font-size: 0.78rem;
-  font-weight: 850;
+  font-weight: 800;
   text-transform: uppercase;
 }
 
@@ -259,7 +281,7 @@
 
 .nextTraining strong {
   display: block;
-  font-size: 3.4rem;
+  font-size: clamp(2.35rem, 12vw, 3.4rem);
   letter-spacing: 0;
   line-height: 1;
   margin-top: 6px;
@@ -273,7 +295,7 @@
 .sceneGrid {
   display: grid;
   gap: 10px;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .sceneGrid div {
@@ -281,16 +303,20 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px;
   padding: 14px;
+  min-width: 0;
 }
 
 .sceneGrid strong {
   display: block;
   font-size: 1.3rem;
   margin-top: 6px;
+  overflow-wrap: anywhere;
 }
 
 .participants div {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .participants i {
@@ -302,7 +328,7 @@
   display: flex;
   font-size: 0.72rem;
   font-style: normal;
-  font-weight: 900;
+  font-weight: 800;
   height: 34px;
   justify-content: center;
   margin-left: -8px;
@@ -425,7 +451,7 @@
   color: var(--color-violet-300);
   display: block;
   font-size: 0.78rem;
-  font-weight: 900;
+  font-weight: 800;
   margin-bottom: 14px;
   text-transform: uppercase;
 }
@@ -511,7 +537,7 @@
   border-radius: 20px;
   color: #ffffff;
   font-size: 1.35rem;
-  font-weight: 850;
+  font-weight: 800;
   line-height: 1.25;
   margin-top: 28px;
   padding: 24px;
@@ -595,11 +621,12 @@
 }
 
 .honeypot {
-  height: 0;
-  left: -9999px;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
   overflow: hidden;
   position: absolute;
-  width: 0;
+  width: 1px;
 }
 
 .footer {
@@ -630,10 +657,25 @@
   }
 
   .nav {
+    background: rgba(255, 255, 255, 0.055);
+    border: 1px solid rgba(182, 140, 255, 0.18);
+    border-radius: 18px;
     grid-column: 1 / -1;
-    justify-content: flex-start;
-    overflow-x: auto;
-    padding-bottom: 4px;
+    display: grid;
+    gap: 6px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    justify-content: stretch;
+    padding: 8px;
+    width: 100%;
+  }
+
+  .nav a {
+    align-items: center;
+    border-radius: 12px;
+    display: inline-flex;
+    justify-content: center;
+    min-height: 40px;
+    overflow-wrap: normal;
   }
 
   .headerActions {
@@ -666,6 +708,7 @@
 @media (max-width: 680px) {
   .header {
     align-items: start;
+    gap: 12px;
     position: static;
   }
 
@@ -679,8 +722,13 @@
   }
 
   .hero h1 {
-    font-size: clamp(2.6rem, 16vw, 4.5rem);
+    font-size: clamp(2.35rem, 13vw, 4.5rem);
     letter-spacing: 0;
+    line-height: 0.98;
+  }
+
+  .routeLine {
+    display: none;
   }
 
   .actions {
@@ -703,6 +751,10 @@
     grid-template-columns: 1fr;
   }
 
+  .nav {
+    grid-template-columns: 1fr 1fr;
+  }
+
   .sceneTopline,
   .participants,
   .footer {
@@ -711,10 +763,36 @@
   }
 
   .nextTraining strong {
-    font-size: 2.7rem;
+    font-size: clamp(2.2rem, 12vw, 2.7rem);
   }
 
   .leadForm {
     padding: 18px;
+  }
+}
+
+@media (max-width: 360px) {
+  .header {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .headerLogin {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .hero {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .nav {
+    grid-template-columns: 1fr;
+  }
+
+  .productScene,
+  .nextTraining {
+    border-radius: 18px;
   }
 }

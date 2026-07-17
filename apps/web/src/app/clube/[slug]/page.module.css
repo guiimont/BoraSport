@@ -227,7 +227,7 @@
   grid-auto-columns: minmax(120px, 1fr);
   grid-auto-flow: column;
   margin-bottom: 18px;
-  overflow-x: auto;
+  overflow-x: visible;
   padding-bottom: 4px;
 }
 
