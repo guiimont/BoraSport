@@ -57,6 +57,41 @@ async function getRowsViaRest<T>(
   return (await response.json()) as T[];
 }
 
+async function getRowsViaRestOrThrow<T>(
+  table: string,
+  params: Record<string, string>,
+): Promise<T[] | null> {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseKey) {
+    return null;
+  }
+
+  const url = new URL(`/rest/v1/${table}`, supabaseUrl);
+
+  Object.entries(params).forEach(([key, value]) => {
+    url.searchParams.set(key, value);
+  });
+
+  const response = await fetch(url, {
+    headers: {
+      apikey: supabaseKey,
+      authorization: `Bearer ${supabaseKey}`,
+    },
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    const message = await response.text();
+    throw new Error(
+      `Supabase REST ${table} failed with ${response.status}: ${message}`,
+    );
+  }
+
+  return (await response.json()) as T[];
+}
+
 export async function getCompanyBySlug(slug: string): Promise<Company | null> {
   const company = await getCompanyBySlugViaRest(slug);
 
@@ -150,14 +185,14 @@ export async function getCompanySlots(
         end_time,
         spots_total,
         spots_occupied,
-        services:service_id (
+        services!inner (
           id,
           name,
           description,
           duration_minutes,
           price
         ),
-        resources:resource_id (
+        resources!inner (
           id,
           name,
           capacity_maxima
@@ -166,6 +201,8 @@ export async function getCompanySlots(
     )
     .eq("company_id", companyId)
     .gte("start_time", new Date().toISOString())
+    .eq("services.is_active", true)
+    .eq("resources.is_active", true)
     .order("start_time", { ascending: true })
     .limit(12);
 
@@ -177,11 +214,13 @@ export async function getCompanySlots(
     })) as CompanySlot[];
   }
 
-  const restRows = await getRowsViaRest<CompanySlot>("slots", {
+  const restRows = await getRowsViaRestOrThrow<CompanySlot>("slots", {
     select:
-      "id,company_id,service_id,resource_id,professional_id,start_time,end_time,spots_total,spots_occupied,services:service_id(id,name,description,duration_minutes,price),resources:resource_id(id,name,capacity_maxima)",
+      "id,company_id,service_id,resource_id,professional_id,start_time,end_time,spots_total,spots_occupied,services!inner(id,name,description,duration_minutes,price),resources!inner(id,name,capacity_maxima)",
     company_id: `eq.${companyId}`,
     start_time: `gte.${new Date().toISOString()}`,
+    "services.is_active": "eq.true",
+    "resources.is_active": "eq.true",
     order: "start_time.asc",
     limit: "12",
   });
