@@ -114,7 +114,7 @@ function SvgSeat({
   const [failed, setFailed] = useState(false);
   const id = useId().replace(/:/g, "");
   const { x, y } = getSeatPosition(index, total);
-  const radius = 22;
+  const radius = 24;
   const clipId = `seat-${id}`;
 
   if (!participant) {
@@ -134,6 +134,7 @@ function SvgSeat({
       className={styles.v6SeatLink}
       href={href}
     >
+      <title>{participant.name}</title>
       <clipPath id={clipId}>
         <circle cx={x} cy={y} r={radius} />
       </clipPath>
@@ -201,16 +202,6 @@ function V6Composition({ seats }: { seats: Seat[] }) {
           />
         ))}
       </svg>
-
-      <div className={styles.v6Legend} aria-label="Nomes dos participantes">
-        {participants.map((participant) => (
-          <ParticipantSeat
-            key={participant.public_profile_id}
-            participant={participant}
-            showName
-          />
-        ))}
-      </div>
     </div>
   );
 }

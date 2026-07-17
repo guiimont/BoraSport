@@ -443,21 +443,20 @@ a.avatar {
   border: 1px solid rgba(184, 198, 205, 0.12);
   border-radius: 16px;
   box-sizing: border-box;
-  display: grid;
-  gap: 10px;
-  justify-items: center;
   min-width: 0;
   overflow: hidden;
-  padding: 12px;
+  padding: 10px;
+  text-align: center;
 }
 
 .v6Diagram {
   display: block;
   filter: drop-shadow(0 0 12px rgba(31, 216, 229, 0.045));
   height: auto;
-  max-width: 220px;
+  margin: 0 auto;
+  max-width: 210px;
   min-width: 0;
-  width: min(100%, 220px);
+  width: min(100%, 210px);
 }
 
 .v6Hull {
@@ -511,16 +510,6 @@ a.avatar {
   stroke: rgba(190, 202, 208, 0.36);
   stroke-dasharray: 5 5;
   stroke-width: 2;
-}
-
-.v6Legend {
-  align-items: center;
-  display: grid;
-  gap: 8px;
-  grid-template-columns: repeat(auto-fit, minmax(58px, 1fr));
-  justify-self: stretch;
-  min-width: 0;
-  width: 100%;
 }
 
 .canoeParticipant,
