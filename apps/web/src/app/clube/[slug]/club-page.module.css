@@ -297,68 +297,6 @@ a.avatar {
   color: #ffffff;
 }
 
-.participantList {
-  align-items: start;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-  justify-content: flex-start;
-  min-width: 0;
-}
-
-.participantChip {
-  align-items: center;
-  background: transparent;
-  border: 0;
-  border-radius: var(--radius-md);
-  color: rgba(238, 248, 247, 0.88);
-  display: inline-grid;
-  font-size: 0.78rem;
-  font-weight: 800;
-  gap: 7px;
-  justify-items: center;
-  line-height: 1.22;
-  max-width: 96px;
-  min-width: 0;
-  padding: 6px;
-  text-align: center;
-  text-decoration: none;
-}
-
-.participantChip span:last-child {
-  overflow-wrap: anywhere;
-  white-space: normal;
-}
-
-.participantChip:focus-visible {
-  outline: var(--focus-ring);
-  outline-offset: var(--focus-offset);
-}
-
-.participantAvatar {
-  align-items: center;
-  background:
-    linear-gradient(#091a2b, #101827) padding-box,
-    linear-gradient(135deg, var(--color-sea-500), var(--color-violet-500), var(--color-star-400)) border-box;
-  border: 2px solid transparent;
-  border-radius: 50%;
-  color: var(--color-sea-300);
-  display: flex;
-  font-size: 1rem;
-  font-weight: 900;
-  height: 52px;
-  justify-content: center;
-  overflow: hidden;
-  width: 52px;
-}
-
-.participantAvatar img {
-  display: block;
-  height: 100%;
-  object-fit: cover;
-  width: 100%;
-}
-
 .slotStatus {
   background: rgba(248, 217, 133, 0.1);
   border: 1px solid rgba(248, 217, 133, 0.18);
@@ -376,79 +314,189 @@ a.avatar {
   min-width: 0;
 }
 
-.participantsCompositionHeader {
-  align-items: start;
-  display: flex;
-  gap: 12px;
-  justify-content: space-between;
-  min-width: 0;
-}
-
-.participantsCompositionHeader > div {
-  min-width: 0;
-}
-
-.compositionCount {
+.participantsSummary {
+  align-items: center;
   background:
-    linear-gradient(#090f1d, #090f1d) padding-box,
-    linear-gradient(135deg, rgba(31, 216, 229, 0.74), rgba(141, 77, 255, 0.58)) border-box;
-  border: 1px solid transparent;
-  border-radius: 999px;
-  color: var(--color-sea-300);
-  flex: 0 0 auto;
-  font-size: 0.8rem;
-  font-weight: 900;
-  line-height: 1;
-  padding: 8px 10px;
-}
-
-.canoeVisual {
-  background:
-    radial-gradient(circle at 50% 8%, rgba(31, 216, 229, 0.1), transparent 36%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.025));
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
   border: 1px solid rgba(123, 243, 245, 0.1);
   border-radius: 18px;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  min-width: 0;
+  padding: 12px;
+}
+
+.participantsSummaryCopy {
+  min-width: 0;
+}
+
+.participantsSummaryActions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.participantPreviewStack {
+  align-items: center;
+  display: flex;
+  flex: 0 1 auto;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.participantPreviewLink,
+.participantPreviewMore {
+  margin-left: -8px;
+}
+
+.participantPreviewLink:first-child,
+.participantPreviewMore:first-child {
+  margin-left: 0;
+}
+
+.participantPreviewLink {
+  border-radius: 50%;
+  display: inline-flex;
+  flex: 0 0 auto;
+  text-decoration: none;
+}
+
+.participantPreviewLink:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
+.participantPreviewAvatar,
+.participantPreviewMore {
+  align-items: center;
+  background:
+    linear-gradient(#091a2b, #101827) padding-box,
+    linear-gradient(135deg, var(--color-sea-500), var(--color-violet-500), var(--color-star-400)) border-box;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  color: var(--color-sea-300);
+  display: flex;
+  font-size: 0.76rem;
+  font-weight: 950;
+  height: 34px;
+  justify-content: center;
   overflow: hidden;
-  padding: 18px 14px 14px;
+  width: 34px;
+}
+
+.participantPreviewAvatar img {
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.participantPreviewMore {
+  background:
+    linear-gradient(#111225, #0b1422) padding-box,
+    linear-gradient(135deg, rgba(182, 140, 255, 0.6), rgba(31, 216, 229, 0.5)) border-box;
+  color: rgba(238, 248, 247, 0.86);
+}
+
+.participantsToggle {
+  background: rgba(31, 216, 229, 0.1);
+  border: 1px solid rgba(123, 243, 245, 0.24);
+  border-radius: 999px;
+  color: var(--color-sea-300);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 900;
+  min-height: 36px;
+  padding: 0 12px;
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.participantsToggle:hover {
+  background: rgba(31, 216, 229, 0.16);
+  border-color: rgba(123, 243, 245, 0.4);
+  transform: translateY(-1px);
+}
+
+.participantsToggle:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
+.participantsExpanded {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+
+.v6Composition {
+  background:
+    radial-gradient(circle at 20% 0%, rgba(31, 216, 229, 0.08), transparent 34%),
+    linear-gradient(180deg, rgba(10, 18, 33, 0.92), rgba(8, 13, 26, 0.96));
+  border: 1px solid rgba(123, 243, 245, 0.12);
+  border-radius: 20px;
+  min-width: 0;
+  overflow: hidden;
+  padding: clamp(12px, 3vw, 18px);
   position: relative;
 }
 
-.canoeVisual::before {
-  background:
-    linear-gradient(90deg, transparent, rgba(31, 216, 229, 0.32), rgba(141, 77, 255, 0.22), transparent);
-  border-bottom: 2px solid rgba(123, 243, 245, 0.26);
-  border-radius: 50% 50% 64% 64%;
-  bottom: 34px;
-  content: "";
-  height: 42px;
-  left: 12px;
+.v6Diagram {
+  color: rgba(123, 243, 245, 0.68);
+  display: block;
+  filter: drop-shadow(0 0 18px rgba(31, 216, 229, 0.08));
+  height: auto;
+  inset: 10px 8px auto;
+  max-width: 100%;
   pointer-events: none;
   position: absolute;
-  right: 12px;
+  width: calc(100% - 16px);
+  z-index: 0;
 }
 
-.canoeVisual::after {
-  background: radial-gradient(ellipse at center, rgba(248, 217, 133, 0.18), transparent 68%);
-  bottom: 28px;
-  content: "";
-  height: 1px;
-  left: 24px;
-  pointer-events: none;
-  position: absolute;
-  right: 24px;
+.v6Hull {
+  fill: rgba(8, 37, 56, 0.86);
+  stroke: rgba(123, 243, 245, 0.5);
+  stroke-width: 3;
 }
 
-.canoeSeats {
+.v6Iako {
+  stroke: rgba(248, 217, 133, 0.52);
+  stroke-linecap: round;
+  stroke-width: 4;
+}
+
+.v6Ama {
+  fill: rgba(141, 77, 255, 0.14);
+  stroke: rgba(182, 140, 255, 0.5);
+  stroke-width: 3;
+}
+
+.v6Seats {
+  align-items: start;
   display: grid;
-  gap: 12px;
-  grid-template-columns: repeat(auto-fit, minmax(68px, 1fr));
+  gap: clamp(6px, 1.5vw, 10px);
+  grid-template-columns: repeat(var(--seat-count), minmax(0, 1fr));
+  min-height: clamp(142px, 27vw, 184px);
   min-width: 0;
+  padding: clamp(46px, 8vw, 66px) clamp(4px, 2vw, 12px) 0;
   position: relative;
   z-index: 1;
 }
 
+.v6Seat {
+  min-width: 0;
+}
+
 .canoeParticipant,
-.canoeEmptySeat {
+.emptySeat {
   align-items: center;
   border-radius: 14px;
   color: rgba(238, 248, 247, 0.9);
@@ -478,7 +526,7 @@ a.avatar {
 }
 
 .canoeAvatar,
-.canoeEmptyDot {
+.emptySeatMarker {
   align-items: center;
   border-radius: 50%;
   display: flex;
@@ -500,6 +548,11 @@ a.avatar {
   width: clamp(44px, 12vw, 58px);
 }
 
+.canoeAvatar {
+  position: relative;
+  z-index: 1;
+}
+
 .canoeAvatar img {
   display: block;
   height: 100%;
@@ -507,7 +560,7 @@ a.avatar {
   width: 100%;
 }
 
-.canoeEmptyDot {
+.emptySeatMarker {
   background: rgba(255, 255, 255, 0.035);
   border: 1px dashed rgba(123, 243, 245, 0.22);
   box-shadow: inset 0 0 18px rgba(141, 77, 255, 0.1);
@@ -526,8 +579,20 @@ a.avatar {
   text-wrap: balance;
 }
 
-.canoeEmptySeat .canoeName {
+.emptySeat .canoeName {
   color: rgba(238, 248, 247, 0.46);
+}
+
+.compactParticipantsGrid {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.018));
+  border: 1px solid rgba(123, 243, 245, 0.1);
+  border-radius: 18px;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(74px, 1fr));
+  min-width: 0;
+  padding: 14px;
 }
 
 .canoeNote {
@@ -910,6 +975,18 @@ a.avatar {
     align-self: stretch;
   }
 
+  .participantsSummary {
+    grid-template-columns: 1fr;
+  }
+
+  .participantsSummaryActions {
+    justify-content: space-between;
+  }
+
+  .participantsToggle {
+    flex: 1 1 150px;
+  }
+
   .statGridThree,
   .statGridFour,
   .tileGridTwo {
@@ -930,10 +1007,6 @@ a.avatar {
 
   .muted {
     margin-top: 0;
-  }
-
-  .participantList {
-    justify-content: flex-start;
   }
 
   .slotSummary,
