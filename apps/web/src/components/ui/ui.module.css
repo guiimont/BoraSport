@@ -12,18 +12,28 @@
   color: var(--text-primary);
 }
 
+.brandMarkIconOnly {
+  gap: 0;
+}
+
 .brandSymbol {
   align-items: center;
-  background:
-    linear-gradient(135deg, rgba(31, 216, 229, 0.95), rgba(141, 77, 255, 0.92) 56%, rgba(248, 217, 133, 0.95));
-  border-radius: 12px;
-  box-shadow: 0 0 28px rgba(141, 77, 255, 0.28);
-  color: var(--color-ocean-950);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(123, 243, 245, 0.16);
+  border-radius: 13px;
+  box-shadow: 0 0 28px rgba(31, 216, 229, 0.12);
   display: inline-flex;
-  font-size: 0.82rem;
-  height: 38px;
+  height: 40px;
   justify-content: center;
-  width: 38px;
+  overflow: hidden;
+  width: 40px;
+}
+
+.brandSymbol img {
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
 }
 
 .brandText {

@@ -36,19 +36,6 @@
   white-space: nowrap;
 }
 
-.brand span {
-  align-items: center;
-  background: linear-gradient(135deg, var(--color-sea-500), var(--color-violet-500) 58%, var(--color-star-400));
-  border-radius: 12px;
-  box-shadow: 0 0 28px rgba(141, 77, 255, 0.28);
-  color: #061626;
-  display: inline-flex;
-  font-size: 0.82rem;
-  height: 36px;
-  justify-content: center;
-  width: 36px;
-}
-
 .nav {
   display: flex;
   gap: 6px;

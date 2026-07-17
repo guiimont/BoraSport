@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { BrandMark } from "../components/ui";
 import { CommercialLeadForm } from "./commercial-lead-form";
 import styles from "./home.module.css";
 
@@ -117,8 +118,7 @@ export default function HomePage() {
     <main className={styles.page}>
       <header className={styles.header}>
         <Link aria-label="BoraSport início" className={styles.brand} href="/">
-          <span aria-hidden="true">B</span>
-          BoraSport
+          <BrandMark />
         </Link>
 
         <nav aria-label="Navegação principal" className={styles.nav}>
