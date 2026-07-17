@@ -22,6 +22,10 @@ function getInitial(name: string) {
   return (name.trim().slice(0, 1) || "R").toUpperCase();
 }
 
+function getFirstName(name: string) {
+  return name.trim().split(/\s+/)[0] || "Remador";
+}
+
 function buildSeats(capacity: number, participants: SlotParticipant[]) {
   return Array.from({ length: capacity }, (_, index) => ({
     participant: participants[index] ?? null,
@@ -71,7 +75,7 @@ function ParticipantSeat({ participant }: { participant: SlotParticipant }) {
       title={participant.name}
     >
       <ParticipantAvatar participant={participant} />
-      <span className={styles.canoeName}>{participant.name}</span>
+      <span className={styles.canoeName}>{getFirstName(participant.name)}</span>
     </Link>
   );
 }
@@ -83,17 +87,17 @@ function V6Composition({ seats }: { seats: Seat[] }) {
         aria-hidden="true"
         className={styles.v6Diagram}
         focusable="false"
-        viewBox="0 0 320 520"
+        viewBox="0 0 760 180"
       >
         <path
           className={styles.v6Hull}
-          d="M204 24 C224 58 230 126 228 248 C230 372 224 462 204 504 C184 462 178 372 180 248 C178 126 184 58 204 24 Z"
+          d="M48 74 C82 34 172 24 338 24 L566 24 C656 24 714 48 740 74 C714 100 656 124 566 124 L338 124 C172 124 82 114 48 74 Z"
         />
-        <line className={styles.v6Iako} x1="78" x2="182" y1="166" y2="166" />
-        <line className={styles.v6Iako} x1="78" x2="182" y1="342" y2="342" />
+        <line className={styles.v6Iako} x1="252" x2="252" y1="118" y2="140" />
+        <line className={styles.v6Iako} x1="518" x2="518" y1="118" y2="140" />
         <path
           className={styles.v6Ama}
-          d="M66 76 C82 120 86 186 86 260 C86 334 82 400 66 444 C50 400 46 334 46 260 C46 186 50 120 66 76 Z"
+          d="M126 146 C214 134 520 134 632 146 C520 158 214 158 126 146 Z"
         />
       </svg>
 
@@ -145,7 +149,10 @@ export function ConfirmedParticipantsComposition({
   const seats = buildSeats(safeCapacity, participants);
   const usesV6Visual = safeCapacity <= 6;
   const previewParticipants = participants.slice(0, 5);
-  const hiddenPreviewCount = Math.max(0, participants.length - previewParticipants.length);
+  const hiddenPreviewCount = Math.max(
+    0,
+    participants.length - previewParticipants.length,
+  );
 
   return (
     <section
@@ -165,27 +172,29 @@ export function ConfirmedParticipantsComposition({
         </div>
 
         <div className={styles.participantsSummaryActions}>
-          <div
-            aria-label={`${previewParticipants.length} participantes no resumo`}
-            className={styles.participantPreviewStack}
-          >
-            {previewParticipants.map((participant) => (
-              <Link
-                aria-label={`Abrir perfil esportivo público de ${participant.name}`}
-                className={styles.participantPreviewLink}
-                href={`/remadores/${participant.public_profile_id}`}
-                key={`${participant.slot_id}-${participant.public_profile_id}`}
-                title={participant.name}
-              >
-                <ParticipantAvatar participant={participant} variant="small" />
-              </Link>
-            ))}
-            {hiddenPreviewCount > 0 ? (
-              <span className={styles.participantPreviewMore}>
-                +{hiddenPreviewCount}
-              </span>
-            ) : null}
-          </div>
+          {!isExpanded ? (
+            <div
+              aria-label={`${previewParticipants.length} participantes no resumo`}
+              className={styles.participantPreviewStack}
+            >
+              {previewParticipants.map((participant) => (
+                <Link
+                  aria-label={`Abrir perfil esportivo público de ${participant.name}`}
+                  className={styles.participantPreviewLink}
+                  href={`/remadores/${participant.public_profile_id}`}
+                  key={`${participant.slot_id}-${participant.public_profile_id}`}
+                  title={participant.name}
+                >
+                  <ParticipantAvatar participant={participant} variant="small" />
+                </Link>
+              ))}
+              {hiddenPreviewCount > 0 ? (
+                <span className={styles.participantPreviewMore}>
+                  +{hiddenPreviewCount}
+                </span>
+              ) : null}
+            </div>
+          ) : null}
 
           <button
             aria-expanded={isExpanded}
