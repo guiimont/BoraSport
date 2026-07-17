@@ -8,10 +8,11 @@
 .profilePanel,
 .card {
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(246, 252, 252, 0.96));
-  border: 1px solid rgba(141, 77, 255, 0.14);
+    linear-gradient(180deg, rgba(20, 19, 31, 0.94), rgba(10, 17, 30, 0.96));
+  border: 1px solid rgba(182, 140, 255, 0.2);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-night-card), 0 0 34px rgba(141, 77, 255, 0.08);
+  color: var(--text-inverse);
 }
 
 .profilePanel {
@@ -33,7 +34,7 @@
 }
 
 .eyebrow {
-  color: var(--color-violet-700);
+  color: var(--color-star-400);
   font-size: 0.78rem;
   font-weight: 900;
   letter-spacing: 0;
@@ -42,7 +43,7 @@
 }
 
 .profileIntro h2 {
-  color: var(--text-primary);
+  color: #ffffff;
   font-size: clamp(1.6rem, 3vw, 2.3rem);
   line-height: 1.05;
   margin: 0;
@@ -52,7 +53,7 @@
 .profileIntro p,
 .cardText,
 .avatarField p {
-  color: var(--text-secondary);
+  color: rgba(238, 248, 247, 0.7);
   line-height: 1.6;
   margin: var(--space-3) 0 0;
 }
@@ -61,11 +62,12 @@
 .avatarLarge {
   align-items: center;
   background:
-    linear-gradient(var(--surface-card), var(--surface-card)) padding-box,
+    linear-gradient(#091a2b, #101827) padding-box,
     linear-gradient(135deg, var(--color-sea-500), var(--color-violet-500), var(--color-star-400)) border-box;
   border: 2px solid transparent;
   border-radius: 50%;
-  color: var(--color-ocean-800);
+  box-shadow: 0 0 28px rgba(31, 216, 229, 0.14);
+  color: var(--color-sea-300);
   display: flex;
   flex: 0 0 auto;
   font-weight: 900;
@@ -102,8 +104,10 @@
 
 .avatarField {
   align-items: center;
-  background: rgba(255, 255, 255, 0.64);
-  border: 1px solid rgba(141, 77, 255, 0.14);
+  background:
+    linear-gradient(135deg, rgba(31, 216, 229, 0.08), rgba(141, 77, 255, 0.12)),
+    rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(123, 243, 245, 0.12);
   border-radius: var(--radius-md);
   display: grid;
   gap: var(--space-4);
@@ -117,10 +121,10 @@
 
 .input,
 .fileInput {
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(141, 77, 255, 0.16);
+  background: rgba(5, 12, 23, 0.78);
+  border: 1px solid rgba(182, 140, 255, 0.22);
   border-radius: var(--radius-md);
-  color: var(--text-primary);
+  color: #ffffff;
   font: inherit;
   min-height: 46px;
   padding: 0 13px;
@@ -133,8 +137,12 @@
 .input:focus-visible,
 .fileInput:focus-visible {
   border-color: var(--color-sea-500);
-  box-shadow: var(--shadow-focus), 0 0 18px rgba(141, 77, 255, 0.14);
+  box-shadow: var(--shadow-focus), 0 0 20px rgba(31, 216, 229, 0.16);
   outline: none;
+}
+
+.input::placeholder {
+  color: rgba(238, 248, 247, 0.44);
 }
 
 .fileInput {
@@ -154,7 +162,7 @@
 }
 
 .card h3 {
-  color: var(--text-primary);
+  color: #ffffff;
   font-size: 1.25rem;
   line-height: 1.2;
   margin: 0;
@@ -167,7 +175,7 @@
 }
 
 .dataList div {
-  border-top: 1px solid var(--border-subtle);
+  border-top: 1px solid rgba(216, 231, 231, 0.1);
   display: grid;
   gap: var(--space-1);
   padding-top: var(--space-3);
@@ -179,14 +187,14 @@
 }
 
 .dataList dt {
-  color: var(--text-secondary);
+  color: rgba(238, 248, 247, 0.55);
   font-size: 0.78rem;
   font-weight: 900;
   text-transform: uppercase;
 }
 
 .dataList dd {
-  color: var(--text-primary);
+  color: rgba(255, 255, 255, 0.92);
   font-weight: 800;
   margin: 0;
   overflow-wrap: anywhere;

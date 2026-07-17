@@ -84,7 +84,7 @@
 }
 
 .field {
-  color: var(--color-ink);
+  color: inherit;
   display: grid;
   font-size: 0.92rem;
   font-weight: 800;
@@ -96,7 +96,7 @@
 }
 
 .fieldHelp {
-  color: var(--text-secondary);
+  color: color-mix(in srgb, currentColor 64%, transparent);
   font-size: 0.84rem;
   font-weight: 650;
   line-height: 1.45;
@@ -119,27 +119,27 @@
 }
 
 .alertsuccess {
-  background: var(--state-success-bg);
-  border-color: rgba(7, 92, 91, 0.14);
-  color: var(--state-success-text);
+  background: rgba(22, 163, 136, 0.14);
+  border-color: rgba(123, 243, 245, 0.22);
+  color: #bffcf1;
 }
 
 .alerterror {
-  background: var(--state-error-bg);
-  border-color: rgba(159, 63, 32, 0.16);
-  color: var(--state-error-text);
+  background: rgba(255, 122, 69, 0.14);
+  border-color: rgba(255, 122, 69, 0.26);
+  color: #ffd6c6;
 }
 
 .alertinfo {
-  background: var(--state-info-bg);
-  border-color: rgba(7, 92, 107, 0.14);
-  color: var(--state-info-text);
+  background: rgba(31, 216, 229, 0.12);
+  border-color: rgba(123, 243, 245, 0.2);
+  color: #c8fbfb;
 }
 
 .alertwarning {
-  background: var(--state-warning-bg);
-  border-color: rgba(122, 74, 0, 0.16);
-  color: var(--state-warning-text);
+  background: rgba(248, 217, 133, 0.13);
+  border-color: rgba(248, 217, 133, 0.24);
+  color: #ffe9a8;
 }
 
 .spinnerWrap {
@@ -350,10 +350,12 @@
 
 .memberPage {
   background:
-    linear-gradient(180deg, rgba(4, 24, 39, 0) 0, #edf7f8 380px),
-    var(--color-sky-50);
-  color: var(--text-primary);
+    radial-gradient(circle at 16% 42%, rgba(141, 77, 255, 0.16), transparent 28rem),
+    radial-gradient(circle at 84% 54%, rgba(31, 216, 229, 0.1), transparent 30rem),
+    linear-gradient(180deg, #060812 0, var(--color-ocean-950) 42%, #07111e 100%);
+  color: var(--text-inverse);
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 .memberHero {
@@ -469,11 +471,12 @@
 }
 
 .memberIdentity {
-  background: rgba(237, 252, 252, 0.95);
+  background:
+    linear-gradient(180deg, rgba(21, 18, 34, 0.92), rgba(12, 15, 25, 0.94));
   border: 1px solid rgba(141, 77, 255, 0.28);
   border-radius: var(--radius-lg);
-  box-shadow: 0 20px 52px rgba(0, 0, 0, 0.2);
-  color: var(--text-primary);
+  box-shadow: var(--shadow-night-card), 0 0 28px rgba(141, 77, 255, 0.14);
+  color: var(--text-inverse);
   display: grid;
   gap: var(--space-2);
   padding: var(--space-5);
@@ -481,7 +484,7 @@
 
 .memberIdentity span,
 .memberIdentity em {
-  color: #0b7f98;
+  color: var(--color-sea-300);
   font-size: 0.78rem;
   font-style: normal;
   font-weight: 900;
@@ -494,7 +497,7 @@
 }
 
 .memberIdentity small {
-  color: var(--text-secondary);
+  color: rgba(238, 248, 247, 0.68);
   overflow-wrap: anywhere;
 }
 
@@ -502,6 +505,8 @@
   margin: 0 auto;
   max-width: var(--container-lg);
   padding: clamp(22px, 4vw, 34px);
+  position: relative;
+  z-index: 1;
 }
 
 @media (max-width: 820px) {

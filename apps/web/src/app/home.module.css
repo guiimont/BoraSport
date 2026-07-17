@@ -454,19 +454,61 @@
 .differenceSection {
   align-items: start;
   display: grid;
-  gap: 32px;
-  grid-template-columns: 1.05fr 0.95fr;
+  gap: clamp(22px, 4vw, 48px);
+  grid-template-columns: minmax(0, 0.96fr) minmax(280px, 0.62fr);
+}
+
+.differenceSection > div {
+  display: grid;
+  gap: 18px;
+  max-width: 760px;
+}
+
+.differenceSection .eyebrow {
+  align-items: center;
+  background: rgba(141, 77, 255, 0.13);
+  border: 1px solid rgba(182, 140, 255, 0.28);
+  border-radius: 999px;
+  color: var(--color-star-400);
+  display: inline-flex;
+  font-family: var(--font-sans);
+  justify-self: start;
+  margin: 0;
+  padding: 7px 12px;
 }
 
 .differenceSection p {
   background:
-    linear-gradient(135deg, rgba(31, 216, 229, 0.12), rgba(141, 77, 255, 0.18)),
-    rgba(20, 19, 31, 0.94);
-  border: 1px solid rgba(182, 140, 255, 0.22);
+    linear-gradient(135deg, rgba(31, 216, 229, 0.1), rgba(141, 77, 255, 0.16)),
+    rgba(12, 15, 25, 0.92);
+  border: 1px solid rgba(123, 243, 245, 0.13);
   border-radius: 22px;
   color: rgba(255, 255, 255, 0.82);
   margin: 0;
   padding: 26px;
+}
+
+.differenceSection h2 {
+  font-family: var(--font-sans);
+  font-size: clamp(2.15rem, 4.2vw, 4.75rem);
+  line-height: 0.98;
+  max-width: 840px;
+  text-wrap: balance;
+}
+
+.differenceSection h2::after {
+  background: linear-gradient(90deg, var(--color-sea-500), var(--color-violet-500), var(--color-star-400));
+  border-radius: 999px;
+  content: "";
+  display: block;
+  height: 3px;
+  margin-top: 24px;
+  width: min(220px, 46vw);
+}
+
+.differenceSection h2 em {
+  color: var(--color-sea-300);
+  font-style: normal;
 }
 
 .contactSection {

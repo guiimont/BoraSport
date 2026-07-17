@@ -282,7 +282,7 @@ export default function HomePage() {
       <section className={styles.differenceSection}>
         <div>
           <p className={styles.eyebrow}>Diferencial</p>
-          <h2>Não adaptamos uma ferramenta genérica. Criamos uma plataforma para o va'a.</h2>
+          <h2>Não adaptamos uma ferramenta genérica. Criamos uma plataforma <em>para o va'a.</em></h2>
         </div>
         <p>
           A linguagem, a operação e a experiência foram pensadas para clubes de
