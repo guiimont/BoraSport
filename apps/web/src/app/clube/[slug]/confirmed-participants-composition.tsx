@@ -83,21 +83,17 @@ function V6Composition({ seats }: { seats: Seat[] }) {
         aria-hidden="true"
         className={styles.v6Diagram}
         focusable="false"
-        viewBox="0 0 760 190"
+        viewBox="0 0 320 520"
       >
         <path
           className={styles.v6Hull}
-          d="M36 92 C68 50 154 34 304 34 L522 34 C612 34 690 58 724 92 C690 126 612 150 522 150 L304 150 C154 150 68 134 36 92 Z"
+          d="M204 24 C224 58 230 126 228 248 C230 372 224 462 204 504 C184 462 178 372 180 248 C178 126 184 58 204 24 Z"
         />
-        <line className={styles.v6Iako} x1="232" x2="644" y1="62" y2="34" />
-        <line className={styles.v6Iako} x1="232" x2="644" y1="122" y2="154" />
+        <line className={styles.v6Iako} x1="78" x2="182" y1="166" y2="166" />
+        <line className={styles.v6Iako} x1="78" x2="182" y1="342" y2="342" />
         <path
           className={styles.v6Ama}
-          d="M638 28 C694 18 736 22 756 38 C734 54 694 58 638 50 Z"
-        />
-        <path
-          className={styles.v6Ama}
-          d="M638 140 C694 132 736 136 756 152 C734 168 694 172 638 162 Z"
+          d="M66 76 C82 120 86 186 86 260 C86 334 82 400 66 444 C50 400 46 334 46 260 C46 186 50 120 66 76 Z"
         />
       </svg>
 
