@@ -438,44 +438,38 @@ a.avatar {
 
 .v6Composition {
   background:
-    radial-gradient(circle at 64% 48%, rgba(31, 216, 229, 0.055), transparent 38%),
+    radial-gradient(circle at 50% 42%, rgba(31, 216, 229, 0.055), transparent 40%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.032), rgba(255, 255, 255, 0.014));
   border: 1px solid rgba(184, 198, 205, 0.12);
   border-radius: 16px;
   box-sizing: border-box;
-  height: clamp(280px, 86vw, 360px);
-  isolation: isolate;
+  display: grid;
+  gap: 10px;
+  justify-items: center;
   min-width: 0;
   overflow: hidden;
-  padding: 10px;
-  position: relative;
+  padding: 12px;
 }
 
 .v6Diagram {
   display: block;
   filter: drop-shadow(0 0 12px rgba(31, 216, 229, 0.045));
-  height: calc(100% - 20px);
-  left: 50%;
-  margin: 0 auto;
-  max-width: 100%;
-  pointer-events: none;
-  position: absolute;
-  top: 10px;
-  transform: translateX(-50%);
-  width: min(78%, 224px);
-  z-index: 0;
+  height: auto;
+  max-width: 220px;
+  min-width: 0;
+  width: min(100%, 220px);
 }
 
 .v6Hull {
   fill: rgba(38, 46, 54, 0.72);
-  stroke: rgba(190, 202, 208, 0.64);
+  stroke: rgba(190, 202, 208, 0.66);
   stroke-width: 2;
 }
 
 .v6Iako {
   stroke: rgba(174, 185, 192, 0.54);
   stroke-linecap: round;
-  stroke-width: 2.4;
+  stroke-width: 4;
 }
 
 .v6Ama {
@@ -484,30 +478,49 @@ a.avatar {
   stroke-width: 2;
 }
 
-.v6Seats {
-  align-items: center;
-  display: grid;
-  gap: clamp(2px, 0.9vw, 5px);
-  grid-template-rows: repeat(var(--seat-count), minmax(0, 1fr));
-  box-sizing: border-box;
-  height: 100%;
-  left: 63%;
-  margin: 0;
-  max-height: 300px;
-  min-width: 0;
-  padding: clamp(42px, 14vw, 58px) 0 clamp(42px, 14vw, 58px);
-  position: absolute;
-  top: 0;
-  transform: translateX(-50%);
-  width: clamp(46px, 14vw, 64px);
-  z-index: 1;
+.v6SeatLink {
+  cursor: pointer;
+  outline: none;
 }
 
-.v6Seat {
+.v6SeatLink:focus-visible .v6SeatRing,
+.v6SeatLink:hover .v6SeatRing {
+  stroke: rgba(123, 243, 245, 0.92);
+}
+
+.v6SeatRing {
+  fill: rgba(9, 16, 27, 0.62);
+  stroke: rgba(210, 222, 229, 0.74);
+  stroke-width: 2;
+  transition: stroke var(--transition-fast);
+}
+
+.v6FallbackCircle {
+  fill: rgba(11, 22, 35, 0.96);
+}
+
+.v6FallbackInitial {
+  fill: rgba(238, 248, 247, 0.9);
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 950;
+}
+
+.v6Vacancy circle {
+  fill: rgba(255, 255, 255, 0.03);
+  stroke: rgba(190, 202, 208, 0.36);
+  stroke-dasharray: 5 5;
+  stroke-width: 2;
+}
+
+.v6Legend {
   align-items: center;
   display: grid;
-  justify-items: center;
+  gap: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(58px, 1fr));
+  justify-self: stretch;
   min-width: 0;
+  width: 100%;
 }
 
 .canoeParticipant,
@@ -520,7 +533,6 @@ a.avatar {
   justify-items: center;
   min-width: 0;
   padding: 0;
-  position: relative;
   text-align: center;
   text-decoration: none;
 }
@@ -589,29 +601,16 @@ a.avatar {
   display: block;
   font-size: clamp(0.62rem, 2.25vw, 0.72rem);
   font-weight: 850;
-  left: calc(100% + 6px);
   line-height: 1.08;
-  max-width: clamp(40px, 18vw, 64px);
+  max-width: 100%;
   min-height: 1.35em;
   overflow-wrap: anywhere;
-  position: absolute;
-  text-align: left;
+  text-align: center;
   text-wrap: balance;
-  top: 50%;
-  transform: translateY(-50%);
 }
 
 .emptySeat .canoeName {
   color: rgba(238, 248, 247, 0.46);
-}
-
-.compactParticipantsGrid .canoeName {
-  left: auto;
-  max-width: 100%;
-  position: static;
-  text-align: center;
-  top: auto;
-  transform: none;
 }
 
 .compactParticipantsGrid {

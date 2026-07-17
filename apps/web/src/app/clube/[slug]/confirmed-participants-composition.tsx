@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import type { CSSProperties } from "react";
-import { useState } from "react";
+import { useId, useState } from "react";
 
 import type { SlotParticipant } from "../../../types/saas";
 import styles from "./club-page.module.css";
@@ -66,7 +65,13 @@ function EmptySeat({ index }: { index: number }) {
   );
 }
 
-function ParticipantSeat({ participant }: { participant: SlotParticipant }) {
+function ParticipantSeat({
+  participant,
+  showName = true,
+}: {
+  participant: SlotParticipant;
+  showName?: boolean;
+}) {
   return (
     <Link
       aria-label={`Abrir perfil esportivo público de ${participant.name}`}
@@ -75,48 +80,135 @@ function ParticipantSeat({ participant }: { participant: SlotParticipant }) {
       title={participant.name}
     >
       <ParticipantAvatar participant={participant} />
-      <span className={styles.canoeName}>{getFirstName(participant.name)}</span>
+      {showName ? (
+        <span className={styles.canoeName}>{getFirstName(participant.name)}</span>
+      ) : null}
     </Link>
   );
 }
 
+function getSeatPosition(index: number, capacity: number) {
+  if (capacity === 1) {
+    return { x: 170, y: 260 };
+  }
+
+  const firstY = 130;
+  const lastY = 390;
+  const step = (lastY - firstY) / Math.max(1, capacity - 1);
+
+  return {
+    x: 170,
+    y: firstY + step * index,
+  };
+}
+
+function SvgSeat({
+  index,
+  participant,
+  total,
+}: {
+  index: number;
+  participant: SlotParticipant | null;
+  total: number;
+}) {
+  const [failed, setFailed] = useState(false);
+  const id = useId().replace(/:/g, "");
+  const { x, y } = getSeatPosition(index, total);
+  const radius = 22;
+  const clipId = `seat-${id}`;
+
+  if (!participant) {
+    return (
+      <g aria-label={`Vaga disponível ${index + 1}`} className={styles.v6Vacancy}>
+        <circle cx={x} cy={y} r={radius} />
+      </g>
+    );
+  }
+
+  const initial = getInitial(participant.name);
+  const href = `/remadores/${participant.public_profile_id}`;
+
+  return (
+    <a
+      aria-label={`Abrir perfil esportivo público de ${participant.name}`}
+      className={styles.v6SeatLink}
+      href={href}
+    >
+      <clipPath id={clipId}>
+        <circle cx={x} cy={y} r={radius} />
+      </clipPath>
+      <circle className={styles.v6SeatRing} cx={x} cy={y} r={radius + 1.5} />
+      {participant.avatar_url && !failed ? (
+        <image
+          aria-hidden="true"
+          clipPath={`url(#${clipId})`}
+          height={radius * 2}
+          href={participant.avatar_url}
+          onError={() => setFailed(true)}
+          preserveAspectRatio="xMidYMid slice"
+          width={radius * 2}
+          x={x - radius}
+          y={y - radius}
+        />
+      ) : (
+        <>
+          <circle className={styles.v6FallbackCircle} cx={x} cy={y} r={radius} />
+          <text
+            className={styles.v6FallbackInitial}
+            dominantBaseline="central"
+            textAnchor="middle"
+            x={x}
+            y={y}
+          >
+            {initial}
+          </text>
+        </>
+      )}
+    </a>
+  );
+}
+
 function V6Composition({ seats }: { seats: Seat[] }) {
+  const participants = seats
+    .map((seat) => seat.participant)
+    .filter((participant): participant is SlotParticipant => Boolean(participant));
+
   return (
     <div className={styles.v6Composition}>
       <svg
-        aria-hidden="true"
+        aria-label={`Va'a com ${participants.length} participantes confirmados em ${seats.length} vagas`}
         className={styles.v6Diagram}
-        focusable="false"
-        viewBox="0 0 260 420"
+        role="img"
+        viewBox="0 0 320 520"
       >
         <path
           className={styles.v6Hull}
-          d="M164 18 C190 56 198 116 198 210 C198 304 190 364 164 402 C138 364 130 304 130 210 C130 116 138 56 164 18 Z"
+          d="M170 24 C214 80 235 154 235 260 C235 366 214 454 170 496 C126 454 105 366 105 260 C105 154 126 80 170 24 Z"
         />
-        <line className={styles.v6Iako} x1="74" x2="132" y1="132" y2="132" />
-        <line className={styles.v6Iako} x1="74" x2="132" y1="288" y2="288" />
+        <line className={styles.v6Iako} x1="72" x2="108" y1="170" y2="170" />
+        <line className={styles.v6Iako} x1="72" x2="108" y1="350" y2="350" />
         <path
           className={styles.v6Ama}
-          d="M54 70 C68 112 72 162 72 210 C72 258 68 308 54 350 C40 308 36 258 36 210 C36 162 40 112 54 70 Z"
+          d="M60 70 C74 120 76 190 76 260 C76 330 74 400 60 450 C46 400 44 330 44 260 C44 190 46 120 60 70 Z"
         />
+
+        {seats.map(({ participant, seatKey }, index) => (
+          <SvgSeat
+            index={index}
+            key={seatKey}
+            participant={participant}
+            total={seats.length}
+          />
+        ))}
       </svg>
 
-      <div
-        className={styles.v6Seats}
-        style={
-          {
-            "--seat-count": seats.length,
-          } as CSSProperties
-        }
-      >
-        {seats.map(({ participant, seatKey }, index) => (
-          <div className={styles.v6Seat} key={seatKey}>
-            {participant ? (
-              <ParticipantSeat participant={participant} />
-            ) : (
-              <EmptySeat index={index} />
-            )}
-          </div>
+      <div className={styles.v6Legend} aria-label="Nomes dos participantes">
+        {participants.map((participant) => (
+          <ParticipantSeat
+            key={participant.public_profile_id}
+            participant={participant}
+            showName
+          />
         ))}
       </div>
     </div>
