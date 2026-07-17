@@ -4,6 +4,7 @@ import { useActionState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useFormStatus } from "react-dom";
 
+import { FileField } from "../../../components/ui";
 import type { Resource, Service, VocabularyConfig } from "../../../types/saas";
 import {
   type AdminFormState,
@@ -363,14 +364,11 @@ export function TenantCatalogForms({
             />
           </label>
 
-          <label className={styles.label}>
-            Arquivo
-            <input
-              className={styles.input}
-              name="workoutAttachment"
-              type="file"
-            />
-          </label>
+          <FileField
+            actionLabel="Selecionar arquivo"
+            label="Arquivo"
+            name="workoutAttachment"
+          />
         </div>
 
         <label className={styles.label}>

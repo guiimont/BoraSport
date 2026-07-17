@@ -4,6 +4,7 @@ import { useActionState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useFormStatus } from "react-dom";
 
+import { FileField } from "../../../components/ui";
 import type { LandingPage } from "../../../types/saas";
 import { type AdminFormState, saveLandingPage } from "./actions";
 import styles from "./admin.module.css";
@@ -93,10 +94,12 @@ export function LandingPageForm({
       </div>
 
       <div className={styles.fieldGridTwo}>
-        <label className={styles.label}>
-          Imagem principal
-          <input className={styles.input} name="landingHeroImage" type="file" />
-        </label>
+        <FileField
+          accept="image/*"
+          actionLabel="Selecionar imagem"
+          label="Imagem principal"
+          name="landingHeroImage"
+        />
 
         <label className={styles.checkItem}>
           <input

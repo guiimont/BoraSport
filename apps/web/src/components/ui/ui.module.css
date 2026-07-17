@@ -2,10 +2,10 @@
   align-items: center;
   color: var(--text-inverse);
   display: inline-flex;
-  font-weight: 850;
+  font-weight: 800;
   gap: var(--space-3);
   letter-spacing: 0;
-  white-space: nowrap;
+  min-width: 0;
 }
 
 .brandMarkDark {
@@ -46,7 +46,7 @@
   cursor: pointer;
   display: inline-flex;
   font: inherit;
-  font-weight: 850;
+  font-weight: 800;
   justify-content: center;
   min-height: 46px;
   padding: 0 18px;
@@ -116,6 +116,85 @@
   color: var(--state-error-text);
   font-size: 0.86rem;
   font-weight: 800;
+}
+
+.fileField {
+  color: inherit;
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+  width: 100%;
+}
+
+.fileLabel {
+  color: inherit;
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.fileControl {
+  align-items: stretch;
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+  width: 100%;
+}
+
+.fileInput {
+  block-size: 1px;
+  inline-size: 1px;
+  margin: -1px;
+  opacity: 0.001;
+  overflow: hidden;
+  position: absolute;
+}
+
+.fileButton {
+  align-items: center;
+  background: linear-gradient(135deg, rgba(34, 210, 214, 0.95), rgba(141, 77, 255, 0.95));
+  border: 1px solid rgba(123, 243, 245, 0.44);
+  border-radius: 12px;
+  box-shadow: 0 16px 34px rgba(31, 216, 229, 0.14), 0 0 24px rgba(141, 77, 255, 0.16);
+  color: #04121f;
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-weight: 800;
+  gap: var(--space-2);
+  justify-content: center;
+  line-height: 1.25;
+  min-height: 46px;
+  padding: 0 var(--space-4);
+  text-align: center;
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+  width: 100%;
+}
+
+.fileButton:hover {
+  transform: translateY(-1px);
+}
+
+.fileInput:focus-visible + .fileButton {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
+.fileName {
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid rgba(182, 140, 255, 0.2);
+  border-radius: 12px;
+  color: color-mix(in srgb, currentColor 76%, transparent);
+  display: block;
+  font-size: 0.86rem;
+  font-weight: 700;
+  line-height: 1.45;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  padding: var(--space-3);
+  width: 100%;
 }
 
 .alert {
@@ -227,7 +306,7 @@
   right: 12%;
   top: 12%;
   transform: rotate(-18deg);
-  width: 430px;
+  width: clamp(180px, 72vw, 430px);
 }
 
 .authHorizon {
@@ -278,7 +357,7 @@
 .authEyebrow {
   color: var(--color-star-400) !important;
   font-size: 0.78rem !important;
-  font-weight: 900;
+  font-weight: 800;
   letter-spacing: 0;
   margin-top: var(--space-8) !important;
   text-transform: uppercase;
@@ -365,7 +444,7 @@
     linear-gradient(180deg, #060812 0, var(--color-ocean-950) 42%, #07111e 100%);
   color: var(--text-inverse);
   min-height: 100vh;
-  overflow-x: hidden;
+  width: 100%;
 }
 
 .memberHero {
@@ -459,7 +538,7 @@
 .memberEyebrow {
   color: var(--color-star-400);
   font-size: 0.78rem;
-  font-weight: 900;
+  font-weight: 800;
   letter-spacing: 0;
   margin: 0 0 var(--space-3);
   text-transform: uppercase;
@@ -497,7 +576,7 @@
   color: var(--color-sea-300);
   font-size: 0.78rem;
   font-style: normal;
-  font-weight: 900;
+  font-weight: 800;
   text-transform: uppercase;
 }
 

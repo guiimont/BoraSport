@@ -36,7 +36,7 @@
 .eyebrow {
   color: var(--color-star-400);
   font-size: 0.78rem;
-  font-weight: 900;
+  font-weight: 800;
   letter-spacing: 0;
   margin: 0 0 var(--space-2);
   text-transform: uppercase;
@@ -70,7 +70,7 @@
   color: var(--color-sea-300);
   display: flex;
   flex: 0 0 auto;
-  font-weight: 900;
+  font-weight: 800;
   justify-content: center;
   overflow: hidden;
 }
@@ -119,8 +119,7 @@
   margin: 0;
 }
 
-.input,
-.fileInput {
+.input {
   background: rgba(5, 12, 23, 0.78);
   border: 1px solid rgba(182, 140, 255, 0.22);
   border-radius: var(--radius-md);
@@ -134,8 +133,7 @@
   width: 100%;
 }
 
-.input:focus-visible,
-.fileInput:focus-visible {
+.input:focus-visible {
   border-color: var(--color-sea-500);
   box-shadow: var(--shadow-focus), 0 0 20px rgba(31, 216, 229, 0.16);
   outline: none;
@@ -145,8 +143,17 @@
   color: rgba(238, 248, 247, 0.44);
 }
 
-.fileInput {
-  padding: 10px 13px;
+.fileGroup {
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.fieldHelp {
+  color: rgba(238, 248, 247, 0.64);
+  font-size: 0.84rem;
+  font-weight: 650;
+  line-height: 1.45;
 }
 
 .sidePanel {
@@ -189,7 +196,7 @@
 .dataList dt {
   color: rgba(238, 248, 247, 0.55);
   font-size: 0.78rem;
-  font-weight: 900;
+  font-weight: 800;
   text-transform: uppercase;
 }
 

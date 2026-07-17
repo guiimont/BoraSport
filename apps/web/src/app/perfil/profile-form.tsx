@@ -3,7 +3,7 @@
 import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
 
-import { Alert, Button, Field, Spinner } from "../../components/ui";
+import { Alert, Button, Field, FileField, Spinner } from "../../components/ui";
 import type { Profile } from "../../types/saas";
 import { type ProfileState, saveProfile } from "./actions";
 import styles from "./profile.module.css";
@@ -71,22 +71,23 @@ export function ProfileForm({ email, profile }: ProfileFormProps) {
         />
       </Field>
 
-      <Field
-        help="Use uma foto quadrada ou de rosto. O app recorta em formato circular nas listas de confirmados."
-        label="Foto do perfil"
-      >
-        <input
+      <div className={styles.fileGroup}>
+        <FileField
           accept="image/*"
-          className={styles.fileInput}
+          actionLabel="Selecionar foto"
+          label="Foto do perfil"
           name="avatarFile"
           onChange={(event) => {
             const file = event.target.files?.[0];
 
             setLocalPreview(file ? URL.createObjectURL(file) : "");
           }}
-          type="file"
         />
-      </Field>
+        <span className={styles.fieldHelp}>
+          Use uma foto quadrada ou de rosto. O app recorta em formato circular
+          nas listas de confirmados.
+        </span>
+      </div>
 
       <Field
         help="Opcional. Use quando a foto já estiver publicada em uma URL segura."
