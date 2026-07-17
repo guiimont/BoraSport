@@ -42,7 +42,7 @@
   color: #ffffff;
   display: flex;
   font-size: 28px;
-  font-weight: 900;
+  font-weight: 800;
   justify-content: center;
 }
 
@@ -50,7 +50,7 @@
 .eyebrow {
   color: var(--club-color);
   font-size: 12px;
-  font-weight: 900;
+  font-weight: 800;
   letter-spacing: 0;
   margin: 0 0 8px;
   text-transform: uppercase;
@@ -159,7 +159,7 @@
   color: #60717c;
   display: block;
   font-size: 12px;
-  font-weight: 850;
+  font-weight: 800;
   text-transform: uppercase;
 }
 
@@ -190,7 +190,7 @@
 .nextTime span {
   color: #0d6f98;
   font-size: 64px;
-  font-weight: 950;
+  font-weight: 800;
   line-height: 0.84;
 }
 
@@ -213,7 +213,7 @@
 }
 
 .rideDetails dd {
-  font-weight: 850;
+  font-weight: 800;
   margin-top: 4px;
 }
 
@@ -244,7 +244,7 @@
 .dayBlock span {
   color: #60717c;
   font-size: 12px;
-  font-weight: 850;
+  font-weight: 800;
   text-transform: uppercase;
 }
 
@@ -256,7 +256,7 @@
 .dayBlock em {
   color: var(--club-color);
   font-style: normal;
-  font-weight: 900;
+  font-weight: 800;
 }
 
 .full {
@@ -274,7 +274,7 @@
   background: #063b56;
   border-radius: 8px;
   color: #ffffff;
-  font-weight: 950;
+  font-weight: 800;
   padding: 16px;
   text-align: center;
 }
@@ -327,7 +327,7 @@
   border-radius: 8px;
   cursor: pointer;
   font: inherit;
-  font-weight: 850;
+  font-weight: 800;
   min-height: 44px;
 }
 
@@ -445,7 +445,7 @@
   background: #f3dfbd;
   border-radius: 999px;
   color: #102331;
-  font-weight: 850;
+  font-weight: 800;
   padding: 9px 12px;
 }
 

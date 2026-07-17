@@ -4,8 +4,15 @@
     radial-gradient(circle at 88% 18%, rgba(31, 216, 229, 0.12), transparent 30rem),
     linear-gradient(180deg, #060812 0%, var(--color-ocean-950) 46%, #07111e 100%);
   color: var(--text-inverse);
+  font-family: var(--font-sans);
   min-height: 100vh;
-  overflow-x: hidden;
+  width: 100%;
+}
+
+.page *,
+.page *::before,
+.page *::after {
+  box-sizing: border-box;
 }
 
 .header {
@@ -21,6 +28,7 @@
   max-width: var(--container-lg);
   padding-left: clamp(16px, 4vw, 34px);
   padding-right: clamp(16px, 4vw, 34px);
+  width: 100%;
 }
 
 .headerInner {
@@ -40,6 +48,7 @@
   line-height: 0.94;
   margin: 8px 0 0;
   text-wrap: balance;
+  overflow-wrap: anywhere;
 }
 
 .headerText,
@@ -47,6 +56,7 @@
   color: rgba(238, 248, 247, 0.68);
   line-height: 1.58;
   margin: 12px 0 0;
+  overflow-wrap: anywhere;
 }
 
 .sessionBar {
@@ -65,9 +75,11 @@
   border-radius: 999px;
   display: inline-flex;
   font-size: 0.78rem;
-  font-weight: 900;
+  font-weight: 800;
+  max-width: 100%;
+  min-width: 0;
+  overflow-wrap: anywhere;
   padding: 7px 10px;
-  width: fit-content;
 }
 
 .sessionBar span,
@@ -81,7 +93,7 @@
 .eyebrow {
   color: var(--color-star-400);
   font-size: 0.76rem;
-  font-weight: 900;
+  font-weight: 800;
   letter-spacing: 0;
   margin: 0;
   text-transform: uppercase;
@@ -104,15 +116,34 @@
   display: inline-flex;
   font: inherit;
   font-size: 0.92rem;
-  font-weight: 850;
+  font-weight: 800;
   justify-content: center;
+  line-height: 1.25;
+  max-width: 100%;
   min-height: 42px;
   padding: 0 14px;
+  text-align: center;
   text-decoration: none;
   transition:
     border-color var(--transition-fast),
     box-shadow var(--transition-fast),
     transform var(--transition-fast);
+}
+
+.headerInner > *,
+.content > *,
+.sectionHead > *,
+.actionRow > *,
+.panel,
+.moduleCard,
+.statCard,
+.claimPanel,
+.infoBox,
+.subForm,
+.listItem,
+.listItemVertical,
+.inviteResult {
+  min-width: 0;
 }
 
 .primaryButton:hover,
@@ -195,6 +226,7 @@
   display: block;
   font-size: 1rem;
   line-height: 1.2;
+  overflow-wrap: anywhere;
 }
 
 .moduleCard p,
@@ -203,6 +235,7 @@
 .empty,
 .subForm p {
   color: rgba(238, 248, 247, 0.64);
+  overflow-wrap: anywhere;
 }
 
 .moduleCard p {
@@ -238,7 +271,7 @@
 .statCard p {
   color: rgba(238, 248, 247, 0.58);
   font-size: 0.78rem;
-  font-weight: 850;
+  font-weight: 800;
   margin: 0;
   text-transform: uppercase;
 }
@@ -295,6 +328,8 @@
   font-size: 0.9rem;
   font-weight: 750;
   gap: 7px;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .input,
@@ -308,6 +343,13 @@
   min-height: 44px;
   min-width: 0;
   padding: 0 12px;
+  width: 100%;
+}
+
+.input,
+.select,
+.textarea {
+  max-width: 100%;
 }
 
 .textarea {
@@ -345,6 +387,8 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .infoBox,
@@ -403,7 +447,7 @@
 .checkPanel legend {
   color: rgba(238, 248, 247, 0.82);
   font-size: 0.9rem;
-  font-weight: 850;
+  font-weight: 800;
   padding: 0 6px;
 }
 
@@ -420,10 +464,12 @@
   border-radius: 12px;
   color: rgba(238, 248, 247, 0.82);
   display: flex;
-  font-weight: 850;
+  font-weight: 800;
   gap: 8px;
   justify-content: center;
   min-height: 42px;
+  min-width: 0;
+  overflow-wrap: anywhere;
   padding: 0 10px;
 }
 
@@ -465,6 +511,15 @@
   display: flex;
   gap: 10px;
   justify-content: space-between;
+  min-width: 0;
+}
+
+.listItem strong,
+.listItem span,
+.listItemVertical strong,
+.table td,
+.table th {
+  overflow-wrap: anywhere;
 }
 
 .itemDescription {
@@ -532,9 +587,56 @@
     width: 100%;
   }
 
+  .presetButton,
+  .presetButtonActive {
+    flex: 1 1 min(100%, 148px);
+    min-height: 48px;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    padding-left: 10px;
+    padding-right: 10px;
+    white-space: normal;
+  }
+
+  .moduleCard {
+    min-height: auto;
+  }
+
+  .listItem {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
   .content,
   .headerInner {
     padding-left: var(--space-4);
     padding-right: var(--space-4);
+  }
+}
+
+@media (max-width: 520px) {
+  .header h1,
+  .claimPanel h1 {
+    font-size: clamp(2rem, 11vw, 3.1rem);
+    line-height: 1;
+  }
+
+  .headerInner {
+    padding-bottom: var(--space-8);
+    padding-top: var(--space-8);
+  }
+
+  .panel,
+  .claimPanel,
+  .statCard {
+    padding: var(--space-4);
+  }
+
+  .sessionBar span {
+    width: 100%;
+  }
+
+  .table {
+    min-width: 620px;
   }
 }

@@ -4,8 +4,15 @@
     radial-gradient(circle at 88% 18%, rgba(31, 216, 229, 0.12), transparent 28rem),
     linear-gradient(180deg, #060812 0%, var(--color-ocean-950) 48%, #07111e 100%);
   color: var(--text-inverse);
+  font-family: var(--font-sans);
   min-height: 100vh;
-  overflow-x: hidden;
+  width: 100%;
+}
+
+.page *,
+.page *::before,
+.page *::after {
+  box-sizing: border-box;
 }
 
 .hero {
@@ -33,6 +40,7 @@
   max-width: var(--container-lg);
   padding-left: clamp(16px, 4vw, 34px);
   padding-right: clamp(16px, 4vw, 34px);
+  width: 100%;
 }
 
 .heroInner {
@@ -46,24 +54,34 @@
   z-index: 1;
 }
 
+.heroInner > *,
+.content > *,
+.nextCard,
+.card,
+.slotCard,
+.locationPanel {
+  min-width: 0;
+}
+
 .eyebrow,
 .nextLabel,
 .introLabel,
 .participantsLabel {
   color: var(--color-star-400);
   font-size: 0.76rem;
-  font-weight: 900;
+  font-weight: 800;
   letter-spacing: 0;
   margin: 0;
   text-transform: uppercase;
 }
 
 .title {
-  font-size: clamp(2.7rem, 8vw, 6.4rem);
+  font-size: clamp(2.5rem, 7.2vw, 5.8rem);
   letter-spacing: 0;
-  line-height: 0.92;
+  line-height: 0.96;
   margin: 10px 0 0;
   max-width: 920px;
+  overflow-wrap: anywhere;
   text-wrap: balance;
 }
 
@@ -90,7 +108,7 @@
   border-radius: 12px;
   display: inline-flex;
   font: inherit;
-  font-weight: 850;
+  font-weight: 800;
   justify-content: center;
   min-height: 44px;
   padding: 0 16px;
@@ -208,7 +226,7 @@
   color: rgba(238, 248, 247, 0.56);
   display: block;
   font-size: 0.74rem;
-  font-weight: 850;
+  font-weight: 800;
   text-transform: uppercase;
 }
 
@@ -218,8 +236,8 @@
   font-size: 0.98rem;
   margin-top: 5px;
   overflow: hidden;
+  overflow-wrap: anywhere;
   text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .crewLine,
@@ -246,7 +264,7 @@
   color: var(--color-sea-300);
   display: flex;
   font-size: 0.78rem;
-  font-weight: 900;
+  font-weight: 800;
   height: 36px;
   justify-content: center;
   margin-left: -8px;
@@ -289,8 +307,12 @@
 .tabsScroller {
   display: flex;
   gap: 8px;
+  max-width: 100%;
   overflow-x: auto;
-  padding-bottom: 2px;
+  overscroll-behavior-x: contain;
+  padding-bottom: 4px;
+  padding-right: clamp(28px, 12vw, 84px);
+  scroll-padding-inline: 16px;
 }
 
 .tabButton {
@@ -302,7 +324,7 @@
   flex: 0 0 auto;
   font: inherit;
   font-size: 0.92rem;
-  font-weight: 850;
+  font-weight: 800;
   min-height: 42px;
   padding: 0 15px;
 }
@@ -331,6 +353,7 @@
   gap: 12px;
   justify-content: space-between;
   margin-bottom: 14px;
+  min-width: 0;
 }
 
 .sectionTitle {
@@ -359,7 +382,7 @@
 .slotTime {
   color: var(--color-sea-300);
   font-size: 0.9rem;
-  font-weight: 900;
+  font-weight: 800;
   margin: 0;
 }
 
@@ -433,6 +456,7 @@
   min-height: 44px;
   min-width: 0;
   padding: 0 12px;
+  width: 100%;
 }
 
 .locationInput::placeholder {
@@ -517,7 +541,7 @@
   color: #ffe9a8;
   flex: 0 0 auto;
   font-size: 0.8rem;
-  font-weight: 850;
+  font-weight: 800;
   padding: 7px 10px;
 }
 
@@ -546,6 +570,14 @@
     align-items: stretch;
     flex-direction: column;
   }
+
+  .agendaHeader {
+    gap: 6px;
+  }
+
+  .muted {
+    margin-top: 0;
+  }
 }
 
 @media (max-width: 520px) {
@@ -558,6 +590,7 @@
   .contextNav {
     align-items: stretch;
     flex-direction: column;
+    gap: 12px;
   }
 
   .contextLink,
@@ -566,14 +599,46 @@
   }
 
   .title {
-    font-size: clamp(2.55rem, 15vw, 4.2rem);
+    font-size: clamp(2.15rem, 11vw, 3.2rem);
+    line-height: 1.02;
+  }
+
+  .lead {
+    font-size: 1rem;
+  }
+
+  .nextCard {
+    padding: var(--space-4);
+  }
+
+  .nextTitle {
+    font-size: clamp(1.45rem, 8vw, 2rem);
   }
 
   .tabsBar {
     margin-left: calc(var(--space-4) * -1);
     margin-right: calc(var(--space-4) * -1);
     padding-left: var(--space-4);
-    padding-right: var(--space-4);
+    padding-right: 0;
+    width: calc(100% + var(--space-8));
+  }
+
+  .tabsScroller {
+    padding-right: 88px;
+  }
+
+  .tabButton {
+    min-height: 40px;
+    padding: 0 13px;
+  }
+
+  .sectionTitle {
+    font-size: clamp(1.45rem, 8vw, 1.9rem);
+    overflow-wrap: anywhere;
+  }
+
+  .emptyState {
+    padding: var(--space-4);
   }
 
   .windyFrame {
