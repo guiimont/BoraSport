@@ -298,48 +298,65 @@ a.avatar {
 }
 
 .participantList {
-  align-items: center;
+  align-items: start;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  justify-content: flex-end;
+  gap: 14px;
+  justify-content: flex-start;
   min-width: 0;
 }
 
 .participantChip {
   align-items: center;
-  background: rgba(255, 255, 255, 0.055);
-  border: 1px solid rgba(123, 243, 245, 0.14);
-  border-radius: 999px;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-md);
   color: rgba(238, 248, 247, 0.88);
-  display: inline-flex;
-  font-size: 0.86rem;
+  display: inline-grid;
+  font-size: 0.78rem;
   font-weight: 800;
-  gap: 8px;
-  line-height: 1.15;
-  max-width: min(220px, 100%);
+  gap: 7px;
+  justify-items: center;
+  line-height: 1.22;
+  max-width: 96px;
   min-width: 0;
-  padding: 5px 10px 5px 5px;
+  padding: 6px;
+  text-align: center;
   text-decoration: none;
 }
 
-.participantChip .avatar {
-  flex: 0 0 auto;
-  height: 30px;
-  margin-left: 0;
-  width: 30px;
-}
-
 .participantChip span:last-child {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
 .participantChip:focus-visible {
   outline: var(--focus-ring);
   outline-offset: var(--focus-offset);
+}
+
+.participantAvatar {
+  align-items: center;
+  background:
+    linear-gradient(#091a2b, #101827) padding-box,
+    linear-gradient(135deg, var(--color-sea-500), var(--color-violet-500), var(--color-star-400)) border-box;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  color: var(--color-sea-300);
+  display: flex;
+  font-size: 1rem;
+  font-weight: 900;
+  height: 52px;
+  justify-content: center;
+  overflow: hidden;
+  width: 52px;
+}
+
+.participantAvatar img {
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
 }
 
 .slotStatus {
@@ -435,40 +452,131 @@ a.avatar {
   gap: 12px;
 }
 
+.scheduleDays {
+  display: grid;
+  gap: 26px;
+}
+
+.scheduleDay {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+.dayHeading {
+  color: #ffffff;
+  font-size: clamp(1.1rem, 2.8vw, 1.45rem);
+  line-height: 1.15;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
 .slotCard {
   overflow: hidden;
 }
 
 .slotMain {
+  align-items: start;
   display: grid;
-  gap: 16px;
-  grid-template-columns: minmax(0, 1fr) 330px;
-  padding: 18px;
+  gap: 18px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: 20px 20px 16px;
+}
+
+.slotIdentity {
+  align-items: start;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: auto minmax(0, 1fr);
+  min-width: 0;
 }
 
 .slotTime {
+  align-items: center;
+  background:
+    linear-gradient(180deg, rgba(31, 216, 229, 0.18), rgba(141, 77, 255, 0.12));
+  border: 1px solid rgba(123, 243, 245, 0.24);
+  border-radius: 16px;
   color: var(--color-sea-300);
-  font-size: 0.9rem;
-  font-weight: 800;
+  display: inline-flex;
+  font-size: clamp(1.28rem, 3vw, 1.65rem);
+  font-weight: 900;
+  justify-content: center;
+  line-height: 1;
   margin: 0;
+  min-height: 58px;
+  min-width: 86px;
+  padding: 0 12px;
+}
+
+.slotHeading {
+  min-width: 0;
 }
 
 .slotTitle {
-  font-size: 1.25rem;
+  font-size: clamp(1.28rem, 3vw, 1.7rem);
   line-height: 1.15;
-  margin: 6px 0 0;
+  margin: 0;
+  overflow-wrap: anywhere;
 }
 
-.participantsRow {
+.slotMeta strong {
+  color: #ffffff;
+}
+
+.slotSummary {
+  align-items: end;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+  max-width: 360px;
+  min-width: 0;
+}
+
+.capacityPill,
+.durationText {
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 850;
+  line-height: 1.1;
+  padding: 8px 10px;
+}
+
+.capacityPill {
+  background: rgba(31, 216, 229, 0.1);
+  border: 1px solid rgba(123, 243, 245, 0.18);
+  color: rgba(238, 248, 247, 0.9);
+}
+
+.capacityPillFull {
+  background: rgba(255, 122, 69, 0.14);
+  border-color: rgba(255, 122, 69, 0.28);
+  color: #ffd6c6;
+}
+
+.durationText {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(238, 248, 247, 0.64);
+}
+
+.participantsRow,
+.participantsBlock {
   border-top: 1px solid rgba(216, 231, 231, 0.1);
   margin: 0 18px;
   padding: 14px 0;
 }
 
+.participantsBlock {
+  display: grid;
+  gap: 14px;
+}
+
 .slotAction {
-  background: rgba(255, 255, 255, 0.035);
-  border-top: 1px solid rgba(216, 231, 231, 0.1);
-  padding: 14px 18px;
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 18px 18px;
 }
 
 .reserveButton {
@@ -476,7 +584,7 @@ a.avatar {
   cursor: pointer;
   font-size: 0.94rem;
   min-height: 46px;
-  width: 100%;
+  width: min(100%, 280px);
 }
 
 .reserveButton:disabled,
@@ -494,6 +602,8 @@ a.avatar {
   border-color: rgba(255, 122, 69, 0.32);
   box-shadow: none;
   color: #ffd6c6;
+  min-height: 40px;
+  width: auto;
 }
 
 .emptyState {
@@ -657,6 +767,11 @@ a.avatar {
   .participantList {
     justify-content: flex-start;
   }
+
+  .slotSummary,
+  .slotAction {
+    justify-content: flex-start;
+  }
 }
 
 @media (max-width: 520px) {
@@ -717,9 +832,31 @@ a.avatar {
     overflow-wrap: anywhere;
   }
 
-  .participantsRow {
+  .participantsRow,
+  .participantsBlock {
     margin-left: 14px;
     margin-right: 14px;
+  }
+
+  .slotMain {
+    padding: 16px 14px 14px;
+  }
+
+  .slotIdentity {
+    gap: 10px;
+  }
+
+  .slotTime {
+    min-width: 74px;
+    padding: 0 9px;
+  }
+
+  .reserveButton {
+    width: 100%;
+  }
+
+  .cancelButton {
+    width: auto;
   }
 
   .emptyState {

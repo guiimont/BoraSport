@@ -25,6 +25,16 @@ function firstJoin<T>(value: SupabaseJoin<T>): T | null {
   return value;
 }
 
+function sanitizePublicDisplayName(name: string | null | undefined) {
+  const cleanName = name?.trim();
+
+  if (!cleanName || cleanName.includes("@")) {
+    return "Remador BoraSport";
+  }
+
+  return cleanName;
+}
+
 async function getRowsViaRest<T>(
   table: string,
   params: Record<string, string>,
@@ -247,7 +257,10 @@ export async function getCompanySlotParticipants(
 
   for (const participant of restRows ?? []) {
     grouped[participant.slot_id] = grouped[participant.slot_id] || [];
-    grouped[participant.slot_id].push(participant);
+    grouped[participant.slot_id].push({
+      ...participant,
+      name: sanitizePublicDisplayName(participant.name),
+    });
   }
 
   return grouped;
@@ -289,7 +302,14 @@ export async function getPublicSportProfile(
     },
   );
 
-  return restRows?.[0] ?? null;
+  const profile = restRows?.[0] ?? null;
+
+  return profile
+    ? {
+        ...profile,
+        name: sanitizePublicDisplayName(profile.name),
+      }
+    : null;
 }
 
 function getCurrentWeekStartDate() {
