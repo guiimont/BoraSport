@@ -370,6 +370,174 @@ a.avatar {
   padding: 8px 10px;
 }
 
+.participantsComposition {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+.participantsCompositionHeader {
+  align-items: start;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.participantsCompositionHeader > div {
+  min-width: 0;
+}
+
+.compositionCount {
+  background:
+    linear-gradient(#090f1d, #090f1d) padding-box,
+    linear-gradient(135deg, rgba(31, 216, 229, 0.74), rgba(141, 77, 255, 0.58)) border-box;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: var(--color-sea-300);
+  flex: 0 0 auto;
+  font-size: 0.8rem;
+  font-weight: 900;
+  line-height: 1;
+  padding: 8px 10px;
+}
+
+.canoeVisual {
+  background:
+    radial-gradient(circle at 50% 8%, rgba(31, 216, 229, 0.1), transparent 36%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.025));
+  border: 1px solid rgba(123, 243, 245, 0.1);
+  border-radius: 18px;
+  overflow: hidden;
+  padding: 18px 14px 14px;
+  position: relative;
+}
+
+.canoeVisual::before {
+  background:
+    linear-gradient(90deg, transparent, rgba(31, 216, 229, 0.32), rgba(141, 77, 255, 0.22), transparent);
+  border-bottom: 2px solid rgba(123, 243, 245, 0.26);
+  border-radius: 50% 50% 64% 64%;
+  bottom: 34px;
+  content: "";
+  height: 42px;
+  left: 12px;
+  pointer-events: none;
+  position: absolute;
+  right: 12px;
+}
+
+.canoeVisual::after {
+  background: radial-gradient(ellipse at center, rgba(248, 217, 133, 0.18), transparent 68%);
+  bottom: 28px;
+  content: "";
+  height: 1px;
+  left: 24px;
+  pointer-events: none;
+  position: absolute;
+  right: 24px;
+}
+
+.canoeSeats {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(68px, 1fr));
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.canoeParticipant,
+.canoeEmptySeat {
+  align-items: center;
+  border-radius: 14px;
+  color: rgba(238, 248, 247, 0.9);
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  min-width: 0;
+  padding: 5px 4px 2px;
+  text-align: center;
+  text-decoration: none;
+}
+
+.canoeParticipant {
+  transition:
+    background-color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.canoeParticipant:hover {
+  background: rgba(123, 243, 245, 0.055);
+  transform: translateY(-1px);
+}
+
+.canoeParticipant:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
+.canoeAvatar,
+.canoeEmptyDot {
+  align-items: center;
+  border-radius: 50%;
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: center;
+}
+
+.canoeAvatar {
+  background:
+    linear-gradient(#091a2b, #101827) padding-box,
+    linear-gradient(135deg, var(--color-sea-500), var(--color-violet-500), var(--color-star-400)) border-box;
+  border: 2px solid transparent;
+  box-shadow: 0 0 24px rgba(31, 216, 229, 0.16);
+  color: var(--color-sea-300);
+  font-size: 1.02rem;
+  font-weight: 950;
+  height: clamp(44px, 12vw, 58px);
+  overflow: hidden;
+  width: clamp(44px, 12vw, 58px);
+}
+
+.canoeAvatar img {
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.canoeEmptyDot {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px dashed rgba(123, 243, 245, 0.22);
+  box-shadow: inset 0 0 18px rgba(141, 77, 255, 0.1);
+  height: clamp(40px, 11vw, 52px);
+  width: clamp(40px, 11vw, 52px);
+}
+
+.canoeName {
+  color: rgba(238, 248, 247, 0.82);
+  display: block;
+  font-size: clamp(0.72rem, 2.8vw, 0.82rem);
+  font-weight: 850;
+  line-height: 1.18;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+.canoeEmptySeat .canoeName {
+  color: rgba(238, 248, 247, 0.46);
+}
+
+.canoeNote {
+  color: rgba(238, 248, 247, 0.52);
+  font-size: 0.78rem;
+  line-height: 1.42;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
 .content {
   padding-bottom: 54px;
   padding-top: 0;

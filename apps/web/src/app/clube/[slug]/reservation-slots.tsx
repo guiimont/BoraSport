@@ -1,8 +1,5 @@
 "use client";
 
-import Link from "next/link";
-import { useState } from "react";
-
 import type { ActivityExperience } from "../../../lib/saas/activity-presets";
 import type {
   CompanySlot,
@@ -11,6 +8,7 @@ import type {
 } from "../../../types/saas";
 import { cancelSlotReservation, reserveSlot } from "./actions";
 import styles from "./club-page.module.css";
+import { ConfirmedParticipantsComposition } from "./confirmed-participants-composition";
 
 type ReservationSlotsProps = {
   companyId: string;
@@ -79,41 +77,6 @@ function groupSlotsByDay(slots: CompanySlot[]) {
   }
 
   return Array.from(grouped.values());
-}
-
-function ParticipantAvatar({ participant }: { participant: SlotParticipant }) {
-  const [failed, setFailed] = useState(false);
-  const initial = participant.name.slice(0, 1).toUpperCase();
-
-  if (!participant.avatar_url || failed) {
-    return <span className={styles.participantAvatar}>{initial}</span>;
-  }
-
-  return (
-    <span className={styles.participantAvatar}>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img alt="" onError={() => setFailed(true)} src={participant.avatar_url} />
-    </span>
-  );
-}
-
-function ParticipantList({ participants }: { participants: SlotParticipant[] }) {
-  return (
-    <div className={styles.participantList}>
-      {participants.map((participant) => (
-        <Link
-          aria-label={`Abrir perfil esportivo público de ${participant.name}`}
-          className={styles.participantChip}
-          href={`/remadores/${participant.public_profile_id}`}
-          key={`${participant.slot_id}-${participant.public_profile_id}`}
-          title={participant.name}
-        >
-          <ParticipantAvatar participant={participant} />
-          <span>{participant.name}</span>
-        </Link>
-      ))}
-    </div>
-  );
 }
 
 export function ReservationSlots({
@@ -203,24 +166,11 @@ export function ReservationSlots({
                   </div>
 
                   <div className={styles.participantsBlock}>
-                    <div>
-                      <p className={styles.participantsLabel}>
-                        Participantes confirmados
-                      </p>
-                      <p className={styles.participantsText}>
-                        {participants.length > 0
-                          ? `${participants.length} ${experience.participantLabel} confirmados`
-                          : `Seja o primeiro entre os ${experience.participantLabel}.`}
-                      </p>
-                    </div>
-
-                    {participants.length > 0 ? (
-                      <ParticipantList participants={participants} />
-                    ) : (
-                      <span className={styles.slotStatus}>
-                        Sem participantes ainda
-                      </span>
-                    )}
+                    <ConfirmedParticipantsComposition
+                      capacity={slot.spots_total}
+                      participantLabel={experience.participantLabel}
+                      participants={participants}
+                    />
                   </div>
 
                   {isBookedByCurrentUser ? (
