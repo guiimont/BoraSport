@@ -31,7 +31,7 @@ const defaultVocabulary: Required<VocabularyConfig> = {
   booking_label: "Reserva",
   professional_label: "Profissional",
   resource_label: "Recurso",
-  service_label: "Servico",
+  service_label: "Serviço",
 };
 
 function normalizeVocabulary(
@@ -77,7 +77,7 @@ function StatCard({
 
 function getUserLabel(user: Awaited<ReturnType<typeof getCurrentUser>>) {
   if (!user) {
-    return "Usuario";
+    return "Usuário";
   }
 
   const metadataName =
@@ -85,7 +85,7 @@ function getUserLabel(user: Awaited<ReturnType<typeof getCurrentUser>>) {
       ? user.user_metadata.name
       : null;
 
-  return metadataName || user.email || "Usuario Bora";
+  return metadataName || user.email || "Usuário Bora";
 }
 
 function ModuleCard({
@@ -163,8 +163,8 @@ export default async function AdminPage({ params }: AdminPageProps) {
           <p className={styles.eyebrow}>Primeiro administrador</p>
           <h1>{company.name}</h1>
           <p className={styles.muted}>
-            Este tenant ainda nao tem membros. Para operar o painel, assuma o
-            tenant com sua conta autenticada. Depois disso, o acesso passa a ser
+            Este clube ainda não tem membros. Para operar o painel, assuma o
+            clube com sua conta autenticada. Depois disso, o acesso passa a ser
             controlado por memberships e RLS.
           </p>
 
@@ -179,21 +179,21 @@ export default async function AdminPage({ params }: AdminPageProps) {
       <header className={styles.header}>
         <div className={styles.headerInner}>
           <div>
-            <p className={styles.eyebrow}>Bora SaaS / Painel do gestor</p>
+            <p className={styles.eyebrow}>BoraSport / Painel do gestor</p>
             <h1>{company.name}</h1>
             <p className={styles.headerText}>
-              Voce esta administrando o tenant <strong>{company.slug}</strong>.
+              Você está administrando o clube <strong>{company.slug}</strong>.
             </p>
             <div className={styles.sessionBar}>
               <span>Logado como {userLabel}</span>
               <span>Perfil: {role}</span>
-              <span>Modalidade: {company.type_de_negocio || "generico"}</span>
+              <span>Modalidade: {company.type_de_negocio || "genérico"}</span>
             </div>
           </div>
 
-          <nav className={styles.headerActions} aria-label="Acoes do gestor">
+          <nav className={styles.headerActions} aria-label="Ações do gestor">
             <Link className={styles.secondaryButton} href={`/clube/${company.slug}`}>
-              Ver pagina publica
+              Ver página pública
             </Link>
             <Link className={styles.primaryButtonLink} href="/perfil">
               Meu perfil
@@ -206,8 +206,8 @@ export default async function AdminPage({ params }: AdminPageProps) {
         <section className={styles.panel}>
           <div className={styles.sectionHead}>
             <div>
-              <p className={styles.eyebrow}>Ecossistema do tenant</p>
-              <h2>Modulos de gestao</h2>
+              <p className={styles.eyebrow}>Ecossistema do clube</p>
+              <h2>Módulos de gestão</h2>
               <p className={styles.muted}>
                 O agendamento continua sendo o centro. Os demais modulos
                 apoiam venda, atendimento, dados e relacionamento.
@@ -221,7 +221,7 @@ export default async function AdminPage({ params }: AdminPageProps) {
               title="Agenda e atividades"
             />
             <ModuleCard
-              description="Templates editaveis para paginas de venda do clube, planos e experiencias."
+              description="Templates editáveis para páginas de venda do clube, planos e experiências."
               status={landingPage?.is_published ? "Ativo" : "Base pronta"}
               title="Landing pages"
             />
@@ -238,7 +238,7 @@ export default async function AdminPage({ params }: AdminPageProps) {
           </div>
         </section>
 
-        <section className={styles.statGrid} aria-label="Resumo do tenant">
+        <section className={styles.statGrid} aria-label="Resumo do clube">
           <StatCard label={vocabulary.resource_label} value={resources.length} />
           <StatCard label={vocabulary.service_label} value={services.length} />
           <StatCard label="Horarios futuros" value={slots.length} />
@@ -251,8 +251,8 @@ export default async function AdminPage({ params }: AdminPageProps) {
               <p className={styles.eyebrow}>Add-on de vendas</p>
               <h2>Landing page</h2>
               <p className={styles.muted}>
-                Crie uma pagina simples de captacao integrada com a agenda do
-                tenant. Depois ela pode virar um plano cobrado a parte.
+                Crie uma página simples de captação integrada com a agenda do
+                clube. Depois ela pode virar um plano cobrado à parte.
               </p>
             </div>
             <Link className={styles.secondaryButton} href={`/site/${company.slug}`}>
@@ -269,16 +269,16 @@ export default async function AdminPage({ params }: AdminPageProps) {
         <section className={styles.panel}>
           <div className={styles.sectionHead}>
             <div>
-              <p className={styles.eyebrow}>Configuracao da atividade</p>
-              <h2>Vocabulario e nicho do tenant</h2>
+              <p className={styles.eyebrow}>Configuração da atividade</p>
+              <h2>Vocabulário e nicho do clube</h2>
               <p className={styles.muted}>
                 O Bora usa a mesma agenda para canoa, crossfit, pilates,
-                futvolei e outros nichos. O tenant define os termos e a
+                futvôlei e outros nichos. O clube define os termos e a
                 atividade aqui.
               </p>
             </div>
             <span className={styles.pill}>
-              {company.type_de_negocio || "generico"}
+              {company.type_de_negocio || "genérico"}
             </span>
           </div>
 
@@ -355,7 +355,7 @@ export default async function AdminPage({ params }: AdminPageProps) {
           <div className={styles.sectionHead}>
             <div>
               <p className={styles.eyebrow}>Agenda publicada</p>
-              <h2>Proximos horarios</h2>
+              <h2>Próximos horários</h2>
             </div>
           </div>
 

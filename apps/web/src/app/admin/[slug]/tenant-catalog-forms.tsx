@@ -95,7 +95,7 @@ export function TenantCatalogForms({
           <h2>Cadastros base do agendamento</h2>
           <p className={styles.muted}>
             Defina o que tem capacidade limitada e o que pode ser reservado.
-            Esses nomes mudam conforme o vocabulario do tenant.
+            Esses nomes mudam conforme o vocabulário do clube.
           </p>
         </div>
       </div>
@@ -173,7 +173,7 @@ export function TenantCatalogForms({
 
           <div className={styles.fieldGridTwo}>
             <label className={styles.label}>
-              Duracao em minutos
+              Duração em minutos
               <input
                 className={styles.input}
                 defaultValue="50"
@@ -299,7 +299,7 @@ export function TenantCatalogForms({
           </label>
 
           <label className={styles.label}>
-            Duracao em minutos
+            Duração em minutos
             <input
               className={styles.input}
               defaultValue={firstServiceDuration}
@@ -326,7 +326,7 @@ export function TenantCatalogForms({
             <h3>Treinos da semana</h3>
             <p className={styles.muted}>
               Publique o conteudo do treino que o aluno vai realizar em cada
-              dia. Isso e diferente da agenda de horarios.
+              dia. Isso é diferente da agenda de horários.
             </p>
           </div>
         </div>

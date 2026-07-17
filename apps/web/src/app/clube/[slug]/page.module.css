@@ -2,7 +2,7 @@
   --club-color: #0b7b71;
   background: linear-gradient(180deg, #e9f6f5 0%, var(--club-background) 44%, #ffffff 100%);
   color: #102331;
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--font-sans);
   margin: 0;
   min-height: 100vh;
   padding-bottom: 112px;

@@ -76,9 +76,9 @@ export default async function ClubPage({ params }: ClubPageProps) {
             <p className={styles.eyebrow}>{vocabulary.booking_label} online</p>
             <h1 className={styles.title}>{company.name}</h1>
             <p className={styles.lead}>{experience.agendaHint}</p>
-            <nav className={styles.contextNav} aria-label="Areas do Bora">
+            <nav className={styles.contextNav} aria-label="Áreas do Bora">
               <Link className={styles.contextLinkPrimary} href="/perfil">
-                Area do aluno
+                Área do aluno
               </Link>
               <Link className={styles.contextLink} href={`/admin/${company.slug}`}>
                 Painel do gestor
@@ -88,7 +88,7 @@ export default async function ClubPage({ params }: ClubPageProps) {
 
           <aside className={styles.nextCard}>
             <p className={styles.nextLabel}>
-              Proximo {vocabulary.service_label.toLowerCase()}
+              Próximo {vocabulary.service_label.toLowerCase()}
             </p>
             <h2 className={styles.nextTitle}>
               {nextSlot?.services?.name || "Sem vagas abertas"}

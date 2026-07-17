@@ -116,7 +116,7 @@ export function ReservationSlots({
                   </strong>
                 </div>
                 <div className={`${styles.stat} ${styles.statCenter}`}>
-                  <span>Duracao</span>
+                  <span>Duração</span>
                   <strong>{slot.services?.duration_minutes || "--"} min</strong>
                 </div>
                 <div className={`${styles.stat} ${styles.statCenter}`}>

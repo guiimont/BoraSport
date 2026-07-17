@@ -703,9 +703,9 @@ function AgendaPanel({
     <div>
       <div className={styles.agendaHeader}>
         <h2 className={styles.sectionTitle}>
-          {vocabulary.service_label}s disponiveis
+          {vocabulary.service_label}s disponíveis
         </h2>
-        <p className={styles.muted}>{slots.length} horarios publicados</p>
+        <p className={styles.muted}>{slots.length} horários publicados</p>
       </div>
 
       <ReservationSlots
@@ -816,16 +816,16 @@ function PromotionPanel() {
   return (
     <div className={styles.card}>
       <h2 className={styles.sectionTitle}>
-        Profissionais, produtos e servicos
+        Profissionais, produtos e serviços
       </h2>
       <div className={`${styles.tileGrid} ${styles.tileGridTwo}`}>
         <div className={styles.tile}>
           <strong>Fisioterapia esportiva</strong>
-          <p>Recuperacao e prevencao para remadores.</p>
+          <p>Recuperação e prevenção para remadores.</p>
         </div>
         <div className={styles.tile}>
           <strong>Equipamentos e parceiros</strong>
-          <p>Produtos, servicos e profissionais ligados ao clube.</p>
+          <p>Produtos, serviços e profissionais ligados ao clube.</p>
         </div>
       </div>
     </div>

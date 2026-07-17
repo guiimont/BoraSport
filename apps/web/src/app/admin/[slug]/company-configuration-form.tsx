@@ -28,8 +28,8 @@ const activityOptions = [
   ["pilates", "Studio de pilates"],
   ["futvolei", "CT de futvolei"],
   ["esporte", "Esporte / aulas em grupo"],
-  ["servicos", "Servicos com agenda"],
-  ["generico", "Generico"],
+  ["servicos", "Serviços com agenda"],
+  ["generico", "Genérico"],
 ];
 
 function SubmitButton() {

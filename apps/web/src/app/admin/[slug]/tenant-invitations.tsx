@@ -174,7 +174,7 @@ export function TenantInvitations({
               <th>Criado</th>
               <th>Expira</th>
               <th>Uso</th>
-              <th>Acoes</th>
+              <th>Ações</th>
             </tr>
           </thead>
           <tbody>
