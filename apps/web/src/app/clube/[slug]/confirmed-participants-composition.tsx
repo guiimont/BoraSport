@@ -184,13 +184,13 @@ function V6Composition({ seats }: { seats: Seat[] }) {
       >
         <path
           className={styles.v6Hull}
-          d="M170 24 C214 80 235 154 235 260 C235 366 214 454 170 496 C126 454 105 366 105 260 C105 154 126 80 170 24 Z"
+          d="M170 24 C207 80 225 154 225 260 C225 366 207 454 170 496 C133 454 115 366 115 260 C115 154 133 80 170 24 Z"
         />
-        <line className={styles.v6Iako} x1="72" x2="108" y1="170" y2="170" />
-        <line className={styles.v6Iako} x1="72" x2="108" y1="350" y2="350" />
+        <line className={styles.v6Iako} x1="86" x2="118" y1="170" y2="170" />
+        <line className={styles.v6Iako} x1="86" x2="118" y1="350" y2="350" />
         <path
           className={styles.v6Ama}
-          d="M60 70 C74 120 76 190 76 260 C76 330 74 400 60 450 C46 400 44 330 44 260 C44 190 46 120 60 70 Z"
+          d="M74 70 C86 120 88 190 88 260 C88 330 86 400 74 450 C62 400 60 330 60 260 C60 190 62 120 74 70 Z"
         />
 
         {seats.map(({ participant, seatKey }, index) => (
