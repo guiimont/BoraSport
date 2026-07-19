@@ -127,6 +127,10 @@ export type MembershipWithCompany = Membership & {
   companies: Pick<Company, "id" | "logo_url" | "name" | "slug"> | null;
 };
 
+export type CompanyMember = Membership & {
+  profile: Pick<Profile, "avatar_url" | "id" | "name"> | null;
+};
+
 export type CompanyInvitationStatus = "active" | "expired" | "revoked" | "used";
 
 export type CompanyInvitation = {

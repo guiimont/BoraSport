@@ -2,6 +2,7 @@ import type {
   Booking,
   Company,
   CompanyInvitation,
+  CompanyMember,
   CompanySlot,
   LandingPage,
   MembershipRole,
@@ -480,6 +481,37 @@ export async function getCompanyBookings(
   });
 
   return (restRows ?? []) as Booking[];
+}
+
+export async function getCompanyMembers(
+  companyId: string,
+): Promise<CompanyMember[]> {
+  const supabase = await createClient();
+
+  const { data: memberships, error } = await supabase
+    .from("memberships")
+    .select("id,user_id,company_id,role,created_at,updated_at")
+    .eq("company_id", companyId)
+    .order("created_at", { ascending: false });
+
+  if (error || !memberships || memberships.length === 0) {
+    return [];
+  }
+
+  const userIds = memberships.map((membership) => membership.user_id);
+  const { data: profiles } = await supabase
+    .from("profiles")
+    .select("id,name,avatar_url")
+    .in("id", userIds);
+
+  const profilesById = new Map(
+    (profiles ?? []).map((profile) => [profile.id, profile]),
+  );
+
+  return memberships.map((membership) => ({
+    ...membership,
+    profile: profilesById.get(membership.user_id) ?? null,
+  })) as CompanyMember[];
 }
 
 export async function getCurrentUser() {
