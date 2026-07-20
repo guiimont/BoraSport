@@ -8,6 +8,7 @@ import {
   getCompanyResources,
   getCompanyServices,
   getCompanySlots,
+  getCompanyTrainingLibrary,
 } from "../../../lib/saas/queries";
 import { ClaimCompanyForm } from "./claim-company-form";
 import { formatDateTime, getAdminContext } from "./admin-context";
@@ -70,8 +71,16 @@ export default async function AdminOverviewPage({ params }: AdminPageProps) {
     );
   }
 
-  const [resources, services, slots, bookings, landingPage, invitations, members] =
-    await Promise.all([
+  const [
+    resources,
+    services,
+    slots,
+    bookings,
+    landingPage,
+    invitations,
+    members,
+    trainingPlans,
+  ] = await Promise.all([
       getCompanyResources(company.id),
       getCompanyServices(company.id),
       getCompanySlots(company.id),
@@ -79,6 +88,7 @@ export default async function AdminOverviewPage({ params }: AdminPageProps) {
       getCompanyLandingPage(company.id),
       getCompanyInvitations(company.id),
       getCompanyMembers(company.id),
+      getCompanyTrainingLibrary(company.id),
     ]);
 
   const nextSlot = slots[0] ?? null;
@@ -155,9 +165,9 @@ export default async function AdminOverviewPage({ params }: AdminPageProps) {
           </Link>
           <Link
             className={styles.secondaryButton}
-            href={`/admin/${company.slug}/treinos#criar-treino`}
+            href={`/admin/${company.slug}/treinos/novo`}
           >
-            Criar {vocabulary.service_label.toLowerCase()}
+            Novo treino
           </Link>
         </div>
       </section>
@@ -168,7 +178,7 @@ export default async function AdminOverviewPage({ params }: AdminPageProps) {
         <StatCard label="Reservas recentes" value={confirmedBookings} />
         <StatCard label="Remadores vinculados" value={members.length} />
         <StatCard label={`${vocabulary.resource_label}s ativos`} value={resources.length} />
-        <StatCard label={`${vocabulary.service_label}s`} value={services.length} />
+        <StatCard label="Treinos estruturados" value={trainingPlans.length} />
         <StatCard label="Convites pendentes" value={pendingInvitations} />
         <StatCard
           label="Site do clube"
