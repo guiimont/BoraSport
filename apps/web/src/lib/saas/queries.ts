@@ -12,6 +12,10 @@ import type {
   Resource,
   Service,
   SlotParticipant,
+  TrainingBlock,
+  TrainingPlanLibraryItem,
+  TrainingPlanVersion,
+  TrainingPlanWithVersion,
   WeeklyWorkout,
 } from "../../types/saas";
 import { createClient } from "./supabase-server";
@@ -646,4 +650,161 @@ export async function getCompanyInvitations(
   }
 
   return (data ?? []) as CompanyInvitation[];
+}
+
+export async function getCompanyTrainingLibrary(
+  companyId: string,
+): Promise<TrainingPlanLibraryItem[]> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("training_plans")
+    .select(
+      `
+        id,
+        company_id,
+        title,
+        objective,
+        vessel_class,
+        default_duration_seconds,
+        group_label,
+        coach_id,
+        status,
+        created_by,
+        archived_at,
+        created_at,
+        updated_at,
+        training_plan_versions (
+          id,
+          version_number,
+          level,
+          status,
+          duration_seconds,
+          published_at
+        )
+      `,
+    )
+    .eq("company_id", companyId)
+    .order("updated_at", { ascending: false });
+
+  if (error) {
+    if (error.code === "42P01" || error.code === "42703") {
+      return [];
+    }
+
+    throw error;
+  }
+
+  return (data ?? []).map((plan) => ({
+    ...plan,
+    training_plan_versions: Array.isArray(plan.training_plan_versions)
+      ? plan.training_plan_versions
+      : [],
+  })) as TrainingPlanLibraryItem[];
+}
+
+export async function getTrainingPlanVersions(
+  trainingPlanId: string,
+): Promise<TrainingPlanVersion[]> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("training_plan_versions")
+    .select(
+      "id,company_id,training_plan_id,version_number,level,status,duration_seconds,technical_notes,safety_notes,published_at,created_by,created_at,updated_at",
+    )
+    .eq("training_plan_id", trainingPlanId)
+    .order("version_number", { ascending: false });
+
+  if (error) {
+    if (error.code === "42P01" || error.code === "42703") {
+      return [];
+    }
+
+    throw error;
+  }
+
+  return (data ?? []) as TrainingPlanVersion[];
+}
+
+export async function getTrainingPlanWithVersion({
+  companyId,
+  trainingPlanId,
+  versionId,
+}: {
+  companyId: string;
+  trainingPlanId: string;
+  versionId?: string | null;
+}): Promise<TrainingPlanWithVersion | null> {
+  const supabase = await createClient();
+
+  const { data: plan, error: planError } = await supabase
+    .from("training_plans")
+    .select(
+      "id,company_id,title,objective,vessel_class,default_duration_seconds,group_label,coach_id,status,created_by,archived_at,created_at,updated_at",
+    )
+    .eq("company_id", companyId)
+    .eq("id", trainingPlanId)
+    .maybeSingle();
+
+  if (planError) {
+    if (planError.code === "42P01" || planError.code === "42703") {
+      return null;
+    }
+
+    throw planError;
+  }
+
+  if (!plan) {
+    return null;
+  }
+
+  let versionQuery = supabase
+    .from("training_plan_versions")
+    .select(
+      "id,company_id,training_plan_id,version_number,level,status,duration_seconds,technical_notes,safety_notes,published_at,created_by,created_at,updated_at",
+    )
+    .eq("company_id", companyId)
+    .eq("training_plan_id", trainingPlanId);
+
+  if (versionId) {
+    versionQuery = versionQuery.eq("id", versionId);
+  } else {
+    versionQuery = versionQuery.order("version_number", { ascending: false }).limit(1);
+  }
+
+  const { data: versions, error: versionError } = await versionQuery;
+
+  if (versionError) {
+    throw versionError;
+  }
+
+  const version = (versions?.[0] ?? null) as TrainingPlanVersion | null;
+
+  if (!version) {
+    return {
+      blocks: [],
+      plan: plan as TrainingPlanWithVersion["plan"],
+      version: null,
+    };
+  }
+
+  const { data: blocks, error: blocksError } = await supabase
+    .from("training_blocks")
+    .select(
+      "id,company_id,training_plan_version_id,parent_block_id,block_kind,block_type,name,instruction,sort_order,duration_seconds,bora_zone,heart_rate_min,heart_rate_max,repeat_count,target_type,target_value,created_at,updated_at",
+    )
+    .eq("company_id", companyId)
+    .eq("training_plan_version_id", version.id)
+    .order("sort_order", { ascending: true });
+
+  if (blocksError) {
+    throw blocksError;
+  }
+
+  return {
+    blocks: (blocks ?? []) as TrainingBlock[],
+    plan: plan as TrainingPlanWithVersion["plan"],
+    version,
+  };
 }
