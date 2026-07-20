@@ -1,6 +1,13 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
+import {
+  useActionState,
+  useEffect,
+  useState,
+  type InputHTMLAttributes,
+  type ReactNode,
+  type SelectHTMLAttributes,
+} from "react";
 import { useRouter } from "next/navigation";
 import { useFormStatus } from "react-dom";
 
@@ -20,6 +27,10 @@ type CatalogFormProps = {
   companyId: string;
   slug: string;
   vocabulary: Required<VocabularyConfig>;
+};
+
+type ServiceFormProps = CatalogFormProps & {
+  variant?: "catalog" | "trainingQuick";
 };
 
 type SlotFormProps = CatalogFormProps & {
@@ -51,6 +62,121 @@ function Feedback({ state }: { state: AdminFormState }) {
   }
 
   return null;
+}
+
+function FormSection({
+  children,
+  description,
+  title,
+}: {
+  children: ReactNode;
+  description?: string;
+  title: string;
+}) {
+  return (
+    <section className={styles.formSection}>
+      <div>
+        <h3>{title}</h3>
+        {description ? <p className={styles.muted}>{description}</p> : null}
+      </div>
+      <div className={styles.formSectionFields}>{children}</div>
+    </section>
+  );
+}
+
+type AdminInputProps = InputHTMLAttributes<HTMLInputElement> & {
+  help?: string;
+  label: string;
+};
+
+function TextField({ help, label, ...inputProps }: AdminInputProps) {
+  return (
+    <label className={styles.label}>
+      {label}
+      <input className={styles.input} {...inputProps} />
+      {help ? <span className={styles.fieldHelp}>{help}</span> : null}
+    </label>
+  );
+}
+
+function DateField({ help, label, ...inputProps }: AdminInputProps) {
+  return (
+    <label className={styles.label}>
+      {label}
+      <span className={styles.dateFieldShell}>
+        <input className={styles.dateInput} type="date" {...inputProps} />
+        <span aria-hidden="true" className={styles.dateFieldIcon}>
+          <svg viewBox="0 0 24 24" focusable="false">
+            <path d="M7 3v3M17 3v3M4 9h16M6 5h12a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" />
+          </svg>
+        </span>
+      </span>
+      {help ? <span className={styles.fieldHelp}>{help}</span> : null}
+    </label>
+  );
+}
+
+function NumberField({ help, label, ...inputProps }: AdminInputProps) {
+  return (
+    <label className={styles.label}>
+      {label}
+      <span className={styles.numberFieldShell}>
+        <input className={styles.numberInput} type="number" {...inputProps} />
+        <span className={styles.numberFieldUnit}>min</span>
+      </span>
+      {help ? <span className={styles.fieldHelp}>{help}</span> : null}
+    </label>
+  );
+}
+
+function SelectField({
+  children,
+  help,
+  label,
+  ...selectProps
+}: SelectHTMLAttributes<HTMLSelectElement> & {
+  help?: string;
+  label: string;
+}) {
+  return (
+    <label className={styles.label}>
+      {label}
+      <select className={styles.select} {...selectProps}>
+        {children}
+      </select>
+      {help ? <span className={styles.fieldHelp}>{help}</span> : null}
+    </label>
+  );
+}
+
+function getWeekdayFromDate(date: string) {
+  if (!date) {
+    return null;
+  }
+
+  const parsedDate = new Date(`${date}T00:00:00`);
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    return null;
+  }
+
+  const day = parsedDate.getDay();
+
+  return day === 0 ? "7" : String(day);
+}
+
+function getWeekdayLabel(value: string | null) {
+  const labels: Record<string, string> = {
+    "1": "Segunda-feira",
+    "2": "Terça-feira",
+    "3": "Quarta-feira",
+    "4": "Quinta-feira",
+    "5": "Sexta-feira",
+    "6": "Sábado",
+    "7": "Domingo",
+  };
+
+  return value ? labels[value] : "Escolha uma data";
 }
 
 function useRefreshOnSuccess(state: AdminFormState) {
@@ -107,12 +233,23 @@ export function ResourceForm({ companyId, slug, vocabulary }: CatalogFormProps) 
   );
 }
 
-export function ServiceForm({ companyId, slug, vocabulary }: CatalogFormProps) {
+export function ServiceForm({
+  companyId,
+  slug,
+  variant = "catalog",
+  vocabulary,
+}: ServiceFormProps) {
   const [state, action] = useActionState(saveService, initialState);
   useRefreshOnSuccess(state);
+  const isTrainingQuick = variant === "trainingQuick";
 
   return (
-    <form action={action} className={styles.subForm}>
+    <form
+      action={action}
+      className={`${styles.subForm} ${
+        isTrainingQuick ? styles.trainingQuickForm : ""
+      }`}
+    >
       <input name="companyId" type="hidden" value={companyId} />
       <input name="slug" type="hidden" value={slug} />
       <input
@@ -121,54 +258,56 @@ export function ServiceForm({ companyId, slug, vocabulary }: CatalogFormProps) {
         value={vocabulary.service_label}
       />
 
-      <h3>Novo {vocabulary.service_label}</h3>
-      <p className={styles.muted}>
-        Isso cria o tipo de {vocabulary.service_label.toLowerCase()}. Para
-        aparecer para os remadores, publique um horário na agenda.
-      </p>
+      {isTrainingQuick ? null : <h3>Novo {vocabulary.service_label}</h3>}
 
-      <label className={styles.label}>
-        Nome
-        <input
-          className={styles.input}
+      <FormSection
+        description={
+          isTrainingQuick
+            ? "Use este cadastro para opções simples da agenda. O construtor estruturado virá depois."
+            : `Isso cria o tipo de ${vocabulary.service_label.toLowerCase()} usado na agenda.`
+        }
+        title={isTrainingQuick ? "Dados esportivos" : "Dados principais"}
+      >
+        <TextField
+          label="Nome"
           name="name"
           placeholder={`${vocabulary.service_label} padrão`}
         />
-      </label>
 
-      <label className={styles.label}>
-        Descrição
-        <input
-          className={styles.input}
+        <TextField
+          label="Descrição"
           name="description"
           placeholder="Resumo curto para o remador"
         />
-      </label>
 
-      <div className={styles.fieldGridTwo}>
-        <label className={styles.label}>
-          Duração em minutos
-          <input
-            className={styles.input}
-            defaultValue="50"
-            min="5"
-            name="durationMinutes"
-            type="number"
-          />
-        </label>
+        <NumberField
+          defaultValue="50"
+          help="Duração prevista em minutos."
+          label="Duração"
+          min="5"
+          name="durationMinutes"
+        />
+      </FormSection>
 
+      <FormSection
+        description="Mantido por compatibilidade com o catálogo atual. Use 0 quando não houver cobrança associada."
+        title="Configuração comercial"
+      >
         <label className={styles.label}>
           Preço
-          <input
-            className={styles.input}
-            defaultValue="0"
-            min="0"
-            name="price"
-            step="0.01"
-            type="number"
-          />
+          <span className={styles.priceFieldShell}>
+            <span>R$</span>
+            <input
+              className={styles.priceInput}
+              defaultValue="0"
+              min="0"
+              name="price"
+              step="0.01"
+              type="number"
+            />
+          </span>
         </label>
-      </div>
+      </FormSection>
 
       <div className={styles.actionRow}>
         <SubmitButton label={`Cadastrar ${vocabulary.service_label}`} />
@@ -480,69 +619,73 @@ export function WeeklySlotsForm({
 export function WeeklyWorkoutForm({ companyId, slug }: CatalogFormProps) {
   const [state, action] = useActionState(saveWeeklyWorkout, initialState);
   useRefreshOnSuccess(state);
+  const [selectedDate, setSelectedDate] = useState("");
+  const weekdayValue = getWeekdayFromDate(selectedDate);
 
   return (
-    <form action={action} className={styles.subForm}>
+    <form action={action} className={`${styles.subForm} ${styles.weeklyWorkoutForm}`}>
       <input name="companyId" type="hidden" value={companyId} />
       <input name="slug" type="hidden" value={slug} />
 
-      <div className={styles.sectionHead}>
-        <div>
-          <h3>Treinos da semana</h3>
-          <p className={styles.muted}>
-            Publique o conteúdo técnico que o remador vai realizar em cada dia.
-          </p>
-        </div>
-      </div>
-
-      <div className={styles.fieldGridFour}>
-        <label className={styles.label}>
-          Semana
-          <input
-            className={styles.input}
+      <FormSection
+        description="Publique o conteúdo técnico que o remador vai realizar no dia."
+        title="Programação"
+      >
+        <div className={styles.weekPlanGrid}>
+          <DateField
+            label="Data"
             name="workoutWeekStartDate"
-            type="date"
+            onChange={(event) => setSelectedDate(event.currentTarget.value)}
           />
-        </label>
 
-        <label className={styles.label}>
-          Dia
-          <select className={styles.select} name="workoutWeekday">
-            <option value="1">Segunda</option>
-            <option value="2">Terça</option>
-            <option value="3">Quarta</option>
-            <option value="4">Quinta</option>
-            <option value="5">Sexta</option>
-            <option value="6">Sábado</option>
-            <option value="7">Domingo</option>
-          </select>
-        </label>
+          <div className={styles.label}>
+            Dia da semana
+            {weekdayValue ? (
+              <>
+                <input name="workoutWeekday" type="hidden" value={weekdayValue} />
+                <div className={styles.derivedField}>
+                  {getWeekdayLabel(weekdayValue)}
+                </div>
+              </>
+            ) : (
+              <SelectField label="Escolha manualmente" name="workoutWeekday">
+                <option value="1">Segunda</option>
+                <option value="2">Terça</option>
+                <option value="3">Quarta</option>
+                <option value="4">Quinta</option>
+                <option value="5">Sexta</option>
+                <option value="6">Sábado</option>
+                <option value="7">Domingo</option>
+              </SelectField>
+            )}
+          </div>
 
-        <label className={styles.label}>
-          Nome do treino
-          <input
-            className={styles.input}
+          <TextField
+            label="Treino"
             name="workoutTitle"
             placeholder="Treino de tiro, giro, técnico..."
           />
+
+          <FileField
+            actionLabel="Selecionar arquivo"
+            className={styles.weeklyFileField}
+            label="Anexo opcional"
+            name="workoutAttachment"
+          />
+        </div>
+      </FormSection>
+
+      <FormSection title="Instruções">
+        <label className={styles.label}>
+          Orientação para os remadores
+          <textarea
+            className={styles.textarea}
+            name="workoutDescription"
+            placeholder="Ex: aquecimento 10 min, 8 tiros de 2 min forte por 1 min leve..."
+            rows={5}
+          />
         </label>
-
-        <FileField
-          actionLabel="Selecionar arquivo"
-          label="Arquivo"
-          name="workoutAttachment"
-        />
-      </div>
-
-      <label className={styles.label}>
-        Descrição / instruções
-        <textarea
-          className={styles.textarea}
-          name="workoutDescription"
-          placeholder="Ex: aquecimento 10 min, 8 tiros de 2 min forte por 1 min leve..."
-          rows={5}
-        />
-      </label>
+      </FormSection>
 
       <div className={styles.actionRow}>
         <SubmitButton label="Publicar treino da semana" />

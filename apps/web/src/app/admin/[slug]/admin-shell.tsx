@@ -19,6 +19,7 @@ type AdminShellProps = {
   children: ReactNode;
   context: AdminContext;
   eyebrow?: string;
+  showSessionBar?: boolean;
   subtitle?: string;
   title: string;
 };
@@ -42,6 +43,7 @@ export function AdminShell({
   children,
   context,
   eyebrow = "Painel do gestor",
+  showSessionBar = true,
   subtitle,
   title,
 }: AdminShellProps) {
@@ -84,11 +86,13 @@ export function AdminShell({
               <p className={styles.eyebrow}>{eyebrow}</p>
               <h1>{title}</h1>
               {subtitle ? <p className={styles.headerText}>{subtitle}</p> : null}
-              <div className={styles.sessionBar}>
-                <span>{userLabel}</span>
-                <span>Perfil: {role || "sem vínculo"}</span>
-                <span>{company.type_de_negocio || "va'a"}</span>
-              </div>
+              {showSessionBar ? (
+                <div className={styles.sessionBar}>
+                  <span>{userLabel}</span>
+                  <span>Perfil: {role || "sem vínculo"}</span>
+                  <span>{company.type_de_negocio || "va'a"}</span>
+                </div>
+              ) : null}
             </div>
 
             <div className={styles.topbarActions}>

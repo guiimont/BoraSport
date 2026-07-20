@@ -23,34 +23,49 @@ export default async function AdminTrainingPage({
     getCompanyServices(company.id),
     getCompanyWeeklyWorkouts(company.id),
   ]);
+  const nextPublishedWorkout = weeklyWorkouts[0] ?? null;
 
   return (
     <AdminShell
       active="treinos"
       context={context}
-      subtitle="Organize o catálogo de treinos e o conteúdo técnico da semana."
+      eyebrow="Planejamento esportivo"
+      showSessionBar={false}
+      subtitle="Planeje a semana, publique orientações e mantenha uma biblioteca simples de treinos."
       title="Treinos"
     >
-      <section className={styles.catalogGrid}>
-        <article className={styles.panel} id="criar-treino">
-          <div className={styles.sectionHead}>
-            <div>
-              <p className={styles.eyebrow}>Catálogo</p>
-              <h2>Novo {vocabulary.service_label.toLowerCase()}</h2>
-            </div>
-          </div>
-          <ServiceForm
-            companyId={company.id}
-            slug={company.slug}
-            vocabulary={vocabulary}
-          />
+      <section className={styles.trainingSummary} aria-label="Resumo de treinos">
+        <article className={styles.trainingStatCard}>
+          <span>Biblioteca</span>
+          <strong>{services.length}</strong>
+          <p>treinos cadastrados</p>
         </article>
+        <article className={styles.trainingStatCard}>
+          <span>Semana</span>
+          <strong>{weeklyWorkouts.length}</strong>
+          <p>publicações ativas</p>
+        </article>
+        <article className={styles.trainingStatCardWide}>
+          <span>Próximo publicado</span>
+          <strong>{nextPublishedWorkout?.title ?? "Nenhum treino publicado"}</strong>
+          <p>
+            {nextPublishedWorkout
+              ? `Dia ${nextPublishedWorkout.weekday}`
+              : "Use o plano da semana para orientar os remadores."}
+          </p>
+        </article>
+      </section>
 
-        <article className={styles.panel}>
-          <div className={styles.sectionHead}>
+      <section className={styles.trainingWorkspace}>
+        <article className={styles.trainingPrimaryPanel}>
+          <div className={styles.sectionHeadBalanced}>
             <div>
               <p className={styles.eyebrow}>Semana</p>
-              <h2>Plano de treino</h2>
+              <h2>Plano da semana</h2>
+              <p className={styles.muted}>
+                Publique o treino que o remador vai encontrar antes de chegar na
+                base.
+              </p>
             </div>
           </div>
           <WeeklyWorkoutForm
@@ -59,51 +74,90 @@ export default async function AdminTrainingPage({
             vocabulary={vocabulary}
           />
         </article>
+
+        <aside className={styles.trainingSidePanel} id="criar-treino">
+          <div className={styles.sectionHeadBalanced}>
+            <div>
+              <p className={styles.eyebrow}>Biblioteca</p>
+              <h2>Treino rápido</h2>
+              <p className={styles.muted}>
+                Cadastre uma opção básica para publicar na agenda.
+              </p>
+            </div>
+          </div>
+          <ServiceForm
+            companyId={company.id}
+            slug={company.slug}
+            variant="trainingQuick"
+            vocabulary={vocabulary}
+          />
+        </aside>
       </section>
 
-      <section className={styles.twoColumn}>
+      <section className={styles.trainingLists}>
         <article className={styles.panel}>
-          <h2>{vocabulary.service_label}s cadastrados</h2>
+          <div className={styles.sectionHeadBalanced}>
+            <div>
+              <p className={styles.eyebrow}>Biblioteca</p>
+              <h2>Biblioteca atual</h2>
+            </div>
+            {services.length === 0 ? (
+              <a className={styles.secondaryButton} href="#criar-treino">
+                Criar primeiro treino
+              </a>
+            ) : null}
+          </div>
           <div className={styles.list}>
             {services.length > 0 ? (
               services.map((service) => (
-                <div className={styles.listItemVertical} key={service.id}>
-                  <div className={styles.listItem}>
+                <div className={styles.trainingListItem} key={service.id}>
+                  <div>
                     <strong>{service.name}</strong>
-                    <span>{service.duration_minutes} min</span>
+                    {service.description ? (
+                      <p className={styles.itemDescription}>
+                        {service.description}
+                      </p>
+                    ) : null}
                   </div>
-                  {service.description ? (
-                    <p className={styles.itemDescription}>{service.description}</p>
-                  ) : null}
+                  <span>{service.duration_minutes} min</span>
                 </div>
               ))
             ) : (
-              <p className={styles.empty}>
-                Nenhum {vocabulary.service_label.toLowerCase()} cadastrado.
-              </p>
+              <div className={styles.emptyStateCompact}>
+                <strong>Nenhum treino cadastrado.</strong>
+                <p>Crie um treino rápido para começar a publicar horários.</p>
+              </div>
             )}
           </div>
         </article>
 
         <article className={styles.panel}>
-          <h2>Treinos da semana</h2>
+          <div className={styles.sectionHeadBalanced}>
+            <div>
+              <p className={styles.eyebrow}>Publicados</p>
+              <h2>Treinos da semana</h2>
+            </div>
+          </div>
           <div className={styles.list}>
             {weeklyWorkouts.length > 0 ? (
               weeklyWorkouts.map((workout) => (
-                <div className={styles.listItemVertical} key={workout.id}>
-                  <div className={styles.listItem}>
+                <div className={styles.trainingListItem} key={workout.id}>
+                  <div>
                     <strong>{workout.title}</strong>
-                    <span>dia {workout.weekday}</span>
+                    {workout.description ? (
+                      <p className={styles.itemDescription}>
+                        {workout.description}
+                      </p>
+                    ) : null}
                   </div>
-                  {workout.description ? (
-                    <p className={styles.itemDescription}>
-                      {workout.description}
-                    </p>
-                  ) : null}
+                  <span>Dia {workout.weekday}</span>
                 </div>
               ))
             ) : (
-              <p className={styles.empty}>Nenhum treino semanal publicado.</p>
+              <div className={styles.emptyStateCompact}>
+                <strong>Nenhum treino publicado nesta semana.</strong>
+                <p>Use o plano da semana para publicar a orientação do dia.</p>
+              </div>
             )}
           </div>
         </article>
