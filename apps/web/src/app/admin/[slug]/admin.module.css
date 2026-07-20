@@ -438,6 +438,198 @@
   overflow-wrap: anywhere;
 }
 
+.trainingLibraryHeader,
+.trainingToolbar,
+.trainingPlanCard,
+.trainingEmptyState {
+  background:
+    radial-gradient(circle at 92% 8%, rgba(31, 216, 229, 0.09), transparent 14rem),
+    linear-gradient(180deg, rgba(20, 19, 31, 0.94), rgba(10, 17, 30, 0.96));
+  border: 1px solid rgba(182, 140, 255, 0.2);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-night-card), 0 0 34px rgba(141, 77, 255, 0.08);
+  color: var(--text-inverse);
+  min-width: 0;
+}
+
+.trainingLibraryHeader {
+  align-items: flex-start;
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+  padding: clamp(18px, 2.6vw, 26px);
+}
+
+.trainingLibraryHeader > div {
+  min-width: 0;
+}
+
+.trainingLibraryHeader h2,
+.trainingEmptyState h2 {
+  color: #ffffff;
+  font-size: clamp(1.8rem, 3vw, 2.7rem);
+  line-height: 1.04;
+  margin: 6px 0 0;
+  overflow-wrap: anywhere;
+}
+
+.trainingToolbar {
+  align-items: end;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(220px, 1.5fr) repeat(3, minmax(150px, 0.8fr)) auto;
+  padding: 14px;
+}
+
+.trainingToolbar label,
+.trainingSearchField {
+  color: rgba(238, 248, 247, 0.76);
+  display: grid;
+  font-size: 0.82rem;
+  font-weight: 800;
+  gap: 7px;
+  min-width: 0;
+}
+
+.trainingToolbar input,
+.trainingToolbar select {
+  background: rgba(5, 12, 23, 0.78);
+  border: 1px solid rgba(182, 140, 255, 0.22);
+  border-radius: 12px;
+  color: #ffffff;
+  font: inherit;
+  min-height: 42px;
+  min-width: 0;
+  padding: 0 12px;
+  width: 100%;
+}
+
+.trainingToolbar input:focus,
+.trainingToolbar select:focus {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
+.trainingLibraryList {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+.trainingPlanCard {
+  display: grid;
+  gap: 16px;
+  padding: clamp(16px, 2.2vw, 22px);
+}
+
+.trainingPlanMain {
+  align-items: flex-start;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.trainingPlanMain > div:first-child {
+  min-width: 0;
+}
+
+.trainingPlanCard h3 {
+  color: #ffffff;
+  font-size: clamp(1.25rem, 2vw, 1.65rem);
+  line-height: 1.12;
+  margin: 8px 0 0;
+  overflow-wrap: anywhere;
+}
+
+.trainingPlanCard p {
+  color: rgba(238, 248, 247, 0.62);
+  line-height: 1.5;
+  margin: 8px 0 0;
+  overflow-wrap: anywhere;
+}
+
+.trainingPlanVessel,
+.trainingPlanBadges span {
+  border-radius: 999px;
+  display: inline-flex;
+  font-size: 0.74rem;
+  font-weight: 850;
+  line-height: 1.2;
+  padding: 7px 10px;
+}
+
+.trainingPlanVessel {
+  background: rgba(31, 216, 229, 0.1);
+  border: 1px solid rgba(123, 243, 245, 0.2);
+  color: #c8fbfb;
+}
+
+.trainingPlanBadges {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.trainingPlanBadges span {
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid rgba(182, 140, 255, 0.2);
+  color: rgba(238, 248, 247, 0.82);
+}
+
+.trainingPlanMeta {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0;
+}
+
+.trainingPlanMeta div {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(123, 243, 245, 0.11);
+  border-radius: 14px;
+  min-width: 0;
+  padding: 12px;
+}
+
+.trainingPlanMeta dt {
+  color: rgba(238, 248, 247, 0.5);
+  font-size: 0.72rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.trainingPlanMeta dd {
+  color: #ffffff;
+  font-weight: 850;
+  margin: 6px 0 0;
+  overflow-wrap: anywhere;
+}
+
+.trainingPlanActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.trainingEmptyState {
+  display: grid;
+  gap: 12px;
+  justify-items: start;
+  padding: clamp(22px, 4vw, 34px);
+}
+
+.trainingEmptyState p {
+  color: rgba(238, 248, 247, 0.64);
+  line-height: 1.5;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
 .statGrid,
 .moduleGrid {
   display: grid;
@@ -1080,7 +1272,8 @@
 @media (max-width: 1120px) {
   .trainingSummary,
   .trainingWorkspace,
-  .trainingLists {
+  .trainingLists,
+  .trainingToolbar {
     grid-template-columns: 1fr;
   }
 
@@ -1089,6 +1282,10 @@
   }
 
   .weekPlanGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .trainingPlanMeta {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -1124,7 +1321,8 @@
   .topbarActions,
   .primaryButton,
   .primaryButtonLink,
-  .secondaryButton {
+  .secondaryButton,
+  .trainingToolbar button {
     width: 100%;
   }
 
@@ -1172,6 +1370,17 @@
 
   .moduleCard {
     min-height: auto;
+  }
+
+  .trainingLibraryHeader,
+  .trainingPlanMain {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .trainingPlanBadges,
+  .trainingPlanActions {
+    justify-content: flex-start;
   }
 
   .listItem {
@@ -1248,5 +1457,9 @@
 
   .formSection {
     padding: 12px;
+  }
+
+  .trainingPlanMeta {
+    grid-template-columns: 1fr;
   }
 }

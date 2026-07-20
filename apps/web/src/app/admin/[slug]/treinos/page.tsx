@@ -1,29 +1,120 @@
-import {
-  getCompanyServices,
-  getCompanyWeeklyWorkouts,
-} from "../../../../lib/saas/queries";
+import Link from "next/link";
+
+import { getCompanyTrainingLibrary } from "../../../../lib/saas/queries";
+import type {
+  TrainingPlanLibraryItem,
+  TrainingPlanStatus,
+  TrainingVersionLevel,
+  TrainingVersionStatus,
+  VesselClass,
+} from "../../../../types/saas";
 import { getManageAdminContext } from "../admin-context";
 import { AdminShell } from "../admin-shell";
 import styles from "../admin.module.css";
-import { ServiceForm, WeeklyWorkoutForm } from "../tenant-catalog-forms";
 
 type AdminTrainingPageProps = {
   params: Promise<{
     slug: string;
   }>;
+  searchParams?: Promise<{
+    embarcacao?: string;
+    nivel?: string;
+    q?: string;
+    status?: string;
+  }>;
 };
+
+const statusLabels: Record<TrainingPlanStatus | TrainingVersionStatus, string> = {
+  active: "Ativo",
+  archived: "Arquivado",
+  draft: "Rascunho",
+  published: "Publicado",
+};
+
+const levelLabels: Record<TrainingVersionLevel, string> = {
+  avancado: "Avançado",
+  competicao: "Competição",
+  iniciante: "Iniciante",
+  intermediario: "Intermediário",
+  personalizado: "Personalizado",
+};
+
+const vesselLabels: Record<VesselClass, string> = {
+  oc1: "OC1",
+  oc4: "OC4",
+  oc6: "OC6",
+  outro: "Outro",
+  v1: "V1",
+  v3: "V3",
+  v6: "V6",
+};
+
+function formatDate(value: string) {
+  return new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  }).format(new Date(value));
+}
+
+function formatDuration(seconds: number | null | undefined) {
+  if (!seconds) {
+    return "Duração não definida";
+  }
+
+  return `${Math.round(seconds / 60)} min`;
+}
+
+function getLatestVersion(plan: TrainingPlanLibraryItem) {
+  return [...plan.training_plan_versions].sort(
+    (a, b) => b.version_number - a.version_number,
+  )[0];
+}
+
+function applyFilters(
+  plans: TrainingPlanLibraryItem[],
+  filters: {
+    embarcacao: string;
+    nivel: string;
+    q: string;
+    status: string;
+  },
+) {
+  return plans.filter((plan) => {
+    const latestVersion = getLatestVersion(plan);
+    const normalizedQuery = filters.q.toLowerCase();
+    const matchesQuery =
+      !normalizedQuery ||
+      plan.title.toLowerCase().includes(normalizedQuery) ||
+      (plan.objective?.toLowerCase().includes(normalizedQuery) ?? false);
+    const matchesStatus =
+      !filters.status ||
+      plan.status === filters.status ||
+      latestVersion?.status === filters.status;
+    const matchesLevel = !filters.nivel || latestVersion?.level === filters.nivel;
+    const matchesVessel =
+      !filters.embarcacao || plan.vessel_class === filters.embarcacao;
+
+    return matchesQuery && matchesStatus && matchesLevel && matchesVessel;
+  });
+}
 
 export default async function AdminTrainingPage({
   params,
+  searchParams,
 }: AdminTrainingPageProps) {
   const { slug } = await params;
+  const filtersInput = (await searchParams) ?? {};
   const context = await getManageAdminContext(slug);
-  const { company, vocabulary } = context;
-  const [services, weeklyWorkouts] = await Promise.all([
-    getCompanyServices(company.id),
-    getCompanyWeeklyWorkouts(company.id),
-  ]);
-  const nextPublishedWorkout = weeklyWorkouts[0] ?? null;
+  const { company } = context;
+  const trainingPlans = await getCompanyTrainingLibrary(company.id);
+  const filters = {
+    embarcacao: filtersInput.embarcacao ?? "",
+    nivel: filtersInput.nivel ?? "",
+    q: filtersInput.q ?? "",
+    status: filtersInput.status ?? "",
+  };
+  const filteredPlans = applyFilters(trainingPlans, filters);
 
   return (
     <AdminShell
@@ -31,137 +122,171 @@ export default async function AdminTrainingPage({
       context={context}
       eyebrow="Planejamento esportivo"
       showSessionBar={false}
-      subtitle="Planeje a semana, publique orientações e mantenha uma biblioteca simples de treinos."
+      subtitle="Crie, versiona e publique prescrições estruturadas para os treinos do clube."
       title="Treinos"
     >
-      <section className={styles.trainingSummary} aria-label="Resumo de treinos">
-        <article className={styles.trainingStatCard}>
-          <span>Biblioteca</span>
-          <strong>{services.length}</strong>
-          <p>treinos cadastrados</p>
-        </article>
-        <article className={styles.trainingStatCard}>
-          <span>Semana</span>
-          <strong>{weeklyWorkouts.length}</strong>
-          <p>publicações ativas</p>
-        </article>
-        <article className={styles.trainingStatCardWide}>
-          <span>Próximo publicado</span>
-          <strong>{nextPublishedWorkout?.title ?? "Nenhum treino publicado"}</strong>
-          <p>
-            {nextPublishedWorkout
-              ? `Dia ${nextPublishedWorkout.weekday}`
-              : "Use o plano da semana para orientar os remadores."}
+      <section className={styles.trainingLibraryHeader}>
+        <div>
+          <p className={styles.eyebrow}>Biblioteca estruturada</p>
+          <h2>Treinos criados</h2>
+          <p className={styles.muted}>
+            A agenda define data, horário, turma e canoa. Aqui ficam os treinos
+            estruturados que poderão ser reutilizados depois.
           </p>
-        </article>
+        </div>
+        <Link
+          className={styles.primaryButtonLink}
+          href={`/admin/${company.slug}/treinos/novo`}
+        >
+          Novo treino
+        </Link>
       </section>
 
-      <section className={styles.trainingWorkspace}>
-        <article className={styles.trainingPrimaryPanel}>
-          <div className={styles.sectionHeadBalanced}>
-            <div>
-              <p className={styles.eyebrow}>Semana</p>
-              <h2>Plano da semana</h2>
-              <p className={styles.muted}>
-                Publique o treino que o remador vai encontrar antes de chegar na
-                base.
-              </p>
-            </div>
-          </div>
-          <WeeklyWorkoutForm
-            companyId={company.id}
-            slug={company.slug}
-            vocabulary={vocabulary}
+      <form className={styles.trainingToolbar}>
+        <label className={styles.trainingSearchField}>
+          <span>Buscar</span>
+          <input
+            defaultValue={filters.q}
+            name="q"
+            placeholder="Nome ou objetivo"
+            type="search"
           />
-        </article>
+        </label>
 
-        <aside className={styles.trainingSidePanel} id="criar-treino">
-          <div className={styles.sectionHeadBalanced}>
-            <div>
-              <p className={styles.eyebrow}>Biblioteca</p>
-              <h2>Treino rápido</h2>
-              <p className={styles.muted}>
-                Cadastre uma opção básica para publicar na agenda.
-              </p>
-            </div>
-          </div>
-          <ServiceForm
-            companyId={company.id}
-            slug={company.slug}
-            variant="trainingQuick"
-            vocabulary={vocabulary}
-          />
-        </aside>
-      </section>
+        <label>
+          <span>Status</span>
+          <select defaultValue={filters.status} name="status">
+            <option value="">Todos</option>
+            <option value="active">Ativo</option>
+            <option value="draft">Rascunho</option>
+            <option value="published">Publicado</option>
+            <option value="archived">Arquivado</option>
+          </select>
+        </label>
 
-      <section className={styles.trainingLists}>
-        <article className={styles.panel}>
-          <div className={styles.sectionHeadBalanced}>
-            <div>
-              <p className={styles.eyebrow}>Biblioteca</p>
-              <h2>Biblioteca atual</h2>
-            </div>
-            {services.length === 0 ? (
-              <a className={styles.secondaryButton} href="#criar-treino">
-                Criar primeiro treino
-              </a>
-            ) : null}
-          </div>
-          <div className={styles.list}>
-            {services.length > 0 ? (
-              services.map((service) => (
-                <div className={styles.trainingListItem} key={service.id}>
-                  <div>
-                    <strong>{service.name}</strong>
-                    {service.description ? (
-                      <p className={styles.itemDescription}>
-                        {service.description}
+        <label>
+          <span>Nível</span>
+          <select defaultValue={filters.nivel} name="nivel">
+            <option value="">Todos</option>
+            {Object.entries(levelLabels).map(([value, label]) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label>
+          <span>Embarcação</span>
+          <select defaultValue={filters.embarcacao} name="embarcacao">
+            <option value="">Todas</option>
+            {Object.entries(vesselLabels).map(([value, label]) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <button className={styles.secondaryButton} type="submit">
+          Filtrar
+        </button>
+      </form>
+
+      {trainingPlans.length === 0 ? (
+        <section className={styles.trainingEmptyState}>
+          <p className={styles.eyebrow}>Primeiro treino</p>
+          <h2>Sua biblioteca de treinos começa aqui.</h2>
+          <p>Crie o primeiro treino estruturado do clube.</p>
+          <Link
+            className={styles.primaryButtonLink}
+            href={`/admin/${company.slug}/treinos/novo`}
+          >
+            Criar primeiro treino
+          </Link>
+        </section>
+      ) : (
+        <section className={styles.trainingLibraryList}>
+          {filteredPlans.length > 0 ? (
+            filteredPlans.map((plan) => {
+              const latestVersion = getLatestVersion(plan);
+
+              return (
+                <article className={styles.trainingPlanCard} key={plan.id}>
+                  <div className={styles.trainingPlanMain}>
+                    <div>
+                      <span className={styles.trainingPlanVessel}>
+                        {vesselLabels[plan.vessel_class]}
+                      </span>
+                      <h3>{plan.title}</h3>
+                      <p>
+                        {plan.objective ||
+                          "Objetivo ainda não informado para este treino."}
                       </p>
+                    </div>
+                    <div className={styles.trainingPlanBadges}>
+                      <span>{statusLabels[plan.status]}</span>
+                      {latestVersion ? (
+                        <span>{statusLabels[latestVersion.status]}</span>
+                      ) : null}
+                    </div>
+                  </div>
+
+                  <dl className={styles.trainingPlanMeta}>
+                    <div>
+                      <dt>Versões</dt>
+                      <dd>{plan.training_plan_versions.length}</dd>
+                    </div>
+                    <div>
+                      <dt>Nível</dt>
+                      <dd>
+                        {latestVersion
+                          ? levelLabels[latestVersion.level]
+                          : "Sem versão"}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt>Duração</dt>
+                      <dd>
+                        {formatDuration(
+                          latestVersion?.duration_seconds ??
+                            plan.default_duration_seconds,
+                        )}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt>Atualizado</dt>
+                      <dd>{formatDate(plan.updated_at)}</dd>
+                    </div>
+                  </dl>
+
+                  <div className={styles.trainingPlanActions}>
+                    <Link
+                      className={styles.secondaryButton}
+                      href={`/admin/${company.slug}/treinos/${plan.id}`}
+                    >
+                      Abrir treino
+                    </Link>
+                    {latestVersion?.status === "draft" ? (
+                      <Link
+                        className={styles.primaryButtonLink}
+                        href={`/admin/${company.slug}/treinos/${plan.id}`}
+                      >
+                        Editar rascunho
+                      </Link>
                     ) : null}
                   </div>
-                  <span>{service.duration_minutes} min</span>
-                </div>
-              ))
-            ) : (
-              <div className={styles.emptyStateCompact}>
-                <strong>Nenhum treino cadastrado.</strong>
-                <p>Crie um treino rápido para começar a publicar horários.</p>
-              </div>
-            )}
-          </div>
-        </article>
-
-        <article className={styles.panel}>
-          <div className={styles.sectionHeadBalanced}>
-            <div>
-              <p className={styles.eyebrow}>Publicados</p>
-              <h2>Treinos da semana</h2>
+                </article>
+              );
+            })
+          ) : (
+            <div className={styles.trainingEmptyState}>
+              <h2>Nenhum treino encontrado.</h2>
+              <p>Ajuste os filtros para ver outros treinos da biblioteca.</p>
             </div>
-          </div>
-          <div className={styles.list}>
-            {weeklyWorkouts.length > 0 ? (
-              weeklyWorkouts.map((workout) => (
-                <div className={styles.trainingListItem} key={workout.id}>
-                  <div>
-                    <strong>{workout.title}</strong>
-                    {workout.description ? (
-                      <p className={styles.itemDescription}>
-                        {workout.description}
-                      </p>
-                    ) : null}
-                  </div>
-                  <span>Dia {workout.weekday}</span>
-                </div>
-              ))
-            ) : (
-              <div className={styles.emptyStateCompact}>
-                <strong>Nenhum treino publicado nesta semana.</strong>
-                <p>Use o plano da semana para publicar a orientação do dia.</p>
-              </div>
-            )}
-          </div>
-        </article>
-      </section>
+          )}
+        </section>
+      )}
     </AdminShell>
   );
 }
