@@ -630,6 +630,310 @@
   overflow-wrap: anywhere;
 }
 
+.backRow {
+  display: flex;
+  justify-content: flex-start;
+  min-width: 0;
+}
+
+.trainingBuilder,
+.builderSection,
+.trainingDetailHero,
+.archivePanel {
+  min-width: 0;
+}
+
+.trainingBuilder {
+  display: grid;
+  gap: 16px;
+}
+
+.builderSection,
+.trainingDetailHero,
+.archivePanel {
+  background:
+    radial-gradient(circle at 92% 8%, rgba(31, 216, 229, 0.08), transparent 14rem),
+    linear-gradient(180deg, rgba(20, 19, 31, 0.94), rgba(10, 17, 30, 0.96));
+  border: 1px solid rgba(182, 140, 255, 0.2);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-night-card), 0 0 34px rgba(141, 77, 255, 0.08);
+  color: var(--text-inverse);
+  padding: clamp(16px, 2.4vw, 24px);
+}
+
+.builderSection {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(180px, 0.35fr) minmax(0, 1fr);
+}
+
+.builderSectionIntro {
+  min-width: 0;
+}
+
+.builderSectionIntro span {
+  color: var(--color-star-400);
+  font-size: 0.74rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.builderSectionIntro h2 {
+  color: #ffffff;
+  font-size: clamp(1.35rem, 2.4vw, 2rem);
+  line-height: 1.08;
+  margin: 7px 0 0;
+  overflow-wrap: anywhere;
+}
+
+.builderSectionIntro p {
+  color: rgba(238, 248, 247, 0.62);
+  line-height: 1.5;
+  margin: 10px 0 0;
+  overflow-wrap: anywhere;
+}
+
+.builderGrid,
+.builderGridThree {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+.builderGrid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.builderGrid .label:last-child {
+  grid-column: 1 / -1;
+}
+
+.builderGridThree {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.trainingTimeline,
+.trainingTimelineReadOnly {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  position: relative;
+}
+
+.trainingTimeline::before,
+.trainingTimelineReadOnly::before {
+  background: linear-gradient(180deg, rgba(31, 216, 229, 0.6), rgba(141, 77, 255, 0.15));
+  bottom: 14px;
+  content: "";
+  left: 16px;
+  position: absolute;
+  top: 14px;
+  width: 1px;
+}
+
+.timelineBlock,
+.timelineReadOnlyBlock {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(123, 243, 245, 0.12);
+  border-radius: 16px;
+  display: grid;
+  gap: 12px;
+  margin-left: 28px;
+  min-width: 0;
+  padding: 14px;
+  position: relative;
+}
+
+.timelineBlock::before,
+.timelineReadOnlyBlock::before {
+  background: var(--color-sea-500);
+  border: 3px solid rgba(5, 12, 23, 0.96);
+  border-radius: 999px;
+  content: "";
+  height: 13px;
+  left: -34px;
+  position: absolute;
+  top: 18px;
+  width: 13px;
+}
+
+.timelineBlockHeader,
+.timelineReadOnlyBlock > div:first-child {
+  align-items: flex-start;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.timelineBlockHeader strong,
+.timelineReadOnlyBlock strong {
+  color: #ffffff;
+  overflow-wrap: anywhere;
+}
+
+.timelineBlockHeader > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.timelineBlockHeader button {
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid rgba(182, 140, 255, 0.22);
+  border-radius: 10px;
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 850;
+  min-height: 34px;
+  padding: 0 9px;
+}
+
+.timelineBlockHeader button:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
+.blockEditor,
+.repeatGroup,
+.repeatChildren,
+.repeatChildrenReadOnly,
+.trainingReview,
+.trainingNotesGrid {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+.repeatGroup {
+  background: rgba(141, 77, 255, 0.07);
+  border: 1px solid rgba(182, 140, 255, 0.16);
+  border-radius: 14px;
+  padding: 12px;
+}
+
+.repeatChildren,
+.repeatChildrenReadOnly {
+  border-left: 1px solid rgba(123, 243, 245, 0.16);
+  margin-left: 6px;
+  padding-left: 12px;
+}
+
+.builderActionsInline,
+.builderSubmitRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.builderSubmitRow {
+  justify-content: flex-end;
+}
+
+.trainingReview {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.trainingReview div,
+.trainingNotesGrid div,
+.repeatChildrenReadOnly div {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(123, 243, 245, 0.11);
+  border-radius: 14px;
+  min-width: 0;
+  padding: 12px;
+}
+
+.trainingReview span {
+  color: rgba(238, 248, 247, 0.54);
+  display: block;
+  font-size: 0.74rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.trainingReview strong {
+  color: #ffffff;
+  display: block;
+  margin-top: 6px;
+  overflow-wrap: anywhere;
+}
+
+.trainingDetailHero {
+  align-items: flex-start;
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+}
+
+.trainingDetailHero h2 {
+  color: #ffffff;
+  font-size: clamp(1.8rem, 3.8vw, 3.4rem);
+  line-height: 1;
+  margin: 10px 0 0;
+  overflow-wrap: anywhere;
+}
+
+.trainingDetailHero p,
+.timelineReadOnlyBlock p,
+.trainingNotesGrid p,
+.archivePanel p,
+.repeatChildrenReadOnly p {
+  color: rgba(238, 248, 247, 0.62);
+  line-height: 1.5;
+  margin: 8px 0 0;
+  overflow-wrap: anywhere;
+}
+
+.trainingDetailGrid,
+.trainingDetailContent {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+.trainingDetailGrid {
+  grid-template-columns: minmax(260px, 0.8fr) minmax(0, 1.2fr);
+}
+
+.versionList {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.versionLink {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(182, 140, 255, 0.16);
+  border-radius: 14px;
+  color: inherit;
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 12px;
+  text-decoration: none;
+}
+
+.versionLinkActive {
+  border-color: rgba(123, 243, 245, 0.34);
+  box-shadow: 0 0 0 1px rgba(31, 216, 229, 0.12);
+}
+
+.versionLink span {
+  color: rgba(238, 248, 247, 0.62);
+  font-size: 0.84rem;
+}
+
+.archivePanel {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
 .statGrid,
 .moduleGrid {
   display: grid;
@@ -1288,6 +1592,14 @@
   .trainingPlanMeta {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .builderSection,
+  .builderGrid,
+  .builderGridThree,
+  .trainingReview,
+  .trainingDetailGrid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 880px) {
@@ -1461,5 +1773,39 @@
 
   .trainingPlanMeta {
     grid-template-columns: 1fr;
+  }
+
+  .timelineBlockHeader,
+  .timelineReadOnlyBlock > div:first-child,
+  .trainingDetailHero,
+  .archivePanel {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .builderSubmitRow,
+  .builderActionsInline {
+    flex-direction: column;
+  }
+
+  .builderSubmitRow .primaryButton,
+  .builderSubmitRow .secondaryButton,
+  .builderActionsInline .secondaryButton {
+    width: 100%;
+  }
+
+  .timelineBlock,
+  .timelineReadOnlyBlock {
+    margin-left: 22px;
+  }
+
+  .trainingTimeline::before,
+  .trainingTimelineReadOnly::before {
+    left: 12px;
+  }
+
+  .timelineBlock::before,
+  .timelineReadOnlyBlock::before {
+    left: -27px;
   }
 }
