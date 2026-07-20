@@ -1,4 +1,11 @@
 export type JsonObject = Record<string, string | number | boolean | null>;
+export type JsonValue =
+  | JsonObject
+  | JsonValue[]
+  | string
+  | number
+  | boolean
+  | null;
 
 export type VocabularyConfig = {
   booking_label?: string;
@@ -164,4 +171,127 @@ export type Booking = {
 
 export type NewBooking = Pick<Booking, "company_id" | "slot_id" | "user_id"> & {
   status?: BookingStatus;
+};
+
+export type BoraZone =
+  | "z1_recuperar"
+  | "z2_base"
+  | "z3_ritmo"
+  | "z4_forte"
+  | "z5_maximo";
+
+export type VesselClass = "v1" | "oc1" | "v3" | "oc4" | "v6" | "oc6" | "outro";
+
+export type TrainingPlanStatus = "active" | "archived";
+export type TrainingVersionStatus = "draft" | "published" | "archived";
+export type TrainingVersionLevel =
+  | "iniciante"
+  | "intermediario"
+  | "avancado"
+  | "competicao"
+  | "personalizado";
+export type TrainingBlockKind = "simple" | "repeat_group";
+export type TrainingBlockType =
+  | "aquecimento"
+  | "tecnica"
+  | "base"
+  | "ritmo"
+  | "forte"
+  | "largada"
+  | "recuperacao"
+  | "descanso_hidratacao"
+  | "volta_calma";
+export type TrainingTargetType =
+  | "time"
+  | "distance"
+  | "open"
+  | "speed"
+  | "cadence";
+
+export type TrainingPlan = {
+  archived_at: string | null;
+  coach_id: string | null;
+  company_id: string;
+  created_at: string;
+  created_by: string | null;
+  default_duration_seconds: number | null;
+  group_label: string | null;
+  id: string;
+  objective: string | null;
+  status: TrainingPlanStatus;
+  title: string;
+  updated_at: string;
+  vessel_class: VesselClass;
+};
+
+export type TrainingPlanVersion = {
+  company_id: string;
+  created_at: string;
+  created_by: string | null;
+  duration_seconds: number | null;
+  id: string;
+  level: TrainingVersionLevel;
+  published_at: string | null;
+  safety_notes: string | null;
+  status: TrainingVersionStatus;
+  technical_notes: string | null;
+  training_plan_id: string;
+  updated_at: string;
+  version_number: number;
+};
+
+export type TrainingBlock = {
+  block_kind: TrainingBlockKind;
+  block_type: TrainingBlockType | null;
+  bora_zone: BoraZone | null;
+  company_id: string;
+  created_at: string;
+  duration_seconds: number | null;
+  heart_rate_max: number | null;
+  heart_rate_min: number | null;
+  id: string;
+  instruction: string | null;
+  name: string;
+  parent_block_id: string | null;
+  repeat_count: number | null;
+  sort_order: number;
+  target_type: TrainingTargetType;
+  target_value: number | null;
+  training_plan_version_id: string;
+  updated_at: string;
+};
+
+export type TrainingPlanLibraryItem = TrainingPlan & {
+  training_plan_versions: Pick<
+    TrainingPlanVersion,
+    | "duration_seconds"
+    | "id"
+    | "level"
+    | "published_at"
+    | "status"
+    | "version_number"
+  >[];
+};
+
+export type TrainingPlanWithVersion = {
+  blocks: TrainingBlock[];
+  plan: TrainingPlan;
+  version: TrainingPlanVersion | null;
+};
+
+export type TrainingBlockInput = {
+  block_kind?: TrainingBlockKind;
+  block_type?: TrainingBlockType | null;
+  bora_zone?: BoraZone | null;
+  client_key?: string;
+  duration_seconds?: number | null;
+  heart_rate_max?: number | null;
+  heart_rate_min?: number | null;
+  instruction?: string | null;
+  name: string;
+  parent_client_key?: string | null;
+  repeat_count?: number | null;
+  sort_order: number;
+  target_type?: TrainingTargetType;
+  target_value?: number | null;
 };

@@ -4,6 +4,9 @@ import type {
   LandingPage,
   MembershipRole,
   NewBooking,
+  TrainingBlockInput,
+  TrainingVersionLevel,
+  VesselClass,
   WeeklyWorkout,
   VocabularyConfig,
 } from "../../types/saas";
@@ -569,6 +572,116 @@ export async function revokeCompanyInvitation(invitationId: string) {
   const supabase = await createClient();
   const { error } = await supabase.rpc("revoke_company_invite", {
     p_invitation_id: invitationId,
+  });
+
+  if (error) {
+    throw error;
+  }
+}
+
+export type CreateTrainingPlanDraftInput = {
+  coachId?: string | null;
+  companyId: string;
+  defaultDurationSeconds?: number | null;
+  groupLabel?: string | null;
+  objective?: string | null;
+  title: string;
+  vesselClass?: VesselClass;
+};
+
+export async function createTrainingPlanDraft({
+  coachId = null,
+  companyId,
+  defaultDurationSeconds = null,
+  groupLabel = null,
+  objective = null,
+  title,
+  vesselClass = "outro",
+}: CreateTrainingPlanDraftInput): Promise<string> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("create_training_plan_draft", {
+    p_coach_id: coachId,
+    p_company_id: companyId,
+    p_default_duration_seconds: defaultDurationSeconds,
+    p_group_label: groupLabel,
+    p_objective: objective,
+    p_title: title,
+    p_vessel_class: vesselClass,
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  return data as string;
+}
+
+export type CreateTrainingPlanVersionInput = {
+  durationSeconds?: number | null;
+  level?: TrainingVersionLevel;
+  safetyNotes?: string | null;
+  technicalNotes?: string | null;
+  trainingPlanId: string;
+};
+
+export async function createTrainingPlanVersion({
+  durationSeconds = null,
+  level = "intermediario",
+  safetyNotes = null,
+  technicalNotes = null,
+  trainingPlanId,
+}: CreateTrainingPlanVersionInput): Promise<string> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("create_training_plan_version", {
+    p_duration_seconds: durationSeconds,
+    p_level: level,
+    p_safety_notes: safetyNotes,
+    p_technical_notes: technicalNotes,
+    p_training_plan_id: trainingPlanId,
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  return data as string;
+}
+
+export async function saveTrainingBlocks({
+  blocks,
+  trainingPlanVersionId,
+}: {
+  blocks: TrainingBlockInput[];
+  trainingPlanVersionId: string;
+}) {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("save_training_blocks", {
+    p_blocks: blocks,
+    p_training_plan_version_id: trainingPlanVersionId,
+  });
+
+  if (error) {
+    throw error;
+  }
+}
+
+export async function publishTrainingPlanVersion(
+  trainingPlanVersionId: string,
+) {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("publish_training_plan_version", {
+    p_training_plan_version_id: trainingPlanVersionId,
+  });
+
+  if (error) {
+    throw error;
+  }
+}
+
+export async function archiveTrainingPlan(trainingPlanId: string) {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("archive_training_plan", {
+    p_training_plan_id: trainingPlanId,
   });
 
   if (error) {
