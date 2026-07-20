@@ -20,8 +20,8 @@ export type AdminContext = {
 
 export const defaultVocabulary: Required<VocabularyConfig> = {
   booking_label: "Reserva",
-  professional_label: "Profissional",
-  resource_label: "Recurso",
+  professional_label: "Instrutor",
+  resource_label: "Canoa",
   service_label: "Serviço",
 };
 

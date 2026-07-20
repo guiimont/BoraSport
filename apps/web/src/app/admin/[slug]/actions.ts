@@ -36,9 +36,9 @@ export type InvitationFormState = AdminFormState & {
 
 const defaultVocabulary: Required<VocabularyConfig> = {
   booking_label: "Reserva",
-  professional_label: "Profissional",
-  resource_label: "Recurso",
-  service_label: "Servico",
+  professional_label: "Instrutor",
+  resource_label: "Canoa",
+  service_label: "Serviço",
 };
 
 function readText(formData: FormData, key: string, fallback: string) {
@@ -97,13 +97,13 @@ async function assertCanManageTenant(companyId: string) {
   const user = await getCurrentUser();
 
   if (!user) {
-    return "Sessao expirada. Entre novamente para salvar.";
+    return "Sessão expirada. Entre novamente para salvar.";
   }
 
   const role = await getUserCompanyRole(companyId, user.id);
 
   if (role !== "admin" && role !== "professional") {
-    return "Seu usuario ainda nao tem permissao de admin/profissional neste tenant. Assuma o tenant ou ajuste a membership.";
+    return "Seu usuário ainda não tem permissão de gestão neste clube.";
   }
 
   return null;
@@ -114,7 +114,7 @@ async function assertCanAdminTenant(companyId: string) {
 
   if (!user) {
     return {
-      error: "Sessao expirada. Entre novamente para salvar.",
+      error: "Sessão expirada. Entre novamente para salvar.",
       user: null,
     };
   }
@@ -141,15 +141,15 @@ function getReadableError(error: unknown) {
     message.includes("row-level security") ||
     message.includes("permission denied")
   ) {
-    return "Permissao negada pelo Supabase/RLS. Confira se seu usuario tem membership admin/professional neste tenant.";
+    return "Permissão negada. Confira se seu usuário tem acesso de gestão neste clube.";
   }
 
   if (message.includes("violates foreign key constraint")) {
-    return "Dados relacionados nao existem no banco. Confira se o recurso/servico pertence ao mesmo tenant.";
+    return "Dados relacionados não existem no banco. Confira se os cadastros pertencem ao mesmo clube.";
   }
 
   if (message.includes("Bucket not found")) {
-    return "Bucket de arquivos nao existe. Rode a migration de storage correspondente no Supabase.";
+    return "Bucket de arquivos não existe. Rode a migration de storage correspondente no Supabase.";
   }
 
   return message;
@@ -165,7 +165,7 @@ export async function saveCompanyConfiguration(
 
   if (!companyId || !slug) {
     return {
-      error: "Nao foi possivel identificar o tenant para salvar.",
+      error: "Não foi possível identificar o clube para salvar.",
     };
   }
 
@@ -206,14 +206,14 @@ export async function saveCompanyConfiguration(
     });
   } catch (error) {
     return {
-      error: `Nao foi possivel salvar. ${getReadableError(error)}`,
+      error: `Não foi possível salvar. ${getReadableError(error)}`,
     };
   }
 
   revalidateTenantPages(slug);
 
   return {
-    success: "Configuracao salva.",
+    success: "Configuração salva.",
   };
 }
 
@@ -228,7 +228,7 @@ export async function saveResource(
   const capacityMaxima = Math.max(1, Math.floor(readNumber(formData, "capacityMaxima", 1)));
 
   if (!companyId || !slug) {
-    return { error: "Nao foi possivel identificar o tenant." };
+    return { error: "Não foi possível identificar o clube." };
   }
 
   const accessError = await assertCanManageTenant(companyId);
@@ -249,7 +249,7 @@ export async function saveResource(
     });
   } catch (error) {
     return {
-      error: `Nao foi possivel cadastrar. ${getReadableError(error)}`,
+      error: `Não foi possível cadastrar. ${getReadableError(error)}`,
     };
   }
 
@@ -266,7 +266,7 @@ export async function saveService(
 ): Promise<AdminFormState> {
   const companyId = readText(formData, "companyId", "");
   const slug = readText(formData, "slug", "");
-  const serviceLabel = readText(formData, "serviceLabel", "Servico");
+  const serviceLabel = readText(formData, "serviceLabel", "Serviço");
   const name = readText(formData, "name", "");
   const description = readText(formData, "description", "");
   const durationMinutes = Math.max(
@@ -276,7 +276,7 @@ export async function saveService(
   const price = Math.max(0, readNumber(formData, "price", 0));
 
   if (!companyId || !slug) {
-    return { error: "Nao foi possivel identificar o tenant." };
+    return { error: "Não foi possível identificar o clube." };
   }
 
   const accessError = await assertCanManageTenant(companyId);
@@ -299,7 +299,7 @@ export async function saveService(
     });
   } catch (error) {
     return {
-      error: `Nao foi possivel cadastrar. ${getReadableError(error)}`,
+      error: `Não foi possível cadastrar. ${getReadableError(error)}`,
     };
   }
 
@@ -316,7 +316,7 @@ export async function saveSlot(
 ): Promise<AdminFormState> {
   const companyId = readText(formData, "companyId", "");
   const slug = readText(formData, "slug", "");
-  const serviceLabel = readText(formData, "serviceLabel", "Servico");
+  const serviceLabel = readText(formData, "serviceLabel", "Serviço");
   const resourceLabel = readText(formData, "resourceLabel", "Recurso");
   const serviceId = readText(formData, "serviceId", "");
   const resourceId = readOptionalText(formData, "resourceId");
@@ -329,7 +329,7 @@ export async function saveSlot(
   const spotsTotal = Math.max(1, Math.floor(readNumber(formData, "spotsTotal", 1)));
 
   if (!companyId || !slug) {
-    return { error: "Nao foi possivel identificar o tenant." };
+    return { error: "Não foi possível identificar o clube." };
   }
 
   const accessError = await assertCanManageTenant(companyId);
@@ -343,7 +343,7 @@ export async function saveSlot(
   }
 
   if (!date || !time) {
-    return { error: "Informe data e horario." };
+    return { error: "Informe data e horário." };
   }
 
   if (!resourceId) {
@@ -353,13 +353,13 @@ export async function saveSlot(
   const startDate = new Date(`${date}T${time}:00-03:00`);
 
   if (Number.isNaN(startDate.getTime())) {
-    return { error: "Data ou horario invalido." };
+    return { error: "Data ou horário inválido." };
   }
 
   if (startDate.getTime() <= Date.now()) {
     return {
       error:
-        "Esse horario ja passou. Publique um horario futuro para aparecer na pagina publica.",
+        "Esse horário já passou. Publique um horário futuro para aparecer na página pública.",
     };
   }
 
@@ -376,14 +376,14 @@ export async function saveSlot(
     });
   } catch (error) {
     return {
-      error: `Nao foi possivel publicar o horario. ${getReadableError(error)}`,
+      error: `Não foi possível publicar o horário. ${getReadableError(error)}`,
     };
   }
 
   revalidateTenantPages(slug);
 
   return {
-    success: "Horario publicado.",
+    success: "Horário publicado.",
   };
 }
 
@@ -393,7 +393,7 @@ export async function saveWeeklySlots(
 ): Promise<AdminFormState> {
   const companyId = readText(formData, "companyId", "");
   const slug = readText(formData, "slug", "");
-  const serviceLabel = readText(formData, "serviceLabel", "Servico");
+  const serviceLabel = readText(formData, "serviceLabel", "Serviço");
   const resourceLabel = readText(formData, "resourceLabel", "Recurso");
   const serviceId = readText(formData, "weeklyServiceId", "");
   const resourceId = readOptionalText(formData, "weeklyResourceId");
@@ -414,7 +414,7 @@ export async function saveWeeklySlots(
   ].filter((value): value is string => Boolean(value));
 
   if (!companyId || !slug) {
-    return { error: "Nao foi possivel identificar o tenant." };
+    return { error: "Não foi possível identificar o clube." };
   }
 
   const accessError = await assertCanManageTenant(companyId);
@@ -432,11 +432,11 @@ export async function saveWeeklySlots(
   }
 
   if (!dateStart || !dateEnd) {
-    return { error: "Informe o periodo da grade semanal." };
+    return { error: "Informe o período da grade semanal." };
   }
 
   if (times.length === 0) {
-    return { error: "Informe pelo menos um horario da grade semanal." };
+    return { error: "Informe pelo menos um horário da grade semanal." };
   }
 
   const selectedWeekdays = weekdays.length > 0 ? weekdays : [1, 2, 3, 4, 5];
@@ -448,7 +448,7 @@ export async function saveWeeklySlots(
     Number.isNaN(rangeEnd.getTime()) ||
     rangeEnd.getTime() < rangeStart.getTime()
   ) {
-    return { error: "Periodo invalido." };
+    return { error: "Período inválido." };
   }
 
   const slotsToCreate = [];
@@ -483,14 +483,14 @@ export async function saveWeeklySlots(
   if (slotsToCreate.length === 0) {
     return {
       error:
-        "Nenhum horario futuro encontrado nesse periodo. Ajuste as datas ou horarios.",
+        "Nenhum horário futuro encontrado nesse período. Ajuste as datas ou horários.",
     };
   }
 
   if (slotsToCreate.length > 80) {
     return {
       error:
-        "A grade geraria horarios demais de uma vez. Reduza o periodo ou a quantidade de horarios.",
+        "A grade geraria horários demais de uma vez. Reduza o período ou a quantidade de horários.",
     };
   }
 
@@ -501,18 +501,18 @@ export async function saveWeeklySlots(
     if (createdSlots.length === 0) {
       return {
         success:
-          "A grade ja estava publicada. Nenhum horario duplicado foi criado.",
+          "A grade já estava publicada. Nenhum horário duplicado foi criado.",
       };
     }
 
     return {
-      success: `${createdSlots.length} horario${
+      success: `${createdSlots.length} horário${
         createdSlots.length === 1 ? "" : "s"
-      } publicado${createdSlots.length === 1 ? "" : "s"} na agenda publica.`,
+      } publicado${createdSlots.length === 1 ? "" : "s"} na agenda pública.`,
     };
   } catch (error) {
     return {
-      error: `Nao foi possivel publicar a grade semanal. ${getReadableError(
+      error: `Não foi possível publicar a grade semanal. ${getReadableError(
         error,
       )}`,
     };
@@ -565,13 +565,13 @@ export async function saveWeeklyWorkout(
   const attachmentFile = readFile(formData, "workoutAttachment");
 
   if (!companyId || !slug) {
-    return { error: "Nao foi possivel identificar o tenant." };
+    return { error: "Não foi possível identificar o clube." };
   }
 
   const user = await getCurrentUser();
 
   if (!user) {
-    return { error: "Sessao expirada. Entre novamente para salvar." };
+    return { error: "Sessão expirada. Entre novamente para salvar." };
   }
 
   const accessError = await assertCanManageTenant(companyId);
@@ -596,7 +596,7 @@ export async function saveWeeklyWorkout(
     });
   } catch (error) {
     return {
-      error: `Nao foi possivel salvar o treino da semana. ${getReadableError(
+      error: `Não foi possível salvar o treino da semana. ${getReadableError(
         error,
       )}`,
     };
@@ -605,7 +605,7 @@ export async function saveWeeklyWorkout(
   revalidateTenantPages(slug);
 
   return {
-    success: "Treino da semana publicado para os alunos.",
+    success: "Treino da semana publicado para os remadores.",
   };
 }
 
@@ -625,13 +625,13 @@ export async function saveLandingPage(
   const heroImageFile = readFile(formData, "landingHeroImage");
 
   if (!companyId || !slug) {
-    return { error: "Nao foi possivel identificar o tenant." };
+    return { error: "Não foi possível identificar o clube." };
   }
 
   const user = await getCurrentUser();
 
   if (!user) {
-    return { error: "Sessao expirada. Entre novamente para salvar." };
+    return { error: "Sessão expirada. Entre novamente para salvar." };
   }
 
   const accessError = await assertCanManageTenant(companyId);
@@ -641,7 +641,7 @@ export async function saveLandingPage(
   }
 
   if (!title) {
-    return { error: "Informe o titulo da landing page." };
+    return { error: "Informe o título da landing page." };
   }
 
   try {
@@ -663,7 +663,7 @@ export async function saveLandingPage(
     });
   } catch (error) {
     return {
-      error: `Nao foi possivel salvar a landing page. ${getReadableError(
+      error: `Não foi possível salvar a landing page. ${getReadableError(
         error,
       )}`,
     };
@@ -686,13 +686,13 @@ export async function claimCompanyAsAdmin(
   const name = readText(formData, "name", "");
 
   if (!companyId || !slug) {
-    return { error: "Nao foi possivel identificar o tenant." };
+    return { error: "Não foi possível identificar o clube." };
   }
 
   const user = await getCurrentUser();
 
   if (!user) {
-    return { error: "Entre na sua conta para assumir este tenant." };
+    return { error: "Entre na sua conta para assumir este clube." };
   }
 
   try {
@@ -711,14 +711,14 @@ export async function claimCompanyAsAdmin(
     const message = error instanceof Error ? error.message : "Erro desconhecido";
 
     return {
-      error: `Nao foi possivel assumir o tenant. ${message}`,
+      error: `Não foi possível assumir o clube. ${message}`,
     };
   }
 
   revalidateTenantPages(slug);
 
   return {
-    success: "Tenant assumido. Voce agora e admin.",
+    success: "Clube assumido. Você agora é administrador.",
   };
 }
 
@@ -734,13 +734,13 @@ export async function createClientInvitation(
   );
 
   if (!companyId || !slug) {
-    return { error: "Nao foi possivel identificar o tenant." };
+    return { error: "Não foi possível identificar o clube." };
   }
 
   const access = await assertCanAdminTenant(companyId);
 
   if (access.error || !access.user) {
-    return { error: access.error || "Permissao negada." };
+    return { error: access.error || "Permissão negada." };
   }
 
   const expiresAt = new Date(
@@ -762,11 +762,11 @@ export async function createClientInvitation(
     return {
       inviteLink,
       success:
-        "Convite criado. Copie o link agora; ele nao sera exibido novamente.",
+        "Convite criado. Copie o link agora; ele não será exibido novamente.",
     };
   } catch (error) {
     return {
-      error: `Nao foi possivel gerar o convite. ${getReadableError(error)}`,
+      error: `Não foi possível gerar o convite. ${getReadableError(error)}`,
     };
   }
 }
@@ -780,7 +780,7 @@ export async function revokeClientInvitation(
   const invitationId = readText(formData, "invitationId", "");
 
   if (!companyId || !slug || !invitationId) {
-    return { error: "Nao foi possivel identificar o convite." };
+    return { error: "Não foi possível identificar o convite." };
   }
 
   const access = await assertCanAdminTenant(companyId);
@@ -796,7 +796,7 @@ export async function revokeClientInvitation(
     return { success: "Convite revogado." };
   } catch (error) {
     return {
-      error: `Nao foi possivel revogar. ${getReadableError(error)}`,
+      error: `Não foi possível revogar. ${getReadableError(error)}`,
     };
   }
 }

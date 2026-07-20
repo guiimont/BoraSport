@@ -139,15 +139,15 @@ export function CompanyConfigurationForm({
 
         <div className={styles.infoBox}>
           {selectedPreset?.description ||
-            "Essa escolha controla regras e blocos especificos do dominio."}{" "}
-          O vocabulario abaixo troca os nomes do app sem criar uma versao
-          separada para cada cliente.
+            "Essa escolha controla regras e blocos específicos do clube."}{" "}
+          O vocabulário abaixo troca os nomes do app sem criar uma versão
+          separada para cada clube.
         </div>
       </div>
 
       <div className={styles.fieldGridFour}>
         <label className={styles.label}>
-          Recurso
+          Canoa/equipamento
           <input
             className={styles.input}
             name="resourceLabel"
@@ -157,13 +157,13 @@ export function CompanyConfigurationForm({
                 resourceLabel: event.target.value,
               }))
             }
-            placeholder="Canoa, Cadeira, Quadra"
+            placeholder="Canoa, OC1, V6"
             value={formValues.resourceLabel}
           />
         </label>
 
         <label className={styles.label}>
-          Profissional
+          Treinador/instrutor
           <input
             className={styles.input}
             name="professionalLabel"
@@ -173,13 +173,13 @@ export function CompanyConfigurationForm({
                 professionalLabel: event.target.value,
               }))
             }
-            placeholder="Steerer, Coach, Professor"
+            placeholder="Treinador, Instrutor, Steerer"
             value={formValues.professionalLabel}
           />
         </label>
 
         <label className={styles.label}>
-          Servico
+          Serviço
           <input
             className={styles.input}
             name="serviceLabel"
@@ -189,7 +189,7 @@ export function CompanyConfigurationForm({
                 serviceLabel: event.target.value,
               }))
             }
-            placeholder="Treino, Aula, Sessao"
+            placeholder="Treino, Clínica, Remada"
             value={formValues.serviceLabel}
           />
         </label>
@@ -205,7 +205,7 @@ export function CompanyConfigurationForm({
                 bookingLabel: event.target.value,
               }))
             }
-            placeholder="Reserva, Matricula"
+            placeholder="Reserva, Inscrição"
             value={formValues.bookingLabel}
           />
         </label>

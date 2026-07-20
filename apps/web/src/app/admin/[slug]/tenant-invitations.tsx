@@ -110,8 +110,8 @@ export function TenantInvitations({
           <p className={styles.eyebrow}>Acesso de remadores</p>
           <h2>Convites individuais</h2>
           <p className={styles.muted}>
-            Gere links de uso unico para alunos criarem senha e entrarem no
-            clube sem cadastro publico aberto.
+            Gere links de uso único para remadores criarem senha e entrarem no
+            clube sem cadastro público aberto.
           </p>
         </div>
       </div>

@@ -69,7 +69,7 @@ export function LandingPageForm({
       </div>
 
       <label className={styles.label}>
-        Subtitulo
+        Subtítulo
         <textarea
           className={styles.textarea}
           defaultValue={landingPage?.subtitle || ""}

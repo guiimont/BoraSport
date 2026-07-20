@@ -20,7 +20,7 @@ export default async function AdminSettingsPage({
     <AdminShell
       active="configuracoes"
       context={context}
-      subtitle="Ajuste vocabulário, modalidade e preferências já existentes do tenant."
+      subtitle="Ajuste vocabulário, modalidade e preferências já existentes do clube."
       title="Configurações"
     >
       <section className={styles.panel}>

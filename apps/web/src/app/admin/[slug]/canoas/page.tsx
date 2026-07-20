@@ -22,7 +22,7 @@ export default async function AdminResourcesPage({
     <AdminShell
       active="canoas"
       context={context}
-      subtitle="Cadastre canoas e recursos com a capacidade que controla a lotação."
+      subtitle="Cadastre canoas e equipamentos com a capacidade que controla a lotação."
       title={vocabulary.resource_label}
     >
       <section className={styles.panel} id="cadastrar-canoa">
@@ -42,7 +42,7 @@ export default async function AdminResourcesPage({
       <section className={styles.panel}>
         <div className={styles.sectionHead}>
           <div>
-            <p className={styles.eyebrow}>Recursos ativos</p>
+            <p className={styles.eyebrow}>Canoas ativas</p>
             <h2>{vocabulary.resource_label}s cadastrados</h2>
           </div>
         </div>

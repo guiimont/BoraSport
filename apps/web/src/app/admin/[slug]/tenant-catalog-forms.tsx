@@ -124,7 +124,7 @@ export function ServiceForm({ companyId, slug, vocabulary }: CatalogFormProps) {
       <h3>Novo {vocabulary.service_label}</h3>
       <p className={styles.muted}>
         Isso cria o tipo de {vocabulary.service_label.toLowerCase()}. Para
-        aparecer para os alunos, publique um horário na agenda.
+        aparecer para os remadores, publique um horário na agenda.
       </p>
 
       <label className={styles.label}>

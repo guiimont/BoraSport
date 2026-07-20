@@ -192,7 +192,7 @@ export default async function AdminOverviewPage({ params }: AdminPageProps) {
         </Link>
         <Link className={styles.moduleCardLink} href={`/admin/${company.slug}/canoas`}>
           <strong>Canoas</strong>
-          <p>Recursos disponíveis, capacidade e base da lotação.</p>
+          <p>Canoas disponíveis, capacidade e base da lotação.</p>
           <span className={styles.moduleStatusReady}>Base pronta</span>
         </Link>
         <Link className={styles.moduleCardLink} href={`/admin/${company.slug}/site`}>
