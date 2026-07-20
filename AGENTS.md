@@ -41,6 +41,23 @@ Priorizar necessidades especificas de:
 - site publico do clube;
 - gestao administrativa e financeira do clube.
 
+## Regras de negócio e domínio va'a
+
+- Não inventar regras de negócio relacionadas a clubes, treinadores, remadores,
+  embarcações, leme, posições, treinos, zonas, segurança, mar ou competições.
+- Quando o comportamento correto não estiver comprovado pelo código, documentação
+  oficial do projeto ou decisão anterior registrada, interromper a implementação e
+  consultar o responsável pelo produto.
+- Diferenciar sempre:
+  - regra confirmada;
+  - hipótese;
+  - recomendação técnica.
+- Hipóteses não podem ser implementadas como regras definitivas sem aprovação.
+- Decisões aprovadas devem ser registradas na documentação adequada para não depender
+  apenas do histórico da conversa.
+- Integrações externas devem ser validadas em documentação oficial antes de promessa
+  comercial ou implementação.
+
 ## Estrutura do repositorio
 
 - `apps/web`: aplicacao principal em Next.js. Contem a pagina publica do tenant,
