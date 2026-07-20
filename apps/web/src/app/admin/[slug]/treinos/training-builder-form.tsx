@@ -13,20 +13,15 @@ import {
   createStructuredTrainingPlan,
   type TrainingBuilderState,
 } from "./actions";
+import {
+  calculateSeriesCycleDuration,
+  calculateSeriesDuration,
+  calculateTrainingSummary,
+  type TrainingPhase,
+  type TrainingSeriesPhase,
+  type TrainingStepPhase,
+} from "./training-builder-model";
 import styles from "../admin.module.css";
-
-type BuilderBlock = {
-  block_kind: "simple" | "repeat_group";
-  block_type: TrainingBlockType | "";
-  bora_zone: BoraZone | "";
-  client_key: string;
-  duration_minutes: number;
-  instruction: string;
-  name: string;
-  parent_client_key: string | null;
-  repeat_count: number;
-  sort_order: number;
-};
 
 type TrainingBuilderFormProps = {
   slug: string;
@@ -52,16 +47,16 @@ const levelOptions: Array<{ label: string; value: TrainingVersionLevel }> = [
   { label: "Personalizado", value: "personalizado" },
 ];
 
-const blockTypeOptions: Array<{ label: string; value: TrainingBlockType }> = [
+const stepTypeOptions: Array<{ label: string; value: TrainingBlockType }> = [
   { label: "Aquecimento", value: "aquecimento" },
   { label: "Técnica", value: "tecnica" },
   { label: "Base", value: "base" },
   { label: "Ritmo", value: "ritmo" },
   { label: "Forte", value: "forte" },
-  { label: "Largada", value: "largada" },
+  { label: "Largada/Tiro", value: "largada" },
   { label: "Recuperação", value: "recuperacao" },
   { label: "Descanso e hidratação", value: "descanso_hidratacao" },
-  { label: "Volta à calma", value: "volta_calma" },
+  { label: "Desaquecimento", value: "volta_calma" },
 ];
 
 const zoneOptions: Array<{ label: string; value: BoraZone }> = [
@@ -72,45 +67,74 @@ const zoneOptions: Array<{ label: string; value: BoraZone }> = [
   { label: "Z5 Máximo", value: "z5_maximo" },
 ];
 
-function createBlock(parentClientKey: string | null = null): BuilderBlock {
-  const key = `block-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+function createId(prefix: string) {
+  return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
 
+function createStep(overrides: Partial<TrainingStepPhase> = {}): TrainingStepPhase {
   return {
-    block_kind: "simple",
-    block_type: "base",
-    bora_zone: "z2_base",
-    client_key: key,
-    duration_minutes: 10,
+    boraZone: "z2_base",
+    blockType: "base",
+    durationMinutes: 10,
+    id: createId("step"),
     instruction: "",
-    name: parentClientKey ? "Bloco da repetição" : "Bloco",
-    parent_client_key: parentClientKey,
-    repeat_count: 2,
-    sort_order: 1,
+    kind: "step",
+    name: "Aquecimento",
+    ...overrides,
   };
 }
 
-function createGroup(): BuilderBlock {
-  const key = `group-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-
+function createSeries(): TrainingSeriesPhase {
   return {
-    block_kind: "repeat_group",
-    block_type: "",
-    bora_zone: "",
-    client_key: key,
-    duration_minutes: 0,
-    instruction: "",
-    name: "Repetição",
-    parent_client_key: null,
-    repeat_count: 3,
-    sort_order: 1,
+    id: createId("series"),
+    kind: "series",
+    name: "Série principal",
+    repeatCount: 3,
+    steps: [
+      createStep({
+        blockType: "largada",
+        boraZone: "z5_maximo",
+        durationMinutes: 1,
+        instruction: "Tiro forte com saída controlada.",
+        name: "Tiro/Largada",
+      }),
+      createStep({
+        blockType: "recuperacao",
+        boraZone: "z1_recuperar",
+        durationMinutes: 1,
+        instruction: "Parado.",
+        name: "Recuperação parada",
+      }),
+    ],
   };
+}
+
+function phaseDuration(phase: TrainingPhase) {
+  return phase.kind === "series"
+    ? calculateSeriesDuration(phase)
+    : phase.durationMinutes;
+}
+
+function phaseSummary(phase: TrainingPhase) {
+  if (phase.kind === "series") {
+    const cycle = calculateSeriesCycleDuration(phase);
+    const total = calculateSeriesDuration(phase);
+
+    return `${phase.repeatCount} repetições · ${cycle} min por ciclo · ${total} min`;
+  }
+
+  const zoneLabel = zoneOptions.find((zone) => zone.value === phase.boraZone)?.label;
+
+  return `${phase.durationMinutes} min · ${zoneLabel || "Zona não definida"}`;
 }
 
 function SubmitButton({
   children,
+  disabled,
   value,
 }: {
   children: string;
+  disabled: boolean;
   value: "draft" | "publish";
 }) {
   const { pending } = useFormStatus();
@@ -118,7 +142,7 @@ function SubmitButton({
   return (
     <button
       className={value === "publish" ? styles.primaryButton : styles.secondaryButton}
-      disabled={pending}
+      disabled={disabled || pending}
       name="intent"
       type="submit"
       value={value}
@@ -130,410 +154,353 @@ function SubmitButton({
 
 export function TrainingBuilderForm({ slug }: TrainingBuilderFormProps) {
   const [state, action] = useActionState(createStructuredTrainingPlan, initialState);
-  const [blocks, setBlocks] = useState<BuilderBlock[]>([createBlock()]);
+  const [phases, setPhases] = useState<TrainingPhase[]>([
+    createStep({
+      blockType: "aquecimento",
+      boraZone: "z2_base",
+      instruction: "Foco técnico.",
+      name: "Aquecimento",
+    }),
+  ]);
+  const [editingId, setEditingId] = useState(phases[0]?.id ?? "");
+  const summary = useMemo(() => calculateTrainingSummary(phases), [phases]);
+  const canSubmit = summary.validationErrors.length === 0;
 
-  const normalizedBlocks = useMemo(
-    () =>
-      blocks.map((block, index) => ({
-        ...block,
-        sort_order: index + 1,
-      })),
-    [blocks],
-  );
-  const totalMinutes = normalizedBlocks.reduce((total, block) => {
-    if (block.block_kind === "repeat_group") {
-      const childrenTotal = normalizedBlocks
-        .filter((child) => child.parent_client_key === block.client_key)
-        .reduce((childTotal, child) => childTotal + child.duration_minutes, 0);
-
-      return total + childrenTotal * block.repeat_count;
-    }
-
-    if (block.parent_client_key) {
-      return total;
-    }
-
-    return total + block.duration_minutes;
-  }, 0);
-  const zoneTotals = zoneOptions.map((zone) => ({
-    ...zone,
-    minutes: normalizedBlocks
-      .filter(
-        (block) =>
-          block.block_kind === "simple" && block.bora_zone === zone.value,
-      )
-      .reduce((total, block) => total + block.duration_minutes, 0),
-  }));
-
-  function updateBlock(clientKey: string, patch: Partial<BuilderBlock>) {
-    setBlocks((currentBlocks) =>
-      currentBlocks.map((block) =>
-        block.client_key === clientKey ? { ...block, ...patch } : block,
+  function updatePhase(phaseId: string, patch: Partial<TrainingPhase>) {
+    setPhases((current) =>
+      current.map((phase) =>
+        phase.id === phaseId ? ({ ...phase, ...patch } as TrainingPhase) : phase,
       ),
     );
   }
 
-  function removeBlock(clientKey: string) {
-    setBlocks((currentBlocks) =>
-      currentBlocks.filter(
-        (block) =>
-          block.client_key !== clientKey &&
-          block.parent_client_key !== clientKey,
-      ),
+  function updateSeriesStep(
+    seriesId: string,
+    stepId: string,
+    patch: Partial<TrainingStepPhase>,
+  ) {
+    setPhases((current) =>
+      current.map((phase) => {
+        if (phase.kind !== "series" || phase.id !== seriesId) {
+          return phase;
+        }
+
+        return {
+          ...phase,
+          steps: phase.steps.map((step) =>
+            step.id === stepId ? { ...step, ...patch } : step,
+          ),
+        };
+      }),
     );
   }
 
-  function moveBlock(clientKey: string, direction: -1 | 1) {
-    setBlocks((currentBlocks) => {
-      const index = currentBlocks.findIndex((block) => block.client_key === clientKey);
+  function removePhase(phaseId: string) {
+    setPhases((current) => current.filter((phase) => phase.id !== phaseId));
+    setEditingId((currentId) => (currentId === phaseId ? "" : currentId));
+  }
 
-      if (index < 0) {
-        return currentBlocks;
-      }
-
+  function movePhase(phaseId: string, direction: -1 | 1) {
+    setPhases((current) => {
+      const index = current.findIndex((phase) => phase.id === phaseId);
       const nextIndex = index + direction;
 
-      if (nextIndex < 0 || nextIndex >= currentBlocks.length) {
-        return currentBlocks;
+      if (index < 0 || nextIndex < 0 || nextIndex >= current.length) {
+        return current;
       }
 
-      const nextBlocks = [...currentBlocks];
-      const [block] = nextBlocks.splice(index, 1);
-      nextBlocks.splice(nextIndex, 0, block);
-
-      return nextBlocks;
+      const next = [...current];
+      const [phase] = next.splice(index, 1);
+      next.splice(nextIndex, 0, phase);
+      return next;
     });
   }
 
-  function addGroup() {
-    const group = createGroup();
-    const child = createBlock(group.client_key);
-
-    setBlocks((currentBlocks) => [...currentBlocks, group, child]);
+  function addPhase(phase: TrainingPhase) {
+    setPhases((current) => [...current, phase]);
+    setEditingId(phase.id);
   }
 
   return (
     <form action={action} className={styles.trainingBuilder}>
       <input name="slug" type="hidden" value={slug} />
-      <input
-        name="blocksJson"
-        type="hidden"
-        value={JSON.stringify(normalizedBlocks)}
-      />
+      <input name="phasesJson" type="hidden" value={JSON.stringify(phases)} />
+      <input name="durationMinutes" type="hidden" value={summary.totalMinutes} />
 
-      <section className={styles.builderSection}>
-        <div className={styles.builderSectionIntro}>
-          <span>Etapa 1</span>
-          <h2>Informações</h2>
-          <p>Defina a identidade esportiva do treino.</p>
-        </div>
-        <div className={styles.builderGrid}>
-          <label className={styles.label}>
-            Nome
-            <input
-              className={styles.input}
-              name="title"
-              placeholder="Treino de base progressiva"
-              required
-            />
-          </label>
-          <label className={styles.label}>
-            Classe de embarcação
-            <select className={styles.select} name="vesselClass">
-              {vesselOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className={styles.label}>
-            Objetivo
-            <textarea
-              className={styles.textarea}
-              name="objective"
-              placeholder="Ex: sustentar Z2 com técnica limpa e transições controladas."
-              rows={4}
-            />
-          </label>
+      <section className={styles.builderHero}>
+        <div>
+          <p className={styles.eyebrow}>Rascunho</p>
+          <h2>Novo treino estruturado</h2>
+          <p>
+            Monte a sessão como o treinador pensa: aquecimento, série principal,
+            recuperação e desaquecimento.
+          </p>
         </div>
       </section>
 
-      <section className={styles.builderSection}>
-        <div className={styles.builderSectionIntro}>
-          <span>Etapa 2</span>
-          <h2>Versão</h2>
-          <p>Crie a primeira versão do treino. Ela permanece editável enquanto estiver em rascunho.</p>
-        </div>
-        <div className={styles.builderGridThree}>
-          <label className={styles.label}>
-            Nível
-            <select className={styles.select} name="level">
-              {levelOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className={styles.label}>
-            Duração prevista
-            <span className={styles.numberFieldShell}>
-              <input
-                className={styles.numberInput}
-                defaultValue="50"
-                min="1"
-                name="durationMinutes"
-                type="number"
-              />
-              <span className={styles.numberFieldUnit}>min</span>
-            </span>
-          </label>
-          <label className={styles.label}>
-            Observações técnicas
-            <input
-              className={styles.input}
-              name="technicalNotes"
-              placeholder="Foco técnico principal"
-            />
-          </label>
-          <label className={styles.label}>
-            Observações de segurança
-            <input
-              className={styles.input}
-              name="safetyNotes"
-              placeholder="Condições, atenção ou restrições"
-            />
-          </label>
-        </div>
-      </section>
+      <div className={styles.builderLayout}>
+        <div className={styles.builderMain}>
+          <section className={styles.builderSectionCompact}>
+            <div className={styles.builderSectionIntro}>
+              <span>Informações essenciais</span>
+              <h2>Identidade do treino</h2>
+            </div>
+            <div className={styles.builderGrid}>
+              <label className={styles.label}>
+                Nome
+                <input
+                  className={styles.input}
+                  name="title"
+                  placeholder="Treino de tiro e recuperação"
+                  required
+                />
+              </label>
+              <label className={styles.label}>
+                Classe de embarcação
+                <select className={styles.select} name="vesselClass">
+                  {vesselOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className={styles.label}>
+                Objetivo
+                <textarea
+                  className={styles.textarea}
+                  name="objective"
+                  placeholder="Ex: desenvolver largada forte e recuperação completa entre tiros."
+                  rows={4}
+                />
+              </label>
+            </div>
+          </section>
 
-      <section className={styles.builderSection}>
-        <div className={styles.builderSectionIntro}>
-          <span>Etapa 3</span>
-          <h2>Estrutura</h2>
-          <p>Organize blocos por tempo e Zona Bora. Grupos podem conter apenas blocos simples.</p>
-        </div>
-        <div className={styles.trainingTimeline}>
-          {normalizedBlocks
-            .filter((block) => !block.parent_client_key)
-            .map((block) => {
-              const children = normalizedBlocks.filter(
-                (child) => child.parent_client_key === block.client_key,
-              );
+          <section className={styles.builderSectionCompact}>
+            <div className={styles.builderSectionIntro}>
+              <span>Configuração</span>
+              <h2>Nível e segurança</h2>
+            </div>
+            <div className={styles.builderGrid}>
+              <label className={styles.label}>
+                Nível
+                <select className={styles.select} name="level">
+                  {levelOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className={styles.label}>
+                Observações de segurança
+                <input
+                  className={styles.input}
+                  name="safetyNotes"
+                  placeholder="Ex: revisar vento, corrente e hidratação."
+                />
+              </label>
+              <input name="technicalNotes" type="hidden" value="" />
+            </div>
+          </section>
 
-              return (
-                <article className={styles.timelineBlock} key={block.client_key}>
-                  <div className={styles.timelineBlockHeader}>
-                    <strong>
-                      {block.block_kind === "repeat_group"
-                        ? "Repetição"
-                        : "Bloco simples"}
-                    </strong>
+          <section className={styles.builderSectionCompact}>
+            <div className={styles.builderSectionIntro}>
+              <span>Estrutura do treino</span>
+              <h2>Linha do tempo</h2>
+              <p>Somente a fase em edição abre os campos. As demais ficam compactas.</p>
+            </div>
+
+            <div className={styles.phaseTimeline}>
+              {phases.map((phase, index) => (
+                <article className={styles.phaseCard} key={phase.id}>
+                  <div className={styles.phaseCollapsed}>
+                    <span className={styles.phaseNumber}>
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
                     <div>
-                      <button
-                        aria-label="Mover para cima"
-                        onClick={() => moveBlock(block.client_key, -1)}
-                        type="button"
-                      >
+                      <strong>{phase.name || (phase.kind === "series" ? "Série" : "Etapa")}</strong>
+                      <p>{phaseSummary(phase)}</p>
+                      {phase.kind === "series" ? (
+                        <ul>
+                          {phase.steps.map((step) => (
+                            <li key={step.id}>
+                              {step.name} — {step.durationMinutes} min —{" "}
+                              {zoneOptions.find((zone) => zone.value === step.boraZone)?.label}
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p>{phase.instruction || "Sem instrução adicional."}</p>
+                      )}
+                    </div>
+                    <div className={styles.phaseActions}>
+                      <button onClick={() => setEditingId(phase.id)} type="button">
+                        Editar
+                      </button>
+                      <button onClick={() => movePhase(phase.id, -1)} type="button">
                         ↑
                       </button>
-                      <button
-                        aria-label="Mover para baixo"
-                        onClick={() => moveBlock(block.client_key, 1)}
-                        type="button"
-                      >
+                      <button onClick={() => movePhase(phase.id, 1)} type="button">
                         ↓
                       </button>
-                      <button
-                        onClick={() => removeBlock(block.client_key)}
-                        type="button"
-                      >
+                      <button onClick={() => removePhase(phase.id)} type="button">
                         Remover
                       </button>
                     </div>
                   </div>
 
-                  {block.block_kind === "repeat_group" ? (
-                    <div className={styles.repeatGroup}>
-                      <label className={styles.label}>
-                        Nome do grupo
-                        <input
-                          className={styles.input}
-                          onChange={(event) =>
-                            updateBlock(block.client_key, {
-                              name: event.currentTarget.value,
-                            })
-                          }
-                          value={block.name}
-                        />
-                      </label>
-                      <label className={styles.label}>
-                        Repetir
-                        <span className={styles.numberFieldShell}>
-                          <input
-                            className={styles.numberInput}
-                            min="2"
-                            onChange={(event) =>
-                              updateBlock(block.client_key, {
-                                repeat_count: Number(event.currentTarget.value),
-                              })
-                            }
-                            type="number"
-                            value={block.repeat_count}
-                          />
-                          <span className={styles.numberFieldUnit}>x</span>
-                        </span>
-                      </label>
-                      <div className={styles.repeatChildren}>
-                        {children.map((child) => (
-                          <BlockEditor
-                            block={child}
-                            key={child.client_key}
-                            onRemove={removeBlock}
-                            onUpdate={updateBlock}
-                          />
-                        ))}
-                        <button
-                          className={styles.secondaryButton}
-                          onClick={() =>
-                            setBlocks((currentBlocks) => [
-                              ...currentBlocks,
-                              createBlock(block.client_key),
-                            ])
-                          }
-                          type="button"
-                        >
-                          Adicionar bloco à repetição
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <BlockEditor
-                      block={block}
-                      onRemove={removeBlock}
-                      onUpdate={updateBlock}
-                    />
-                  )}
+                  {editingId === phase.id ? (
+                    phase.kind === "series" ? (
+                      <SeriesEditor
+                        onAddStep={() =>
+                          updatePhase(phase.id, {
+                            steps: [...phase.steps, createStep({ name: "Nova etapa" })],
+                          } as Partial<TrainingPhase>)
+                        }
+                        onRemoveStep={(stepId) =>
+                          updatePhase(phase.id, {
+                            steps: phase.steps.filter((step) => step.id !== stepId),
+                          } as Partial<TrainingPhase>)
+                        }
+                        onUpdate={updatePhase}
+                        onUpdateStep={updateSeriesStep}
+                        series={phase}
+                      />
+                    ) : (
+                      <StepEditor
+                        onUpdate={(patch) => updatePhase(phase.id, patch)}
+                        step={phase}
+                      />
+                    )
+                  ) : null}
                 </article>
+              ))}
+            </div>
+
+            <div className={styles.phaseAddActions}>
+              <button
+                className={styles.secondaryButton}
+                onClick={() => addPhase(createStep({ name: "Nova etapa" }))}
+                type="button"
+              >
+                + Adicionar etapa
+              </button>
+              <button
+                className={styles.secondaryButton}
+                onClick={() => addPhase(createSeries())}
+                type="button"
+              >
+                + Adicionar série
+              </button>
+            </div>
+          </section>
+        </div>
+
+        <aside className={styles.builderSummaryPanel}>
+          <p className={styles.eyebrow}>Resumo</p>
+          <h2>Treino</h2>
+          <div className={styles.summaryHeroNumber}>{summary.totalMinutes} min</div>
+          <p>{summary.mainPhasesCount} fases principais</p>
+          <div className={styles.zoneSummaryList}>
+            {zoneOptions.map((zone) => {
+              const minutes = summary.zoneMinutes[zone.value];
+              const percentage =
+                summary.totalMinutes > 0
+                  ? Math.round((minutes / summary.totalMinutes) * 100)
+                  : 0;
+
+              return (
+                <div className={styles.zoneSummaryItem} key={zone.value}>
+                  <span>{zone.label}</span>
+                  <strong>{minutes} min</strong>
+                  <div>
+                    <i style={{ width: `${percentage}%` }} />
+                  </div>
+                </div>
               );
             })}
-        </div>
-        <div className={styles.builderActionsInline}>
-          <button
-            className={styles.secondaryButton}
-            onClick={() => setBlocks((currentBlocks) => [...currentBlocks, createBlock()])}
-            type="button"
-          >
-            Adicionar bloco
-          </button>
-          <button className={styles.secondaryButton} onClick={addGroup} type="button">
-            Adicionar repetição
-          </button>
-        </div>
-      </section>
-
-      <section className={styles.builderSection}>
-        <div className={styles.builderSectionIntro}>
-          <span>Etapa 4</span>
-          <h2>Revisão</h2>
-          <p>Confira a duração calculada e a distribuição por zona antes de salvar.</p>
-        </div>
-        <div className={styles.trainingReview}>
-          <div>
-            <span>Duração calculada</span>
-            <strong>{totalMinutes} min</strong>
           </div>
-          {zoneTotals.map((zone) => (
-            <div key={zone.value}>
-              <span>{zone.label}</span>
-              <strong>{zone.minutes} min</strong>
-            </div>
-          ))}
-        </div>
-        {state.error ? (
-          <p className={styles.error} role="alert">
-            {state.error}
-          </p>
-        ) : null}
-        <div className={styles.builderSubmitRow}>
-          <SubmitButton value="draft">Salvar rascunho</SubmitButton>
-          <SubmitButton value="publish">Publicar versão</SubmitButton>
-        </div>
-      </section>
+          {summary.validationErrors.length > 0 ? (
+            <p className={styles.error} role="alert">
+              {summary.validationErrors[0]}
+            </p>
+          ) : null}
+          {state.error ? (
+            <p className={styles.error} role="alert">
+              {state.error}
+            </p>
+          ) : null}
+        </aside>
+      </div>
+
+      <div className={styles.builderStickyActions}>
+        <SubmitButton disabled={!canSubmit} value="draft">
+          Salvar rascunho
+        </SubmitButton>
+        <button
+          className={styles.secondaryButton}
+          onClick={() => setEditingId("")}
+          type="button"
+        >
+          Revisar treino
+        </button>
+        <SubmitButton disabled={!canSubmit} value="publish">
+          Publicar versão
+        </SubmitButton>
+      </div>
     </form>
   );
 }
 
-function BlockEditor({
-  block,
-  onRemove,
+function StepEditor({
   onUpdate,
+  step,
 }: {
-  block: BuilderBlock;
-  onRemove: (clientKey: string) => void;
-  onUpdate: (clientKey: string, patch: Partial<BuilderBlock>) => void;
+  onUpdate: (patch: Partial<TrainingStepPhase>) => void;
+  step: TrainingStepPhase;
 }) {
   return (
-    <div className={styles.blockEditor}>
+    <div className={styles.phaseEditor}>
       <div className={styles.builderGridThree}>
+        <label className={styles.label}>
+          Nome
+          <input
+            className={styles.input}
+            onChange={(event) => onUpdate({ name: event.currentTarget.value })}
+            value={step.name}
+          />
+        </label>
         <label className={styles.label}>
           Tipo
           <select
             className={styles.select}
             onChange={(event) =>
-              onUpdate(block.client_key, {
-                block_type: event.currentTarget.value as TrainingBlockType,
-              })
+              onUpdate({ blockType: event.currentTarget.value as TrainingBlockType })
             }
-            value={block.block_type}
+            value={step.blockType}
           >
-            {blockTypeOptions.map((option) => (
+            {stepTypeOptions.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
               </option>
             ))}
           </select>
         </label>
-        <label className={styles.label}>
-          Nome
-          <input
-            className={styles.input}
-            onChange={(event) =>
-              onUpdate(block.client_key, {
-                name: event.currentTarget.value,
-              })
-            }
-            value={block.name}
-          />
-        </label>
-        <label className={styles.label}>
-          Duração
-          <span className={styles.numberFieldShell}>
-            <input
-              className={styles.numberInput}
-              min="1"
-              onChange={(event) =>
-                onUpdate(block.client_key, {
-                  duration_minutes: Number(event.currentTarget.value),
-                })
-              }
-              type="number"
-              value={block.duration_minutes}
-            />
-            <span className={styles.numberFieldUnit}>min</span>
-          </span>
-        </label>
+        <DurationStepper
+          label="Duração"
+          onChange={(durationMinutes) => onUpdate({ durationMinutes })}
+          value={step.durationMinutes}
+        />
         <label className={styles.label}>
           Zona Bora
           <select
             className={styles.select}
             onChange={(event) =>
-              onUpdate(block.client_key, {
-                bora_zone: event.currentTarget.value as BoraZone,
-              })
+              onUpdate({ boraZone: event.currentTarget.value as BoraZone })
             }
-            value={block.bora_zone}
+            value={step.boraZone}
           >
             {zoneOptions.map((zone) => (
               <option key={zone.value} value={zone.value}>
@@ -544,28 +511,144 @@ function BlockEditor({
         </label>
       </div>
       <label className={styles.label}>
-        Instrução
+        Instrução opcional
         <textarea
           className={styles.textarea}
-          onChange={(event) =>
-            onUpdate(block.client_key, {
-              instruction: event.currentTarget.value,
-            })
-          }
-          placeholder="Oriente execução, técnica e recuperação."
+          onChange={(event) => onUpdate({ instruction: event.currentTarget.value })}
+          placeholder="Ex: foco técnico, remada solta, parado, recuperação completa."
           rows={3}
-          value={block.instruction}
+          value={step.instruction}
         />
       </label>
-      {block.parent_client_key ? (
-        <button
-          className={styles.secondaryButton}
-          onClick={() => onRemove(block.client_key)}
-          type="button"
-        >
-          Remover bloco da repetição
-        </button>
-      ) : null}
     </div>
+  );
+}
+
+function SeriesEditor({
+  onAddStep,
+  onRemoveStep,
+  onUpdate,
+  onUpdateStep,
+  series,
+}: {
+  onAddStep: () => void;
+  onRemoveStep: (stepId: string) => void;
+  onUpdate: (phaseId: string, patch: Partial<TrainingPhase>) => void;
+  onUpdateStep: (
+    seriesId: string,
+    stepId: string,
+    patch: Partial<TrainingStepPhase>,
+  ) => void;
+  series: TrainingSeriesPhase;
+}) {
+  const cycleMinutes = calculateSeriesCycleDuration(series);
+  const totalMinutes = calculateSeriesDuration(series);
+
+  return (
+    <div className={styles.phaseEditor}>
+      <div className={styles.builderGridThree}>
+        <label className={styles.label}>
+          Nome da série
+          <input
+            className={styles.input}
+            onChange={(event) => onUpdate(series.id, { name: event.currentTarget.value })}
+            value={series.name}
+          />
+        </label>
+        <RepetitionStepper
+          onChange={(repeatCount) => onUpdate(series.id, { repeatCount })}
+          value={series.repeatCount}
+        />
+        <div className={styles.seriesComputed}>
+          <span>Resultado</span>
+          <strong>
+            {series.repeatCount} repetições · {cycleMinutes} min por ciclo ·{" "}
+            {totalMinutes} min
+          </strong>
+        </div>
+      </div>
+
+      <div className={styles.seriesSteps}>
+        {series.steps.map((step) => (
+          <article className={styles.seriesStepCard} key={step.id}>
+            <StepEditor
+              onUpdate={(patch) => onUpdateStep(series.id, step.id, patch)}
+              step={step}
+            />
+            <button
+              className={styles.secondaryButton}
+              onClick={() => onRemoveStep(step.id)}
+              type="button"
+            >
+              Remover etapa da série
+            </button>
+          </article>
+        ))}
+      </div>
+
+      <button className={styles.secondaryButton} onClick={onAddStep} type="button">
+        Adicionar etapa à série
+      </button>
+    </div>
+  );
+}
+
+function DurationStepper({
+  label,
+  onChange,
+  value,
+}: {
+  label: string;
+  onChange: (value: number) => void;
+  value: number;
+}) {
+  return (
+    <label className={styles.label}>
+      {label}
+      <span className={styles.stepperField}>
+        <button onClick={() => onChange(Math.max(1, value - 1))} type="button">
+          -
+        </button>
+        <input
+          min="1"
+          onChange={(event) => onChange(Number(event.currentTarget.value))}
+          type="number"
+          value={value}
+        />
+        <span>min</span>
+        <button onClick={() => onChange(value + 1)} type="button">
+          +
+        </button>
+      </span>
+    </label>
+  );
+}
+
+function RepetitionStepper({
+  onChange,
+  value,
+}: {
+  onChange: (value: number) => void;
+  value: number;
+}) {
+  return (
+    <label className={styles.label}>
+      Repetições
+      <span className={styles.stepperField}>
+        <button onClick={() => onChange(Math.max(1, value - 1))} type="button">
+          -
+        </button>
+        <input
+          min="1"
+          onChange={(event) => onChange(Number(event.currentTarget.value))}
+          type="number"
+          value={value}
+        />
+        <span>x</span>
+        <button onClick={() => onChange(value + 1)} type="button">
+          +
+        </button>
+      </span>
+    </label>
   );
 }
