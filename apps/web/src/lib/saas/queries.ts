@@ -40,6 +40,24 @@ function sanitizePublicDisplayName(name: string | null | undefined) {
   return cleanName;
 }
 
+function normalizeResource(resource: Partial<Resource> & Pick<Resource, "id" | "company_id" | "name" | "capacity_maxima" | "is_active" | "created_at" | "updated_at">): Resource {
+  return {
+    color: resource.color ?? null,
+    company_id: resource.company_id,
+    capacity_maxima: resource.capacity_maxima,
+    created_at: resource.created_at,
+    default_steerer_policy: resource.default_steerer_policy ?? null,
+    id: resource.id,
+    internal_code: resource.internal_code ?? null,
+    is_active: resource.is_active,
+    name: resource.name,
+    operational_notes: resource.operational_notes ?? null,
+    updated_at: resource.updated_at,
+    vessel_class: resource.vessel_class ?? null,
+    vessel_status: resource.vessel_status ?? (resource.is_active ? "disponivel" : "inativa"),
+  };
+}
+
 async function getRowsViaRest<T>(
   table: string,
   params: Record<string, string>,
@@ -419,12 +437,14 @@ export async function getCompanyResources(
 
   const { data, error } = await supabase
     .from("resources")
-    .select("*")
+    .select(
+      "id,company_id,name,capacity_maxima,is_active,vessel_class,vessel_status,default_steerer_policy,internal_code,operational_notes,color,created_at,updated_at",
+    )
     .eq("company_id", companyId)
     .order("name", { ascending: true });
 
   if (!error && data && data.length > 0) {
-    return data as Resource[];
+    return data.map((resource) => normalizeResource(resource as Resource));
   }
 
   const restRows = await getRowsViaRest<Resource>("resources", {
@@ -433,7 +453,16 @@ export async function getCompanyResources(
     order: "name.asc",
   });
 
-  return (restRows ?? []) as Resource[];
+  return (restRows ?? []).map((resource) => normalizeResource(resource));
+}
+
+export async function getCompanyResourceById(
+  companyId: string,
+  resourceId: string,
+): Promise<Resource | null> {
+  const resources = await getCompanyResources(companyId);
+
+  return resources.find((resource) => resource.id === resourceId) ?? null;
 }
 
 export async function getCompanyServices(

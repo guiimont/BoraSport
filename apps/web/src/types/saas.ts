@@ -39,6 +39,12 @@ export type Resource = {
   name: string;
   capacity_maxima: number;
   is_active: boolean;
+  vessel_class: VesselClass | null;
+  vessel_status: VesselStatus | null;
+  default_steerer_policy: DefaultSteererPolicy | null;
+  internal_code: string | null;
+  operational_notes: string | null;
+  color: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -185,6 +191,8 @@ export type BoraZone =
   | "z5_maximo";
 
 export type VesselClass = "v1" | "oc1" | "v3" | "oc4" | "v6" | "oc6" | "outro";
+export type VesselStatus = "disponivel" | "manutencao" | "inativa";
+export type DefaultSteererPolicy = "instrutor" | "aluno" | "definir_treino";
 
 export type TrainingPlanStatus = "active" | "archived";
 export type TrainingVersionStatus = "draft" | "published" | "archived";

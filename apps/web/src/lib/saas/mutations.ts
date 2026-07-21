@@ -1,5 +1,6 @@
 import type {
   CompanyInvitation,
+  DefaultSteererPolicy,
   JsonObject,
   LandingPage,
   MembershipRole,
@@ -7,6 +8,7 @@ import type {
   TrainingBlockInput,
   TrainingVersionLevel,
   VesselClass,
+  VesselStatus,
   WeeklyWorkout,
   VocabularyConfig,
 } from "../../types/saas";
@@ -65,13 +67,23 @@ export async function updateCompanyConfiguration({
 export type CreateResourceInput = {
   capacityMaxima: number;
   companyId: string;
+  defaultSteererPolicy?: DefaultSteererPolicy | null;
+  internalCode?: string | null;
   name: string;
+  operationalNotes?: string | null;
+  vesselClass?: VesselClass | null;
+  vesselStatus?: VesselStatus;
 };
 
 export async function createResource({
   capacityMaxima,
   companyId,
+  defaultSteererPolicy = null,
+  internalCode = null,
   name,
+  operationalNotes = null,
+  vesselClass = null,
+  vesselStatus = "disponivel",
 }: CreateResourceInput) {
   const supabase = await createClient();
 
@@ -80,9 +92,88 @@ export async function createResource({
     .insert({
       capacity_maxima: capacityMaxima,
       company_id: companyId,
-      is_active: true,
+      default_steerer_policy: defaultSteererPolicy,
+      internal_code: internalCode,
+      is_active: vesselStatus !== "inativa",
       name,
+      operational_notes: operationalNotes,
+      vessel_class: vesselClass,
+      vessel_status: vesselStatus,
     })
+    .select("*")
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return resource;
+}
+
+export type UpdateResourceInput = CreateResourceInput & {
+  resourceId: string;
+};
+
+export async function updateResource({
+  capacityMaxima,
+  companyId,
+  defaultSteererPolicy = null,
+  internalCode = null,
+  name,
+  operationalNotes = null,
+  resourceId,
+  vesselClass = null,
+  vesselStatus = "disponivel",
+}: UpdateResourceInput) {
+  const supabase = await createClient();
+
+  const { data: resource, error } = await supabase
+    .from("resources")
+    .update({
+      capacity_maxima: capacityMaxima,
+      default_steerer_policy: defaultSteererPolicy,
+      internal_code: internalCode,
+      is_active: vesselStatus !== "inativa",
+      name,
+      operational_notes: operationalNotes,
+      updated_at: new Date().toISOString(),
+      vessel_class: vesselClass,
+      vessel_status: vesselStatus,
+    })
+    .eq("company_id", companyId)
+    .eq("id", resourceId)
+    .select("*")
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return resource;
+}
+
+export type UpdateResourceOperationalStatusInput = {
+  companyId: string;
+  resourceId: string;
+  vesselStatus: VesselStatus;
+};
+
+export async function updateResourceOperationalStatus({
+  companyId,
+  resourceId,
+  vesselStatus,
+}: UpdateResourceOperationalStatusInput) {
+  const supabase = await createClient();
+
+  const { data: resource, error } = await supabase
+    .from("resources")
+    .update({
+      is_active: vesselStatus !== "inativa",
+      updated_at: new Date().toISOString(),
+      vessel_status: vesselStatus,
+    })
+    .eq("company_id", companyId)
+    .eq("id", resourceId)
     .select("*")
     .single();
 
