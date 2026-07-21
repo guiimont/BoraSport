@@ -1608,6 +1608,247 @@
   margin-top: 5px;
 }
 
+.dayScroller {
+  display: flex;
+  gap: 8px;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: thin;
+}
+
+.dayPill {
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid rgba(182, 140, 255, 0.24);
+  border-radius: 999px;
+  color: rgba(238, 248, 247, 0.78);
+  flex: 0 0 auto;
+  font-size: 0.82rem;
+  font-weight: 850;
+  min-height: 42px;
+  min-width: 58px;
+  padding: 11px 13px;
+  text-align: center;
+  text-decoration: none;
+}
+
+.dayPillActive {
+  background: linear-gradient(135deg, rgba(31, 216, 229, 0.16), rgba(141, 77, 255, 0.2));
+  border-color: rgba(123, 243, 245, 0.34);
+  color: #ffffff;
+}
+
+.dayPill:focus-visible,
+.baseScheduleItem:focus-visible,
+.baseResourceOption:focus-within {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
+.baseScheduleMobileList {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+.baseScheduleList,
+.baseScheduleListCompact {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+
+.baseScheduleItem {
+  align-items: center;
+  background:
+    radial-gradient(circle at 94% 12%, rgba(31, 216, 229, 0.07), transparent 12rem),
+    linear-gradient(180deg, rgba(20, 19, 31, 0.94), rgba(10, 17, 30, 0.96));
+  border: 1px solid rgba(182, 140, 255, 0.18);
+  border-radius: 16px;
+  color: inherit;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: auto minmax(0, 1fr) auto auto auto;
+  min-width: 0;
+  padding: 13px;
+  text-decoration: none;
+}
+
+.baseScheduleItemCompact {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+}
+
+.baseScheduleItemCompact .baseScheduleVessels,
+.baseScheduleItemCompact .vesselDetailsCell {
+  display: none;
+}
+
+.baseScheduleTime {
+  color: #ffffff;
+  font-size: 1.05rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.baseScheduleMain {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.baseScheduleMain strong {
+  color: #ffffff;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.baseScheduleMain small {
+  color: rgba(238, 248, 247, 0.62);
+  font-weight: 700;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.baseScheduleVessels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: flex-end;
+}
+
+.baseScheduleVessels span,
+.vesselAvatar {
+  align-items: center;
+  background: rgba(31, 216, 229, 0.12);
+  border: 1px solid rgba(123, 243, 245, 0.24);
+  border-radius: 999px;
+  color: #c8fbfb;
+  display: inline-flex;
+  font-size: 0.78rem;
+  font-weight: 900;
+  height: 34px;
+  justify-content: center;
+  width: 34px;
+}
+
+.baseScheduleItem em,
+.baseResourceOption em {
+  color: #ffe9a8;
+  font-size: 0.76rem;
+  font-style: normal;
+  font-weight: 850;
+}
+
+.weekGrid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.weekDayCard {
+  background: linear-gradient(180deg, rgba(20, 19, 31, 0.94), rgba(10, 17, 30, 0.96));
+  border: 1px solid rgba(182, 140, 255, 0.18);
+  border-radius: var(--radius-lg);
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px;
+}
+
+.weekDayCard strong {
+  color: #ffffff;
+  display: block;
+  margin-top: 5px;
+  overflow-wrap: anywhere;
+}
+
+.baseResourceGrid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  min-width: 0;
+}
+
+.baseResourceOption {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(123, 243, 245, 0.12);
+  border-radius: 16px;
+  cursor: pointer;
+  display: grid;
+  gap: 11px;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  min-width: 0;
+  padding: 12px;
+}
+
+.baseResourceOptionSelected {
+  border-color: rgba(123, 243, 245, 0.36);
+  box-shadow: 0 0 0 1px rgba(31, 216, 229, 0.1);
+}
+
+.baseResourceOption input {
+  accent-color: var(--color-sea-500);
+  margin-top: 9px;
+}
+
+.baseResourceOption input:disabled ~ span {
+  opacity: 0.58;
+}
+
+.baseResourceOption strong,
+.baseVesselDetailCard strong {
+  color: #ffffff;
+  display: block;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.baseResourceOption small,
+.baseVesselDetailCard p {
+  color: rgba(238, 248, 247, 0.62);
+  display: block;
+  line-height: 1.45;
+  margin: 4px 0 0;
+  overflow-wrap: anywhere;
+}
+
+.baseAlertList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.baseAlertList span {
+  background: rgba(248, 217, 133, 0.12);
+  border: 1px solid rgba(248, 217, 133, 0.22);
+  border-radius: 999px;
+  color: #ffe9a8;
+  font-size: 0.78rem;
+  font-weight: 850;
+  padding: 7px 10px;
+}
+
+.baseVesselDetailGrid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 16px;
+  min-width: 0;
+}
+
+.baseVesselDetailCard {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(123, 243, 245, 0.12);
+  border-radius: 16px;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: auto minmax(0, 1fr);
+  min-width: 0;
+  padding: 14px;
+}
+
 .stepperField {
   align-items: center;
   background: rgba(5, 12, 23, 0.78);
@@ -2310,6 +2551,7 @@
   .builderSection,
   .builderGrid,
   .builderGridThree,
+  .baseResourceGrid,
   .builderLayout,
   .vesselFilterForm,
   .vesselLibraryGrid,
@@ -2326,6 +2568,10 @@
   .vesselListHeader,
   .vesselListItem {
     grid-template-columns: minmax(180px, 1.3fr) minmax(90px, 0.7fr) minmax(80px, 0.45fr) minmax(120px, 0.7fr) minmax(90px, 0.45fr);
+  }
+
+  .weekGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
@@ -2500,6 +2746,33 @@
     display: none;
   }
 
+  .weekGrid {
+    display: none;
+  }
+
+  .baseScheduleItem,
+  .baseScheduleItemCompact {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  .baseScheduleVessels {
+    grid-column: 2;
+    justify-content: flex-start;
+  }
+
+  .baseScheduleItem .vesselDetailsCell {
+    grid-column: 3;
+    grid-row: 2;
+  }
+
+  .baseScheduleItem em {
+    grid-column: 1 / -1;
+  }
+
+  .baseVesselDetailGrid {
+    grid-template-columns: 1fr;
+  }
+
   .listItem {
     align-items: flex-start;
     flex-direction: column;
@@ -2612,6 +2885,25 @@
   .builderStickyActions,
   .vesselActions {
     flex-direction: column;
+  }
+
+  .baseResourceOption {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .baseResourceOption input {
+    grid-row: span 2;
+  }
+
+  .baseResourceOption .vesselAvatar {
+    display: none;
+  }
+
+  .dayScroller {
+    margin-left: calc(var(--space-4) * -1);
+    margin-right: calc(var(--space-4) * -1);
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
   }
 
   .phaseAddActions .secondaryButton,

@@ -1,4 +1,5 @@
 import {
+  getCompanyBaseSchedules,
   getCompanyBookings,
   getCompanyResources,
   getCompanyServices,
@@ -25,6 +26,7 @@ export default async function AdminAgendaPage({ params }: AdminAgendaPageProps) 
     getCompanySlots(company.id),
     getCompanyBookings(company.id),
   ]);
+  const baseSchedules = await getCompanyBaseSchedules(company.id);
 
   const confirmedBookings = bookings.filter(
     (booking) => booking.status === "confirmed",
@@ -63,6 +65,29 @@ export default async function AdminAgendaPage({ params }: AdminAgendaPageProps) 
             {slots.reduce((total, slot) => total + slot.spots_occupied, 0)}
           </strong>
         </article>
+      </section>
+
+      <section className={styles.overviewHero}>
+        <div>
+          <p className={styles.eyebrow}>Grade-base</p>
+          <h2>Modelo semanal da operação</h2>
+          <p>
+            Organize turmas, treinadores e canoas recorrentes antes de publicar
+            sessões na agenda pública.
+          </p>
+        </div>
+        <div className={styles.quickActions}>
+          <span className={styles.statusBadge}>
+            {baseSchedules.length} horário
+            {baseSchedules.length === 1 ? "" : "s"} na grade
+          </span>
+          <a
+            className={styles.primaryButtonLink}
+            href={`/admin/${company.slug}/agenda/grade`}
+          >
+            Abrir Grade-base
+          </a>
+        </div>
       </section>
 
       <section className={styles.panel}>
