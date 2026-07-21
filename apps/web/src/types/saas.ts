@@ -193,6 +193,32 @@ export type BoraZone =
 export type VesselClass = "v1" | "oc1" | "v3" | "oc4" | "v6" | "oc6" | "outro";
 export type VesselStatus = "disponivel" | "manutencao" | "inativa";
 export type DefaultSteererPolicy = "instrutor" | "aluno" | "definir_treino";
+export type BaseScheduleStatus = "active" | "inactive";
+
+export type BaseScheduleResource = {
+  company_id: string;
+  created_at: string;
+  resource: Resource | null;
+  resource_id: string;
+  schedule_id: string;
+};
+
+export type BaseSchedule = {
+  coach: Pick<Profile, "avatar_url" | "id" | "name"> | null;
+  coach_id: string;
+  company_id: string;
+  created_at: string;
+  created_by: string | null;
+  duration_minutes: number;
+  group_name: string;
+  id: string;
+  level: string | null;
+  resources: BaseScheduleResource[];
+  start_time: string;
+  status: BaseScheduleStatus;
+  updated_at: string;
+  weekday: number;
+};
 
 export type TrainingPlanStatus = "active" | "archived";
 export type TrainingVersionStatus = "draft" | "published" | "archived";

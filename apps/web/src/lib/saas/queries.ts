@@ -1,4 +1,6 @@
 import type {
+  BaseSchedule,
+  BaseScheduleResource,
   Booking,
   Company,
   CompanyInvitation,
@@ -55,6 +57,50 @@ function normalizeResource(resource: Partial<Resource> & Pick<Resource, "id" | "
     updated_at: resource.updated_at,
     vessel_class: resource.vessel_class ?? null,
     vessel_status: resource.vessel_status ?? (resource.is_active ? "disponivel" : "inativa"),
+  };
+}
+
+function normalizeBaseScheduleResource(
+  row: Omit<BaseScheduleResource, "resource"> & {
+    resources?: SupabaseJoin<Resource>;
+  },
+): BaseScheduleResource {
+  return {
+    company_id: row.company_id,
+    created_at: row.created_at,
+    resource: firstJoin(row.resources ?? null)
+      ? normalizeResource(firstJoin(row.resources ?? null) as Resource)
+      : null,
+    resource_id: row.resource_id,
+    schedule_id: row.schedule_id,
+  };
+}
+
+function normalizeBaseSchedule(
+  row: Omit<BaseSchedule, "coach" | "resources"> & {
+    base_schedule_resources?: Array<
+      Omit<BaseScheduleResource, "resource"> & { resources?: SupabaseJoin<Resource> }
+    >;
+    profiles?: SupabaseJoin<Pick<Profile, "avatar_url" | "id" | "name">>;
+  },
+): BaseSchedule {
+  return {
+    coach: firstJoin(row.profiles ?? null),
+    coach_id: row.coach_id,
+    company_id: row.company_id,
+    created_at: row.created_at,
+    created_by: row.created_by,
+    duration_minutes: row.duration_minutes,
+    group_name: row.group_name,
+    id: row.id,
+    level: row.level,
+    resources: (row.base_schedule_resources ?? []).map(
+      normalizeBaseScheduleResource,
+    ),
+    start_time: row.start_time,
+    status: row.status,
+    updated_at: row.updated_at,
+    weekday: row.weekday,
   };
 }
 
@@ -463,6 +509,79 @@ export async function getCompanyResourceById(
   const resources = await getCompanyResources(companyId);
 
   return resources.find((resource) => resource.id === resourceId) ?? null;
+}
+
+export async function getCompanyBaseSchedules(
+  companyId: string,
+): Promise<BaseSchedule[]> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("base_schedules")
+    .select(
+      `
+        id,
+        company_id,
+        weekday,
+        start_time,
+        duration_minutes,
+        group_name,
+        level,
+        coach_id,
+        status,
+        created_by,
+        created_at,
+        updated_at,
+        profiles:coach_id (
+          id,
+          name,
+          avatar_url
+        ),
+        base_schedule_resources (
+          schedule_id,
+          company_id,
+          resource_id,
+          created_at,
+          resources (
+            id,
+            company_id,
+            name,
+            capacity_maxima,
+            is_active,
+            vessel_class,
+            vessel_status,
+            default_steerer_policy,
+            internal_code,
+            operational_notes,
+            color,
+            created_at,
+            updated_at
+          )
+        )
+      `,
+    )
+    .eq("company_id", companyId)
+    .order("weekday", { ascending: true })
+    .order("start_time", { ascending: true });
+
+  if (error) {
+    if (error.code === "42P01" || error.code === "42703") {
+      return [];
+    }
+
+    throw error;
+  }
+
+  return (data ?? []).map((row) => normalizeBaseSchedule(row as Parameters<typeof normalizeBaseSchedule>[0]));
+}
+
+export async function getCompanyBaseScheduleById(
+  companyId: string,
+  scheduleId: string,
+): Promise<BaseSchedule | null> {
+  const schedules = await getCompanyBaseSchedules(companyId);
+
+  return schedules.find((schedule) => schedule.id === scheduleId) ?? null;
 }
 
 export async function getCompanyServices(

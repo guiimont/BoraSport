@@ -1,4 +1,5 @@
 import type {
+  BaseScheduleStatus,
   CompanyInvitation,
   DefaultSteererPolicy,
   JsonObject,
@@ -182,6 +183,81 @@ export async function updateResourceOperationalStatus({
   }
 
   return resource;
+}
+
+export type UpsertBaseScheduleInput = {
+  coachId: string;
+  companyId: string;
+  createdBy: string;
+  durationMinutes: number;
+  groupName: string;
+  level?: string | null;
+  resourceIds: string[];
+  scheduleId?: string | null;
+  startTime: string;
+  status: BaseScheduleStatus;
+  weekday: number;
+};
+
+export async function upsertBaseSchedule({
+  coachId,
+  companyId,
+  createdBy,
+  durationMinutes,
+  groupName,
+  level = null,
+  resourceIds,
+  scheduleId = null,
+  startTime,
+  status,
+  weekday,
+}: UpsertBaseScheduleInput): Promise<string> {
+  const supabase = await createClient();
+  const uniqueResourceIds = [...new Set(resourceIds)];
+  const { data, error } = await supabase.rpc("upsert_base_schedule", {
+    p_coach_id: coachId,
+    p_company_id: companyId,
+    p_duration_minutes: durationMinutes,
+    p_group_name: groupName,
+    p_level: level,
+    p_resource_ids: uniqueResourceIds,
+    p_schedule_id: scheduleId,
+    p_start_time: startTime,
+    p_status: status,
+    p_weekday: weekday,
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  void createdBy;
+
+  return data as string;
+}
+
+export async function updateBaseScheduleStatus({
+  companyId,
+  scheduleId,
+  status,
+}: {
+  companyId: string;
+  scheduleId: string;
+  status: BaseScheduleStatus;
+}) {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("base_schedules")
+    .update({
+      status,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("company_id", companyId)
+    .eq("id", scheduleId);
+
+  if (error) {
+    throw error;
+  }
 }
 
 export type CreateServiceInput = {
