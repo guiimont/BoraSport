@@ -1,16 +1,10 @@
 import Link from "next/link";
 
-import type {
-  DefaultSteererPolicy,
-  Resource,
-  VesselClass,
-  VesselStatus,
-} from "../../../../types/saas";
+import type { Resource, VesselClass, VesselStatus } from "../../../../types/saas";
 import { getCompanyResources } from "../../../../lib/saas/queries";
 import { getManageAdminContext } from "../admin-context";
 import { AdminShell } from "../admin-shell";
 import styles from "../admin.module.css";
-import { CanoaStatusAction } from "./canoa-status-action";
 
 type AdminResourcesPageProps = {
   params: Promise<{
@@ -39,26 +33,12 @@ const statusLabels: Record<VesselStatus, string> = {
   manutencao: "Em manutencao",
 };
 
-const steererLabels: Record<DefaultSteererPolicy, string> = {
-  aluno: "Aluno como leme",
-  definir_treino: "Definir em cada treino",
-  instrutor: "Instrutor como leme",
-};
-
 function normalizeText(value: string | null | undefined) {
   return value?.trim().toLowerCase() ?? "";
 }
 
 function getResourceStatus(resource: Resource): VesselStatus {
   return resource.vessel_status ?? (resource.is_active ? "disponivel" : "inativa");
-}
-
-function getPublicSpots(resource: Resource) {
-  if (resource.default_steerer_policy === "instrutor") {
-    return Math.max(0, resource.capacity_maxima - 1);
-  }
-
-  return resource.capacity_maxima;
 }
 
 function matchesClass(resource: Resource, value: string) {
@@ -112,7 +92,7 @@ export default async function AdminResourcesPage({
 }: AdminResourcesPageProps) {
   const { slug } = await params;
   const context = await getManageAdminContext(slug);
-  const { company, vocabulary } = context;
+  const { company } = context;
   const resources = await getCompanyResources(company.id);
   const resolvedSearchParams = (await searchParams) ?? {};
   const filters = {
@@ -127,7 +107,6 @@ export default async function AdminResourcesPage({
   const maintenanceCount = resources.filter(
     (resource) => getResourceStatus(resource) === "manutencao",
   ).length;
-  const legacyCount = resources.filter((resource) => !resource.vessel_class).length;
 
   return (
     <AdminShell
@@ -135,52 +114,27 @@ export default async function AdminResourcesPage({
       context={context}
       eyebrow="Operacao do clube"
       showSessionBar={false}
-      subtitle="Organize a frota, capacidade e regra de leme que sustentam a futura agenda semanal."
+      subtitle="Organize a frota e localize rapidamente quais canoas estao disponiveis para a operacao."
       title="Canoas"
     >
-      <section className={styles.builderHero}>
-        <div className={styles.vesselHeroContent}>
-          <div>
-            <p className={styles.eyebrow}>Frota operacional</p>
-            <h2>Biblioteca de canoas</h2>
-            <p>
-              Cadastre embarcacoes com classe, situacao e regra-padrao de leme.
-              Registros antigos continuam visiveis para completar depois.
-            </p>
-          </div>
-          <Link
-            className={styles.primaryButtonLink}
-            href={`/admin/${company.slug}/canoas/nova`}
-          >
-            Nova canoa
-          </Link>
-        </div>
+      <section className={styles.vesselTopStrip} aria-label="Resumo da frota">
+        <p>
+          <strong>{resources.length}</strong> canoas
+          <span aria-hidden="true"> · </span>
+          <strong>{availableCount}</strong> disponiveis
+          <span aria-hidden="true"> · </span>
+          <strong>{maintenanceCount}</strong> em manutencao
+        </p>
+        <Link
+          className={styles.primaryButtonLink}
+          href={`/admin/${company.slug}/canoas/nova`}
+        >
+          Nova canoa
+        </Link>
       </section>
 
-      <section className={styles.trainingSummary} aria-label="Resumo da frota">
-        <div className={styles.trainingStatCard}>
-          <span>Total</span>
-          <strong>{resources.length}</strong>
-          <p>canoas cadastradas</p>
-        </div>
-        <div className={styles.trainingStatCard}>
-          <span>Disponiveis</span>
-          <strong>{availableCount}</strong>
-          <p>aptas para novas publicacoes futuras</p>
-        </div>
-        <div className={styles.trainingStatCard}>
-          <span>Manutencao</span>
-          <strong>{maintenanceCount}</strong>
-          <p>exigem atencao operacional</p>
-        </div>
-        <div className={styles.trainingStatCard}>
-          <span>Legadas</span>
-          <strong>{legacyCount}</strong>
-          <p>sem classe definida</p>
-        </div>
-      </section>
-
-      <section className={styles.trainingToolbar} aria-label="Filtros da frota">
+      <details className={styles.vesselFilterPanel}>
+        <summary>Filtrar</summary>
         <form className={styles.vesselFilterForm}>
           <label>
             Buscar
@@ -214,98 +168,52 @@ export default async function AdminResourcesPage({
             </select>
           </label>
           <button className={styles.secondaryButton} type="submit">
-            Filtrar
+            Aplicar filtros
           </button>
         </form>
-      </section>
+      </details>
 
       {filteredResources.length > 0 ? (
-        <section className={styles.vesselLibraryGrid}>
+        <section className={styles.vesselList} aria-label="Frota de canoas">
+          <div className={styles.vesselListHeader} aria-hidden="true">
+            <span>Canoa</span>
+            <span>Classe</span>
+            <span>Capacidade</span>
+            <span>Situacao</span>
+            <span>Detalhes</span>
+          </div>
           {filteredResources.map((resource) => {
             const status = getResourceStatus(resource);
-            const collective = resource.capacity_maxima > 1;
+            const vesselClass = resource.vessel_class
+              ? vesselLabels[resource.vessel_class]
+              : "Classe nao definida";
 
             return (
-              <article className={styles.vesselCard} key={resource.id}>
-                <div className={styles.vesselCardHeader}>
-                  <div>
-                    <span className={styles.eyebrow}>
-                      {resource.vessel_class
-                        ? vesselLabels[resource.vessel_class]
-                        : "Classe nao definida"}
-                    </span>
-                    <h2>{resource.name}</h2>
-                  </div>
-                  <span className={styles[`vesselStatus_${status}`]}>
-                    {statusLabels[status]}
-                  </span>
+              <Link
+                className={styles.vesselListItem}
+                href={`/admin/${company.slug}/canoas/${resource.id}`}
+                key={resource.id}
+              >
+                <div className={styles.vesselNameCell}>
+                  <strong>{resource.name}</strong>
+                  {resource.internal_code ? (
+                    <span>{resource.internal_code}</span>
+                  ) : null}
                 </div>
-
-                <dl className={styles.vesselMetrics}>
-                  <div>
-                    <dt>Capacidade</dt>
-                    <dd>{resource.capacity_maxima}</dd>
-                  </div>
-                  <div>
-                    <dt>Vagas futuras</dt>
-                    <dd>{getPublicSpots(resource)}</dd>
-                  </div>
-                  <div>
-                    <dt>Leme</dt>
-                    <dd>
-                      {collective
-                        ? resource.default_steerer_policy
-                          ? steererLabels[resource.default_steerer_policy]
-                          : "Definir em cada treino"
-                        : "Nao se aplica"}
-                    </dd>
-                  </div>
-                </dl>
-
-                {resource.internal_code || resource.operational_notes ? (
-                  <div className={styles.vesselMetaBlock}>
-                    {resource.internal_code ? (
-                      <p>
-                        <span>Identificacao</span>
-                        <strong>{resource.internal_code}</strong>
-                      </p>
-                    ) : null}
-                    {resource.operational_notes ? (
-                      <p>
-                        <span>Observacao</span>
-                        <strong>{resource.operational_notes}</strong>
-                      </p>
-                    ) : null}
-                  </div>
-                ) : null}
-
-                <div className={styles.vesselActions}>
-                  <Link
-                    className={styles.secondaryButton}
-                    href={`/admin/${company.slug}/canoas/${resource.id}`}
-                  >
-                    Visualizar e editar
-                  </Link>
-                  <CanoaStatusAction
-                    companyId={company.id}
-                    resource={resource}
-                    slug={company.slug}
-                    status="manutencao"
-                  />
-                  <CanoaStatusAction
-                    companyId={company.id}
-                    resource={resource}
-                    slug={company.slug}
-                    status="disponivel"
-                  />
-                  <CanoaStatusAction
-                    companyId={company.id}
-                    resource={resource}
-                    slug={company.slug}
-                    status="inativa"
-                  />
-                </div>
-              </article>
+                <span className={styles.vesselClassCell}>{vesselClass}</span>
+                <span className={styles.vesselCapacityCell}>
+                  {resource.capacity_maxima}
+                </span>
+                <span className={styles.vesselMobileMeta}>
+                  {vesselClass} · capacidade {resource.capacity_maxima}
+                </span>
+                <span className={styles[`vesselStatus_${status}`]}>
+                  {statusLabels[status]}
+                </span>
+                <span className={styles.vesselDetailsCell}>
+                  Detalhes <span aria-hidden="true">&gt;</span>
+                </span>
+              </Link>
             );
           })}
         </section>

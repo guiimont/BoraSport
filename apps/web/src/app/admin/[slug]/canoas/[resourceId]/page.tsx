@@ -6,6 +6,7 @@ import { getManageAdminContext } from "../../admin-context";
 import { AdminShell } from "../../admin-shell";
 import styles from "../../admin.module.css";
 import { CanoaOperationalForm } from "../canoa-operational-form";
+import { CanoaStatusAction } from "../canoa-status-action";
 
 type EditCanoaPageProps = {
   params: Promise<{
@@ -40,6 +41,36 @@ export default async function EditCanoaPage({ params }: EditCanoaPageProps) {
           Voltar para frota
         </Link>
       </div>
+      <section className={styles.vesselDetailActions} aria-label="Acoes da canoa">
+        <div>
+          <p className={styles.eyebrow}>Situacao operacional</p>
+          <h2>Acoes da frota</h2>
+          <p>
+            Use estas acoes para preservar historico sem apagar a canoa ou suas
+            relacoes com horarios antigos.
+          </p>
+        </div>
+        <div className={styles.vesselActions}>
+          <CanoaStatusAction
+            companyId={context.company.id}
+            resource={resource}
+            slug={context.company.slug}
+            status="manutencao"
+          />
+          <CanoaStatusAction
+            companyId={context.company.id}
+            resource={resource}
+            slug={context.company.slug}
+            status="disponivel"
+          />
+          <CanoaStatusAction
+            companyId={context.company.id}
+            resource={resource}
+            slug={context.company.slug}
+            status="inativa"
+          />
+        </div>
+      </section>
       <CanoaOperationalForm
         companyId={context.company.id}
         resource={resource}

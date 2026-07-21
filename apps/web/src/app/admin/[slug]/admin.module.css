@@ -1231,6 +1231,58 @@
   min-width: 0;
 }
 
+.vesselTopStrip {
+  align-items: center;
+  background:
+    radial-gradient(circle at 92% 12%, rgba(31, 216, 229, 0.08), transparent 14rem),
+    linear-gradient(180deg, rgba(20, 19, 31, 0.92), rgba(10, 17, 30, 0.94));
+  border: 1px solid rgba(182, 140, 255, 0.18);
+  border-radius: 18px;
+  box-shadow: var(--shadow-night-card), 0 0 28px rgba(141, 77, 255, 0.06);
+  display: flex;
+  gap: 14px;
+  justify-content: space-between;
+  min-width: 0;
+  padding: 14px;
+}
+
+.vesselTopStrip p {
+  color: rgba(238, 248, 247, 0.72);
+  font-size: clamp(0.92rem, 1.7vw, 1.05rem);
+  line-height: 1.4;
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.vesselTopStrip strong {
+  color: #ffffff;
+  font-weight: 900;
+}
+
+.vesselFilterPanel {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(182, 140, 255, 0.16);
+  border-radius: 16px;
+  min-width: 0;
+  padding: 12px;
+}
+
+.vesselFilterPanel summary {
+  color: #ffffff;
+  cursor: pointer;
+  display: none;
+  font-size: 0.9rem;
+  font-weight: 900;
+  list-style: none;
+  min-height: 40px;
+  place-items: center;
+}
+
+.vesselFilterPanel summary::-webkit-details-marker {
+  display: none;
+}
+
 .vesselFilterForm {
   align-items: end;
   display: grid;
@@ -1238,6 +1290,129 @@
   grid-template-columns: minmax(220px, 1fr) minmax(150px, 0.45fr) minmax(170px, 0.45fr) auto;
   min-width: 0;
   width: 100%;
+}
+
+.vesselList {
+  background:
+    radial-gradient(circle at 94% 10%, rgba(31, 216, 229, 0.07), transparent 16rem),
+    linear-gradient(180deg, rgba(20, 19, 31, 0.92), rgba(10, 17, 30, 0.94));
+  border: 1px solid rgba(182, 140, 255, 0.18);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-night-card), 0 0 34px rgba(141, 77, 255, 0.06);
+  display: grid;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.vesselListHeader,
+.vesselListItem {
+  align-items: center;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(220px, 1.5fr) minmax(100px, 0.65fr) minmax(90px, 0.45fr) minmax(140px, 0.7fr) minmax(100px, 0.45fr);
+  min-width: 0;
+}
+
+.vesselListHeader {
+  background: rgba(255, 255, 255, 0.035);
+  border-bottom: 1px solid rgba(216, 231, 231, 0.08);
+  color: rgba(238, 248, 247, 0.54);
+  font-size: 0.72rem;
+  font-weight: 900;
+  padding: 11px 14px;
+  text-transform: uppercase;
+}
+
+.vesselListItem {
+  color: inherit;
+  min-height: 72px;
+  padding: 14px;
+  text-decoration: none;
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.vesselListItem + .vesselListItem {
+  border-top: 1px solid rgba(216, 231, 231, 0.08);
+}
+
+.vesselListItem:hover {
+  background: rgba(123, 243, 245, 0.045);
+}
+
+.vesselListItem:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: -3px;
+}
+
+.vesselNameCell,
+.vesselClassCell,
+.vesselCapacityCell,
+.vesselMobileMeta,
+.vesselDetailsCell {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.vesselNameCell {
+  display: grid;
+  gap: 4px;
+}
+
+.vesselNameCell strong {
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.vesselNameCell span,
+.vesselClassCell,
+.vesselCapacityCell,
+.vesselMobileMeta {
+  color: rgba(238, 248, 247, 0.66);
+  font-size: 0.92rem;
+  font-weight: 750;
+}
+
+.vesselMobileMeta {
+  display: none;
+}
+
+.vesselDetailsCell {
+  align-items: center;
+  color: #c8fbfb;
+  display: inline-flex;
+  font-size: 0.88rem;
+  font-weight: 900;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.vesselDetailActions {
+  align-items: flex-start;
+  background:
+    radial-gradient(circle at 92% 14%, rgba(31, 216, 229, 0.07), transparent 12rem),
+    linear-gradient(180deg, rgba(20, 19, 31, 0.92), rgba(10, 17, 30, 0.94));
+  border: 1px solid rgba(182, 140, 255, 0.18);
+  border-radius: 18px;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  min-width: 0;
+  padding: 16px;
+}
+
+.vesselDetailActions h2 {
+  color: #ffffff;
+  font-size: 1.2rem;
+  line-height: 1.2;
+  margin: 4px 0 0;
+}
+
+.vesselDetailActions p {
+  color: rgba(238, 248, 247, 0.62);
+  line-height: 1.45;
+  margin: 7px 0 0;
 }
 
 .vesselLibraryGrid {
@@ -2147,6 +2322,11 @@
   .builderSummaryPanel {
     position: static;
   }
+
+  .vesselListHeader,
+  .vesselListItem {
+    grid-template-columns: minmax(180px, 1.3fr) minmax(90px, 0.7fr) minmax(80px, 0.45fr) minmax(120px, 0.7fr) minmax(90px, 0.45fr);
+  }
 }
 
 @media (max-width: 880px) {
@@ -2244,13 +2424,80 @@
   }
 
   .vesselHeroContent,
-  .vesselCardHeader {
+  .vesselCardHeader,
+  .vesselTopStrip,
+  .vesselDetailActions {
     align-items: stretch;
     flex-direction: column;
   }
 
   .vesselMetrics {
     grid-template-columns: 1fr;
+  }
+
+  .vesselListHeader {
+    display: none;
+  }
+
+  .vesselList {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    gap: 10px;
+    overflow: visible;
+  }
+
+  .vesselListItem {
+    background:
+      radial-gradient(circle at 94% 12%, rgba(31, 216, 229, 0.07), transparent 12rem),
+      linear-gradient(180deg, rgba(20, 19, 31, 0.94), rgba(10, 17, 30, 0.96));
+    border: 1px solid rgba(182, 140, 255, 0.18);
+    border-radius: 16px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    min-height: 82px;
+    padding: 13px;
+  }
+
+  .vesselListItem + .vesselListItem {
+    border-top: 1px solid rgba(182, 140, 255, 0.18);
+  }
+
+  .vesselNameCell {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .vesselClassCell,
+  .vesselCapacityCell {
+    display: none;
+  }
+
+  .vesselMobileMeta {
+    display: block;
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .vesselStatus_disponivel,
+  .vesselStatus_manutencao,
+  .vesselStatus_inativa {
+    justify-self: end;
+    max-width: 132px;
+    text-align: center;
+  }
+
+  .vesselDetailsCell {
+    grid-column: 2;
+    grid-row: 2;
+    justify-content: flex-end;
+  }
+
+  .vesselFilterPanel summary {
+    display: grid;
+  }
+
+  .vesselFilterPanel:not([open]) .vesselFilterForm {
+    display: none;
   }
 
   .listItem {
