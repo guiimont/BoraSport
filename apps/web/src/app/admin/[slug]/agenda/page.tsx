@@ -29,6 +29,11 @@ export default async function AdminAgendaPage({ params }: AdminAgendaPageProps) 
   const confirmedBookings = bookings.filter(
     (booking) => booking.status === "confirmed",
   );
+  const publishableResources = resources.filter(
+    (resource) =>
+      resource.vessel_status === null ||
+      resource.vessel_status === "disponivel",
+  );
 
   return (
     <AdminShell
@@ -72,16 +77,16 @@ export default async function AdminAgendaPage({ params }: AdminAgendaPageProps) 
           </div>
         </div>
         <div className={styles.catalogGrid}>
-          <SlotForm
-            companyId={company.id}
-            resources={resources}
+        <SlotForm
+          companyId={company.id}
+            resources={publishableResources}
             services={services}
             slug={company.slug}
             vocabulary={vocabulary}
           />
-          <WeeklySlotsForm
-            companyId={company.id}
-            resources={resources}
+        <WeeklySlotsForm
+          companyId={company.id}
+            resources={publishableResources}
             services={services}
             slug={company.slug}
             vocabulary={vocabulary}

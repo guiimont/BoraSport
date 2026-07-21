@@ -13,12 +13,19 @@ import {
   ensureProfile,
   revokeCompanyInvitation,
   updateCompanyConfiguration,
+  updateResource,
+  updateResourceOperationalStatus,
   upsertLandingPage,
   upsertWeeklyWorkout,
 } from "../../../lib/saas/mutations";
 import { getCurrentUser, getUserCompanyRole } from "../../../lib/saas/queries";
 import { getRequestOrigin } from "../../../lib/saas/auth-redirect";
-import type { VocabularyConfig } from "../../../types/saas";
+import type {
+  DefaultSteererPolicy,
+  VesselClass,
+  VesselStatus,
+  VocabularyConfig,
+} from "../../../types/saas";
 
 export type CompanyConfigurationState = {
   error?: string;
@@ -77,6 +84,83 @@ function readTextList(formData: FormData, key: string) {
     .filter((value): value is string => typeof value === "string")
     .map((value) => value.trim())
     .filter(Boolean);
+}
+
+const knownVesselCapacities: Record<Exclude<VesselClass, "outro">, number> = {
+  oc1: 1,
+  oc4: 4,
+  oc6: 6,
+  v1: 1,
+  v3: 3,
+  v6: 6,
+};
+
+const vesselClasses = new Set<VesselClass>([
+  "v1",
+  "oc1",
+  "v3",
+  "oc4",
+  "v6",
+  "oc6",
+  "outro",
+]);
+
+const vesselStatuses = new Set<VesselStatus>([
+  "disponivel",
+  "manutencao",
+  "inativa",
+]);
+
+const steererPolicies = new Set<DefaultSteererPolicy>([
+  "instrutor",
+  "aluno",
+  "definir_treino",
+]);
+
+function readVesselClass(formData: FormData): VesselClass | null {
+  const value = readOptionalText(formData, "vesselClass");
+
+  if (!value || !vesselClasses.has(value as VesselClass)) {
+    return null;
+  }
+
+  return value as VesselClass;
+}
+
+function readVesselStatus(formData: FormData): VesselStatus {
+  const value = readText(formData, "vesselStatus", "disponivel");
+
+  return vesselStatuses.has(value as VesselStatus)
+    ? (value as VesselStatus)
+    : "disponivel";
+}
+
+function resolveVesselCapacity(formData: FormData, vesselClass: VesselClass) {
+  if (vesselClass !== "outro") {
+    return knownVesselCapacities[vesselClass];
+  }
+
+  return Math.max(0, Math.floor(readNumber(formData, "capacityMaxima", 0)));
+}
+
+function readSteererPolicy(
+  formData: FormData,
+  vesselClass: VesselClass,
+  capacityMaxima: number,
+): DefaultSteererPolicy | null {
+  if (vesselClass === "v1" || vesselClass === "oc1") {
+    return null;
+  }
+
+  if (vesselClass === "outro" && capacityMaxima === 1) {
+    return null;
+  }
+
+  const value = readText(formData, "defaultSteererPolicy", "definir_treino");
+
+  return steererPolicies.has(value as DefaultSteererPolicy)
+    ? (value as DefaultSteererPolicy)
+    : "definir_treino";
 }
 
 function dateKeyInSaoPaulo(value: Date) {
@@ -225,27 +309,49 @@ export async function saveResource(
   const slug = readText(formData, "slug", "");
   const resourceLabel = readText(formData, "resourceLabel", "Recurso");
   const name = readText(formData, "name", "");
-  const capacityMaxima = Math.max(1, Math.floor(readNumber(formData, "capacityMaxima", 1)));
+  const vesselClass = readVesselClass(formData);
+  const vesselStatus = readVesselStatus(formData);
+  const capacityMaxima = vesselClass
+    ? resolveVesselCapacity(formData, vesselClass)
+    : Math.max(1, Math.floor(readNumber(formData, "capacityMaxima", 1)));
+  const defaultSteererPolicy = vesselClass
+    ? readSteererPolicy(formData, vesselClass, capacityMaxima)
+    : null;
+  const internalCode = readOptionalText(formData, "internalCode");
+  const operationalNotes = readOptionalText(formData, "operationalNotes");
 
   if (!companyId || !slug) {
     return { error: "Não foi possível identificar o clube." };
   }
 
-  const accessError = await assertCanManageTenant(companyId);
+  const access = await assertCanAdminTenant(companyId);
 
-  if (accessError) {
-    return { error: accessError };
+  if (access.error) {
+    return { error: access.error };
   }
 
   if (!name) {
     return { error: `Informe o nome do ${resourceLabel.toLowerCase()}.` };
   }
 
+  if (!vesselClass) {
+    return { error: "Escolha a classe da canoa." };
+  }
+
+  if (capacityMaxima < 1) {
+    return { error: "Informe uma capacidade valida para a canoa." };
+  }
+
   try {
     await createResource({
       capacityMaxima,
       companyId,
+      defaultSteererPolicy,
+      internalCode,
       name,
+      operationalNotes,
+      vesselClass,
+      vesselStatus,
     });
   } catch (error) {
     return {
@@ -257,6 +363,113 @@ export async function saveResource(
 
   return {
     success: `${resourceLabel} cadastrado.`,
+  };
+}
+
+export async function saveResourceOperation(
+  _previousState: AdminFormState,
+  formData: FormData,
+): Promise<AdminFormState> {
+  const companyId = readText(formData, "companyId", "");
+  const resourceId = readText(formData, "resourceId", "");
+  const slug = readText(formData, "slug", "");
+  const resourceLabel = readText(formData, "resourceLabel", "Canoa");
+  const name = readText(formData, "name", "");
+  const vesselClass = readVesselClass(formData);
+  const vesselStatus = readVesselStatus(formData);
+  const capacityMaxima = vesselClass
+    ? resolveVesselCapacity(formData, vesselClass)
+    : Math.max(1, Math.floor(readNumber(formData, "capacityMaxima", 1)));
+  const defaultSteererPolicy = vesselClass
+    ? readSteererPolicy(formData, vesselClass, capacityMaxima)
+    : null;
+  const internalCode = readOptionalText(formData, "internalCode");
+  const operationalNotes = readOptionalText(formData, "operationalNotes");
+
+  if (!companyId || !resourceId || !slug) {
+    return { error: "Nao foi possivel identificar a canoa." };
+  }
+
+  const access = await assertCanAdminTenant(companyId);
+
+  if (access.error) {
+    return { error: access.error };
+  }
+
+  if (!name) {
+    return { error: `Informe o nome do ${resourceLabel.toLowerCase()}.` };
+  }
+
+  if (!vesselClass) {
+    return { error: "Escolha a classe da canoa." };
+  }
+
+  if (capacityMaxima < 1) {
+    return { error: "Informe uma capacidade valida para a canoa." };
+  }
+
+  try {
+    await updateResource({
+      capacityMaxima,
+      companyId,
+      defaultSteererPolicy,
+      internalCode,
+      name,
+      operationalNotes,
+      resourceId,
+      vesselClass,
+      vesselStatus,
+    });
+  } catch (error) {
+    return {
+      error: `Nao foi possivel salvar. ${getReadableError(error)}`,
+    };
+  }
+
+  revalidateTenantPages(slug);
+  revalidatePath(`/admin/${slug}/canoas`);
+
+  return {
+    success: `${resourceLabel} atualizado.`,
+  };
+}
+
+export async function updateResourceStatusAction(
+  _previousState: AdminFormState,
+  formData: FormData,
+): Promise<AdminFormState> {
+  const companyId = readText(formData, "companyId", "");
+  const resourceId = readText(formData, "resourceId", "");
+  const slug = readText(formData, "slug", "");
+  const vesselStatus = readVesselStatus(formData);
+
+  if (!companyId || !resourceId || !slug) {
+    return { error: "Nao foi possivel identificar a canoa." };
+  }
+
+  const access = await assertCanAdminTenant(companyId);
+
+  if (access.error) {
+    return { error: access.error };
+  }
+
+  try {
+    await updateResourceOperationalStatus({
+      companyId,
+      resourceId,
+      vesselStatus,
+    });
+  } catch (error) {
+    return {
+      error: `Nao foi possivel atualizar a situacao. ${getReadableError(error)}`,
+    };
+  }
+
+  revalidateTenantPages(slug);
+  revalidatePath(`/admin/${slug}/canoas`);
+
+  return {
+    success: "Situacao da canoa atualizada.",
   };
 }
 

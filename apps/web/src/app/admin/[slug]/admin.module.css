@@ -1219,6 +1219,220 @@
   z-index: 3;
 }
 
+.vesselHeroContent {
+  align-items: flex-start;
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.vesselHeroContent > div {
+  min-width: 0;
+}
+
+.vesselFilterForm {
+  align-items: end;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(220px, 1fr) minmax(150px, 0.45fr) minmax(170px, 0.45fr) auto;
+  min-width: 0;
+  width: 100%;
+}
+
+.vesselLibraryGrid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  min-width: 0;
+}
+
+.vesselCard {
+  background:
+    radial-gradient(circle at 92% 10%, rgba(31, 216, 229, 0.08), transparent 14rem),
+    linear-gradient(180deg, rgba(20, 19, 31, 0.94), rgba(10, 17, 30, 0.96));
+  border: 1px solid rgba(182, 140, 255, 0.2);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-night-card), 0 0 34px rgba(141, 77, 255, 0.08);
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+  padding: clamp(16px, 2.2vw, 22px);
+}
+
+.vesselCardHeader {
+  align-items: flex-start;
+  display: flex;
+  gap: 14px;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.vesselCardHeader > div {
+  min-width: 0;
+}
+
+.vesselCardHeader h2 {
+  color: #ffffff;
+  font-size: clamp(1.35rem, 2.4vw, 2rem);
+  line-height: 1.05;
+  margin: 6px 0 0;
+  overflow-wrap: anywhere;
+}
+
+.vesselStatus_disponivel,
+.vesselStatus_manutencao,
+.vesselStatus_inativa {
+  border-radius: 999px;
+  flex: 0 0 auto;
+  font-size: 0.74rem;
+  font-weight: 900;
+  padding: 7px 10px;
+  text-transform: uppercase;
+}
+
+.vesselStatus_disponivel {
+  background: rgba(22, 163, 136, 0.14);
+  border: 1px solid rgba(123, 243, 245, 0.22);
+  color: #bffcf1;
+}
+
+.vesselStatus_manutencao {
+  background: rgba(248, 217, 133, 0.12);
+  border: 1px solid rgba(248, 217, 133, 0.24);
+  color: #ffe9a8;
+}
+
+.vesselStatus_inativa {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: rgba(238, 248, 247, 0.62);
+}
+
+.vesselMetrics {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+  min-width: 0;
+}
+
+.vesselMetrics div,
+.vesselMetaBlock p,
+.vesselSummaryList div {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(123, 243, 245, 0.11);
+  border-radius: 14px;
+  min-width: 0;
+  padding: 12px;
+}
+
+.vesselMetrics dt,
+.vesselMetaBlock span,
+.vesselSummaryList span {
+  color: rgba(238, 248, 247, 0.54);
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.vesselMetrics dd,
+.vesselMetaBlock strong,
+.vesselSummaryList strong {
+  color: #ffffff;
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 850;
+  line-height: 1.25;
+  margin: 7px 0 0;
+  overflow-wrap: anywhere;
+}
+
+.vesselMetaBlock,
+.vesselSummaryList {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+
+.vesselActions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+}
+
+.inlineActionForm {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  min-width: 0;
+}
+
+.compactButton {
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid rgba(182, 140, 255, 0.22);
+  border-radius: 10px;
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 850;
+  min-height: 36px;
+  padding: 0 10px;
+}
+
+.compactButton:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
+.inlineError {
+  color: #ffc7c7;
+  font-size: 0.78rem;
+  font-weight: 750;
+  overflow-wrap: anywhere;
+}
+
+.vesselPolicyGrid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  min-width: 0;
+}
+
+.vesselPolicyOption {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(123, 243, 245, 0.12);
+  border-radius: 14px;
+  cursor: pointer;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: auto minmax(0, 1fr);
+  min-width: 0;
+  padding: 12px;
+}
+
+.vesselPolicyOption input {
+  accent-color: var(--color-sea-500);
+  margin-top: 2px;
+}
+
+.vesselPolicyOption strong {
+  color: #ffffff;
+  display: block;
+  line-height: 1.2;
+}
+
+.vesselPolicyOption small {
+  color: rgba(238, 248, 247, 0.58);
+  display: block;
+  line-height: 1.4;
+  margin-top: 5px;
+}
+
 .stepperField {
   align-items: center;
   background: rgba(5, 12, 23, 0.78);
@@ -1922,6 +2136,9 @@
   .builderGrid,
   .builderGridThree,
   .builderLayout,
+  .vesselFilterForm,
+  .vesselLibraryGrid,
+  .vesselPolicyGrid,
   .trainingReview,
   .trainingDetailGrid {
     grid-template-columns: 1fr;
@@ -2021,8 +2238,19 @@
   }
 
   .trainingPlanBadges,
-  .trainingPlanActions {
+  .trainingPlanActions,
+  .vesselActions {
     justify-content: flex-start;
+  }
+
+  .vesselHeroContent,
+  .vesselCardHeader {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .vesselMetrics {
+    grid-template-columns: 1fr;
   }
 
   .listItem {
@@ -2134,13 +2362,17 @@
   }
 
   .phaseAddActions,
-  .builderStickyActions {
+  .builderStickyActions,
+  .vesselActions {
     flex-direction: column;
   }
 
   .phaseAddActions .secondaryButton,
   .builderStickyActions .primaryButton,
-  .builderStickyActions .secondaryButton {
+  .builderStickyActions .secondaryButton,
+  .vesselActions .secondaryButton,
+  .vesselActions .compactButton,
+  .vesselActions .inlineActionForm {
     width: 100%;
   }
 
