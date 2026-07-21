@@ -1633,6 +1633,13 @@
   text-decoration: none;
 }
 
+.dayPill span {
+  color: rgba(238, 248, 247, 0.58);
+  display: block;
+  font-size: 0.72rem;
+  margin-top: 3px;
+}
+
 .dayPillActive {
   background: linear-gradient(135deg, rgba(31, 216, 229, 0.16), rgba(141, 77, 255, 0.2));
   border-color: rgba(123, 243, 245, 0.34);
@@ -1847,6 +1854,168 @@
   grid-template-columns: auto minmax(0, 1fr);
   min-width: 0;
   padding: 14px;
+}
+
+.agendaToolbar {
+  align-items: flex-start;
+  background:
+    radial-gradient(circle at 88% 18%, rgba(31, 216, 229, 0.1), transparent 18rem),
+    linear-gradient(180deg, rgba(20, 19, 31, 0.94), rgba(10, 17, 30, 0.96));
+  border: 1px solid rgba(182, 140, 255, 0.2);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-night-card), 0 0 34px rgba(141, 77, 255, 0.08);
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+  min-width: 0;
+  padding: clamp(16px, 2.4vw, 24px);
+}
+
+.agendaToolbar > div:first-child {
+  min-width: 0;
+}
+
+.agendaToolbar h2 {
+  color: #ffffff;
+  font-size: clamp(1.45rem, 2.8vw, 2.4rem);
+  line-height: 1.05;
+  margin: 6px 0 0;
+  overflow-wrap: anywhere;
+}
+
+.agendaToolbar p {
+  color: rgba(238, 248, 247, 0.64);
+  line-height: 1.5;
+  margin: 10px 0 0;
+  overflow-wrap: anywhere;
+}
+
+.agendaActions {
+  align-items: flex-start;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.agendaMoreActions {
+  min-width: 0;
+  position: relative;
+}
+
+.agendaMoreActions summary {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid rgba(182, 140, 255, 0.28);
+  border-radius: 12px;
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 800;
+  justify-content: center;
+  line-height: 1.25;
+  min-height: 42px;
+  padding: 0 14px;
+}
+
+.agendaMoreActions summary:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
+.agendaMoreActions div {
+  background: rgba(7, 13, 26, 0.98);
+  border: 1px solid rgba(182, 140, 255, 0.24);
+  border-radius: 14px;
+  box-shadow: var(--shadow-night-card);
+  display: grid;
+  gap: 4px;
+  min-width: 220px;
+  padding: 8px;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  z-index: 3;
+}
+
+.agendaMoreActions a {
+  border-radius: 10px;
+  color: rgba(238, 248, 247, 0.82);
+  font-weight: 800;
+  padding: 10px;
+  text-decoration: none;
+}
+
+.agendaMoreActions a:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+}
+
+.agendaDayList {
+  display: none;
+}
+
+.agendaWeekGrid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  min-width: 0;
+}
+
+.agendaDayCard {
+  background:
+    radial-gradient(circle at 94% 10%, rgba(31, 216, 229, 0.07), transparent 14rem),
+    linear-gradient(180deg, rgba(20, 19, 31, 0.94), rgba(10, 17, 30, 0.96));
+  border: 1px solid rgba(182, 140, 255, 0.18);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-night-card), 0 0 34px rgba(141, 77, 255, 0.07);
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+  padding: 15px;
+}
+
+.agendaDayHeader {
+  align-items: flex-start;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.agendaDayHeader > div {
+  min-width: 0;
+}
+
+.agendaDayHeader h2 {
+  color: #ffffff;
+  font-size: clamp(1.02rem, 1.7vw, 1.25rem);
+  line-height: 1.18;
+  margin: 5px 0 0;
+  overflow-wrap: anywhere;
+}
+
+.agendaSessionList {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+
+.agendaSessionCard {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(123, 243, 245, 0.11);
+  border-radius: 15px;
+  color: inherit;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  min-width: 0;
+  padding: 12px;
+  text-decoration: none;
 }
 
 .stepperField {
@@ -2580,7 +2749,9 @@
   .sectionHead,
   .sectionHeadBalanced,
   .actionRow,
-  .topbar {
+  .topbar,
+  .agendaToolbar,
+  .agendaDayHeader {
     align-items: stretch;
     flex-direction: column;
   }
@@ -2748,6 +2919,38 @@
 
   .weekGrid {
     display: none;
+  }
+
+  .agendaWeekGrid {
+    display: none;
+  }
+
+  .agendaDayList {
+    display: grid;
+    gap: 14px;
+    min-width: 0;
+  }
+
+  .agendaActions,
+  .agendaActions .primaryButtonLink,
+  .agendaActions .secondaryButton,
+  .agendaMoreActions,
+  .agendaMoreActions summary {
+    width: 100%;
+  }
+
+  .agendaMoreActions div {
+    position: static;
+    width: 100%;
+  }
+
+  .agendaSessionCard {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .agendaSessionCard > span:last-child {
+    grid-column: 2;
+    justify-self: start;
   }
 
   .baseScheduleItem,
