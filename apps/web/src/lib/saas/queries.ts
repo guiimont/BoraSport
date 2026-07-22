@@ -688,7 +688,7 @@ export async function getCompanyOperationalSessions({
           name,
           avatar_url
         ),
-        training_plan_versions:training_plan_version_id (
+        training_plan_versions:training_plan_versions!operational_sessions_training_version_company_fk (
           id,
           company_id,
           training_plan_id,
@@ -697,7 +697,7 @@ export async function getCompanyOperationalSessions({
           status,
           duration_seconds,
           published_at,
-          training_plans:training_plan_id (
+          training_plans:training_plans!training_plan_versions_plan_company_fk (
             id,
             title,
             objective,
@@ -780,7 +780,7 @@ export async function getCompanyOperationalSessionById({
           name,
           avatar_url
         ),
-        training_plan_versions:training_plan_version_id (
+        training_plan_versions:training_plan_versions!operational_sessions_training_version_company_fk (
           id,
           company_id,
           training_plan_id,
@@ -789,7 +789,7 @@ export async function getCompanyOperationalSessionById({
           status,
           duration_seconds,
           published_at,
-          training_plans:training_plan_id (
+          training_plans:training_plans!training_plan_versions_plan_company_fk (
             id,
             title,
             objective,
