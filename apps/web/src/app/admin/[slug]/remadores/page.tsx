@@ -6,24 +6,13 @@ import { getManageAdminContext } from "../admin-context";
 import { AdminShell } from "../admin-shell";
 import styles from "../admin.module.css";
 import { TenantInvitations } from "../tenant-invitations";
+import { MembersDirectory } from "./members-directory";
 
 type AdminMembersPageProps = {
   params: Promise<{
     slug: string;
   }>;
 };
-
-function getRoleLabel(role: string) {
-  if (role === "admin") {
-    return "Admin";
-  }
-
-  if (role === "professional") {
-    return "Treinador";
-  }
-
-  return "Remador";
-}
 
 export default async function AdminMembersPage({ params }: AdminMembersPageProps) {
   const { slug } = await params;
@@ -87,28 +76,7 @@ export default async function AdminMembersPage({ params }: AdminMembersPageProps
             </a>
           ) : null}
         </div>
-        <div className={styles.membersList}>
-          {members.length > 0 ? (
-            members.map((member) => (
-              <article className={styles.memberCard} key={member.id}>
-                <div className={styles.memberIdentity}>
-                  <span className={styles.memberAvatar} aria-hidden="true">
-                    {(member.profile?.name || "U").trim().charAt(0).toUpperCase()}
-                  </span>
-                  <div>
-                  <strong>{member.profile?.name || "Usuário BoraSport"}</strong>
-                    <span className={styles.memberRole}>{getRoleLabel(member.role)}</span>
-                  </div>
-                </div>
-                <p className={styles.memberSince}>
-                  No clube desde {new Date(member.created_at).toLocaleDateString("pt-BR")}
-                </p>
-              </article>
-            ))
-          ) : (
-            <p className={styles.empty}>Nenhum remador vinculado ainda.</p>
-          )}
-        </div>
+        <MembersDirectory members={members} />
       </section>
 
       {role === "admin" ? (

@@ -2137,22 +2137,91 @@
   gap: 20px;
 }
 
-.membersList {
+.membersDirectory {
   display: grid;
-  gap: 10px;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
 }
 
-.memberCard {
-  align-items: center;
-  background: rgba(255, 255, 255, 0.035);
+.membersToolbar {
+  align-items: end;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(240px, 1fr) minmax(160px, 220px);
+}
+
+.memberSearch,
+.memberFilter {
+  color: rgba(238, 248, 247, 0.68);
+  display: grid;
+  font-size: 0.76rem;
+  font-weight: 800;
+  gap: 7px;
+}
+
+.memberSearch input,
+.memberFilter select {
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(182, 140, 255, 0.2);
+  border-radius: 12px;
+  color: #ffffff;
+  font: inherit;
+  min-height: 44px;
+  padding: 0 13px;
+}
+
+.memberFilter option {
+  background: #101322;
+}
+
+.memberSearch input:focus,
+.memberFilter select:focus {
+  border-color: rgba(123, 243, 245, 0.52);
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
+.membersResultBar {
+  color: rgba(238, 248, 247, 0.58);
+  font-size: 0.8rem;
+}
+
+.membersResultBar strong {
+  color: #ffffff;
+}
+
+.membersTable {
   border: 1px solid rgba(182, 140, 255, 0.16);
   border-radius: 15px;
-  display: flex;
-  gap: 16px;
-  justify-content: space-between;
+  overflow: hidden;
+}
+
+.membersTableHead,
+.memberRow {
+  align-items: center;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(210px, 1.5fr) minmax(90px, 0.65fr) minmax(72px, 0.48fr) minmax(130px, 0.85fr) minmax(90px, 0.58fr);
   min-width: 0;
-  padding: 14px;
+  padding: 11px 14px;
+}
+
+.membersTableHead {
+  background: rgba(255, 255, 255, 0.045);
+  color: rgba(238, 248, 247, 0.52);
+  font-size: 0.7rem;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.memberRow {
+  background: rgba(255, 255, 255, 0.035);
+  border-top: 1px solid rgba(182, 140, 255, 0.11);
+  min-height: 64px;
+}
+
+.memberRow:hover {
+  background: rgba(123, 243, 245, 0.045);
 }
 
 .memberIdentity {
@@ -2200,6 +2269,61 @@
   flex: 0 0 auto;
   font-size: 0.76rem;
   margin: 0;
+}
+
+.memberActive {
+  align-items: center;
+  color: #8ef3c2;
+  display: inline-flex;
+  font-size: 0.76rem;
+  font-weight: 800;
+  gap: 6px;
+}
+
+.memberActive::before {
+  background: #39d98a;
+  border-radius: 50%;
+  content: "";
+  height: 7px;
+  width: 7px;
+}
+
+.memberPhone {
+  color: rgba(238, 248, 247, 0.72);
+  font-size: 0.8rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.membersPagination {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.membersPagination span {
+  color: rgba(238, 248, 247, 0.62);
+  font-size: 0.78rem;
+}
+
+.membersPagination button {
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(182, 140, 255, 0.2);
+  border-radius: 10px;
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 800;
+  min-height: 38px;
+  padding: 0 12px;
+}
+
+.membersPagination button:disabled {
+  cursor: not-allowed;
+  opacity: 0.38;
 }
 
 .activeInviteCount {
@@ -3663,8 +3787,13 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .membersList {
-    grid-template-columns: 1fr;
+  .membersTable {
+    overflow-x: auto;
+  }
+
+  .membersTableHead,
+  .memberRow {
+    min-width: 760px;
   }
   .trainingSummary,
   .trainingWorkspace,
@@ -4024,9 +4153,61 @@
     grid-template-columns: 1fr 1fr;
   }
 
-  .memberCard {
-    align-items: flex-start;
+  .membersToolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .membersTable {
+    border: 0;
     display: grid;
+    gap: 10px;
+    overflow: visible;
+  }
+
+  .membersTableHead {
+    display: none;
+  }
+
+  .memberRow {
+    border: 1px solid rgba(182, 140, 255, 0.16);
+    border-radius: 14px;
+    grid-template-columns: 1fr 1fr;
+    min-width: 0;
+    padding: 13px;
+  }
+
+  .memberRow .memberIdentity {
+    grid-column: 1 / -1;
+  }
+
+  .memberRow > [data-label] {
+    display: grid;
+    gap: 4px;
+  }
+
+  .memberRow > [data-label]::before {
+    color: rgba(238, 248, 247, 0.45);
+    content: attr(data-label);
+    font-size: 0.66rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .memberRow .memberActive {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .memberRow .memberActive::before {
+    background: none;
+    border-radius: 0;
+    height: auto;
+    width: 100%;
+  }
+
+  .membersPagination {
+    justify-content: space-between;
   }
 
   .inviteComposerRow {

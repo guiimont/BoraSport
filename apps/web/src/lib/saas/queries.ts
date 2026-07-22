@@ -907,7 +907,7 @@ export async function getCompanyMembers(
   const userIds = memberships.map((membership) => membership.user_id);
   const { data: profiles } = await supabase
     .from("profiles")
-    .select("id,name,avatar_url")
+    .select("id,name,phone,avatar_url")
     .in("id", userIds);
 
   const profilesById = new Map(

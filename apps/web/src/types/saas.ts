@@ -141,7 +141,7 @@ export type MembershipWithCompany = Membership & {
 };
 
 export type CompanyMember = Membership & {
-  profile: Pick<Profile, "avatar_url" | "id" | "name"> | null;
+  profile: Pick<Profile, "avatar_url" | "id" | "name" | "phone"> | null;
 };
 
 export type CompanyInvitationStatus = "active" | "expired" | "revoked" | "used";
