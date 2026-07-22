@@ -242,7 +242,7 @@ export type OperationalSessionTrainingVersion = Pick<
 > & {
   training_plan: Pick<
     TrainingPlan,
-    "id" | "objective" | "title" | "vessel_class"
+    "id" | "objective" | "title" | "training_mode"
   > | null;
 };
 
@@ -267,6 +267,7 @@ export type OperationalSession = {
 };
 
 export type TrainingPlanStatus = "active" | "archived";
+export type TrainingMode = "individual" | "coletivo";
 export type TrainingVersionStatus = "draft" | "published" | "archived";
 export type TrainingVersionLevel =
   | "iniciante"
@@ -305,7 +306,7 @@ export type TrainingPlan = {
   status: TrainingPlanStatus;
   title: string;
   updated_at: string;
-  vessel_class: VesselClass;
+  training_mode: TrainingMode;
 };
 
 export type TrainingPlanVersion = {

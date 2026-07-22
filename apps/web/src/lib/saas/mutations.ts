@@ -8,6 +8,7 @@ import type {
   NewBooking,
   OperationalSessionStatus,
   TrainingBlockInput,
+  TrainingMode,
   TrainingVersionLevel,
   VesselClass,
   VesselStatus,
@@ -824,7 +825,7 @@ export type CreateTrainingPlanDraftInput = {
   groupLabel?: string | null;
   objective?: string | null;
   title: string;
-  vesselClass?: VesselClass;
+  trainingMode?: TrainingMode;
 };
 
 export async function createTrainingPlanDraft({
@@ -834,7 +835,7 @@ export async function createTrainingPlanDraft({
   groupLabel = null,
   objective = null,
   title,
-  vesselClass = "outro",
+  trainingMode = "coletivo",
 }: CreateTrainingPlanDraftInput): Promise<string> {
   const supabase = await createClient();
   const { data, error } = await supabase.rpc("create_training_plan_draft", {
@@ -844,7 +845,7 @@ export async function createTrainingPlanDraft({
     p_group_label: groupLabel,
     p_objective: objective,
     p_title: title,
-    p_vessel_class: vesselClass,
+    p_training_mode: trainingMode,
   });
 
   if (error) {

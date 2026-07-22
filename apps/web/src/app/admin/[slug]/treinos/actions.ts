@@ -11,8 +11,8 @@ import {
   saveTrainingBlocks,
 } from "../../../../lib/saas/mutations";
 import type {
+  TrainingMode,
   TrainingVersionLevel,
-  VesselClass,
 } from "../../../../types/saas";
 import { getManageAdminContext } from "../admin-context";
 import {
@@ -25,15 +25,7 @@ export type TrainingBuilderState = {
   error?: string;
 };
 
-const vesselClasses = new Set<VesselClass>([
-  "v1",
-  "oc1",
-  "v3",
-  "oc4",
-  "v6",
-  "oc6",
-  "outro",
-]);
+const trainingModes = new Set<TrainingMode>(["individual", "coletivo"]);
 
 const versionLevels = new Set<TrainingVersionLevel>([
   "iniciante",
@@ -101,7 +93,7 @@ export async function createStructuredTrainingPlan(
 ): Promise<TrainingBuilderState> {
   const slug = readText(formData, "slug");
   const title = readText(formData, "title");
-  const rawVesselClass = readText(formData, "vesselClass");
+  const rawTrainingMode = readText(formData, "trainingMode");
   const rawLevel = readText(formData, "level");
   const intent = readText(formData, "intent");
   const phasesJson = readText(formData, "phasesJson");
@@ -136,9 +128,9 @@ export async function createStructuredTrainingPlan(
 
   try {
     const context = await getManageAdminContext(slug);
-    const vesselClass = vesselClasses.has(rawVesselClass as VesselClass)
-      ? (rawVesselClass as VesselClass)
-      : "outro";
+    const trainingMode = trainingModes.has(rawTrainingMode as TrainingMode)
+      ? (rawTrainingMode as TrainingMode)
+      : "coletivo";
     const level = versionLevels.has(rawLevel as TrainingVersionLevel)
       ? (rawLevel as TrainingVersionLevel)
       : "intermediario";
@@ -149,7 +141,7 @@ export async function createStructuredTrainingPlan(
       defaultDurationSeconds: durationSeconds,
       objective: readOptionalText(formData, "objective"),
       title,
-      vesselClass,
+      trainingMode,
     });
     const trainingPlanVersionId = await createTrainingPlanVersion({
       durationSeconds,

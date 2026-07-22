@@ -9,9 +9,9 @@ import type {
   BoraZone,
   TrainingBlock,
   TrainingBlockType,
+  TrainingMode,
   TrainingVersionLevel,
   TrainingVersionStatus,
-  VesselClass,
 } from "../../../../../types/saas";
 import { getManageAdminContext } from "../../admin-context";
 import { AdminShell } from "../../admin-shell";
@@ -45,14 +45,9 @@ const levelLabels: Record<TrainingVersionLevel, string> = {
   personalizado: "Personalizado",
 };
 
-const vesselLabels: Record<VesselClass, string> = {
-  oc1: "OC1",
-  oc4: "OC4",
-  oc6: "OC6",
-  outro: "Outro",
-  v1: "V1",
-  v3: "V3",
-  v6: "V6",
+const trainingModeLabels: Record<TrainingMode, string> = {
+  coletivo: "Coletivo",
+  individual: "Individual",
 };
 
 const blockTypeLabels: Record<TrainingBlockType, string> = {
@@ -132,7 +127,7 @@ export default async function TrainingDetailPage({
       <section className={styles.trainingDetailHero}>
         <div>
           <span className={styles.trainingPlanVessel}>
-            {vesselLabels[plan.vessel_class]}
+            {trainingModeLabels[plan.training_mode]}
           </span>
           <h2>{plan.title}</h2>
           <p>{plan.objective || "Objetivo ainda não informado."}</p>

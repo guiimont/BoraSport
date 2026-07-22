@@ -701,7 +701,7 @@ export async function getCompanyOperationalSessions({
             id,
             title,
             objective,
-            vessel_class
+            training_mode
           )
         ),
         operational_session_resources (
@@ -793,7 +793,7 @@ export async function getCompanyOperationalSessionById({
             id,
             title,
             objective,
-            vessel_class
+            training_mode
           )
         ),
         operational_session_resources (
@@ -1067,7 +1067,7 @@ export async function getCompanyTrainingLibrary(
         company_id,
         title,
         objective,
-        vessel_class,
+        training_mode,
         default_duration_seconds,
         group_label,
         coach_id,
@@ -1143,7 +1143,7 @@ export async function getTrainingPlanWithVersion({
   const { data: plan, error: planError } = await supabase
     .from("training_plans")
     .select(
-      "id,company_id,title,objective,vessel_class,default_duration_seconds,group_label,coach_id,status,created_by,archived_at,created_at,updated_at",
+      "id,company_id,title,objective,training_mode,default_duration_seconds,group_label,coach_id,status,created_by,archived_at,created_at,updated_at",
     )
     .eq("company_id", companyId)
     .eq("id", trainingPlanId)
