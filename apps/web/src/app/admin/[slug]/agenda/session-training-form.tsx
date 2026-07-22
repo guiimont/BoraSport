@@ -7,6 +7,7 @@ import { useFormStatus } from "react-dom";
 import type { TrainingPlanLibraryItem } from "../../../../types/saas";
 import { linkOperationalSessionTraining, type AdminFormState } from "../actions";
 import styles from "../admin.module.css";
+import { vesselLabels } from "./grade/base-schedule-utils";
 
 type SessionTrainingFormProps = {
   companyId: string;
@@ -41,11 +42,16 @@ export function SessionTrainingForm({
   );
   const publishedVersions = useMemo(
     () =>
-      trainingPlans.flatMap((plan) =>
-        plan.training_plan_versions
-          .filter((version) => version.status === "published")
-          .map((version) => ({ plan, version })),
-      ),
+      trainingPlans
+        .filter((plan) => plan.status === "active" && !plan.archived_at)
+        .flatMap((plan) =>
+          plan.training_plan_versions
+            .filter((version) => version.status === "published")
+            .map((version) => ({ plan, version })),
+        )
+        .sort((a, b) =>
+          a.plan.title.localeCompare(b.plan.title, "pt-BR"),
+        ),
     [trainingPlans],
   );
 
@@ -65,7 +71,8 @@ export function SessionTrainingForm({
           <option value="">Treino ainda não definido</option>
           {publishedVersions.map(({ plan, version }) => (
             <option key={version.id} value={version.id}>
-              {plan.title} · v{version.version_number}
+              {plan.title} · {vesselLabels[plan.vessel_class]} · v
+              {version.version_number}
             </option>
           ))}
         </select>

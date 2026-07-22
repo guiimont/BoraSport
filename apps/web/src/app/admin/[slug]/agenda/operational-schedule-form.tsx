@@ -31,15 +31,18 @@ type OperationalScheduleFormProps = {
 const initialState: AdminFormState = {};
 
 function getPublishedVersions(trainingPlans: TrainingPlanLibraryItem[]) {
-  return trainingPlans.flatMap((plan) =>
-    plan.training_plan_versions
-      .filter((version) => version.status === "published")
-      .map((version) => ({
-        label: `${plan.title} · v${version.version_number}`,
-        plan,
-        version,
-      })),
-  );
+  return trainingPlans
+    .filter((plan) => plan.status === "active" && !plan.archived_at)
+    .flatMap((plan) =>
+      plan.training_plan_versions
+        .filter((version) => version.status === "published")
+        .map((version) => ({
+          label: `${plan.title} · ${vesselLabels[plan.vessel_class]} · v${version.version_number}`,
+          plan,
+          version,
+        })),
+    )
+    .sort((a, b) => a.label.localeCompare(b.label, "pt-BR"));
 }
 
 function SubmitButton() {
