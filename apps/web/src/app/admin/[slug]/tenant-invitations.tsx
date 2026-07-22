@@ -103,26 +103,36 @@ export function TenantInvitations({
     setCopyMessage("Link copiado.");
   }
 
+  const activeInvitations = invitations.filter(
+    (invitation) => getInvitationStatus(invitation) === "ativo",
+  );
+  const invitationHistory = invitations.filter(
+    (invitation) => getInvitationStatus(invitation) !== "ativo",
+  );
+
   return (
-    <section className={styles.panel}>
-      <div className={styles.sectionHead}>
+    <section className={`${styles.panel} ${styles.invitationsPanel}`}>
+      <div className={styles.sectionHeadBalanced}>
         <div>
-          <p className={styles.eyebrow}>Acesso de remadores</p>
-          <h2>Convites individuais</h2>
+          <p className={styles.eyebrow}>Novos acessos</p>
+          <h2>Convidar remador</h2>
           <p className={styles.muted}>
-            Gere links de uso único para remadores criarem senha e entrarem no
-            clube sem cadastro público aberto.
+            Crie um link individual e envie pelo canal que preferir. Cada link
+            pode ser utilizado apenas uma vez.
           </p>
         </div>
+        <span className={styles.activeInviteCount}>
+          {activeInvitations.length} {activeInvitations.length === 1 ? "convite ativo" : "convites ativos"}
+        </span>
       </div>
 
-      <form action={createAction} className={styles.subForm}>
+      <form action={createAction} className={styles.inviteComposer}>
         <input name="companyId" type="hidden" value={companyId} />
         <input name="slug" type="hidden" value={slug} />
 
-        <div className={styles.fieldGridTwo}>
+        <div className={styles.inviteComposerRow}>
           <label className={styles.label}>
-            Expira em dias
+            Validade do convite
             <input
               className={styles.input}
               defaultValue="7"
@@ -132,10 +142,10 @@ export function TenantInvitations({
               type="number"
             />
           </label>
+          <SubmitButton label="Gerar convite" />
         </div>
 
         <div className={styles.actionRow}>
-          <SubmitButton label="Gerar convite" />
           {createState.success ? (
             <p className={styles.success}>{createState.success}</p>
           ) : null}
@@ -166,6 +176,12 @@ export function TenantInvitations({
         ) : null}
       </form>
 
+      <div className={styles.invitationSectionHead}>
+        <div>
+          <h3>Convites ativos</h3>
+          <p>Links que ainda podem ser utilizados.</p>
+        </div>
+      </div>
       <div className={styles.tableWrap}>
         <table className={styles.table}>
           <thead>
@@ -178,8 +194,8 @@ export function TenantInvitations({
             </tr>
           </thead>
           <tbody>
-            {invitations.length > 0 ? (
-              invitations.map((invitation) => {
+            {activeInvitations.length > 0 ? (
+              activeInvitations.map((invitation) => {
                 const status = getInvitationStatus(invitation);
                 const canRevoke = status === "ativo";
 
@@ -220,12 +236,44 @@ export function TenantInvitations({
               })
             ) : (
               <tr>
-                <td colSpan={5}>Nenhum convite gerado ainda.</td>
+                <td colSpan={5}>Nenhum convite ativo. Gere um novo quando precisar.</td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
+
+      {invitationHistory.length > 0 ? (
+        <details className={styles.invitationHistory}>
+          <summary>Histórico de convites ({invitationHistory.length})</summary>
+          <div className={styles.tableWrap}>
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th>Status</th>
+                  <th>Criado</th>
+                  <th>Expirou</th>
+                  <th>Uso</th>
+                </tr>
+              </thead>
+              <tbody>
+                {invitationHistory.map((invitation) => (
+                  <tr key={invitation.id}>
+                    <td><span className={styles.statusBadge}>{getInvitationStatus(invitation)}</span></td>
+                    <td>{formatDateTime(invitation.created_at)}</td>
+                    <td>{formatDateTime(invitation.expires_at)}</td>
+                    <td>
+                      {invitation.used_at
+                        ? `${formatDateTime(invitation.used_at)}${invitation.accepted_email ? ` por ${invitation.accepted_email}` : ""}`
+                        : "--"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </details>
+      ) : null}
 
       {revokeState.success ? (
         <p className={styles.success}>{revokeState.success}</p>

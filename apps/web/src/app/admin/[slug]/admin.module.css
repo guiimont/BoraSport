@@ -2115,6 +2115,150 @@
   gap: 12px;
 }
 
+.membersStatGrid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.membersStatGrid .statCard {
+  min-height: 132px;
+}
+
+.membersStatGrid .statCard span {
+  color: rgba(238, 248, 247, 0.58);
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.membersPanel,
+.invitationsPanel {
+  display: grid;
+  gap: 20px;
+}
+
+.membersList {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.memberCard {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(182, 140, 255, 0.16);
+  border-radius: 15px;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  min-width: 0;
+  padding: 14px;
+}
+
+.memberIdentity {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  min-width: 0;
+}
+
+.memberIdentity > div {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.memberIdentity strong {
+  color: #ffffff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.memberAvatar {
+  align-items: center;
+  background: linear-gradient(135deg, rgba(31, 216, 229, 0.2), rgba(141, 77, 255, 0.24));
+  border: 1px solid rgba(123, 243, 245, 0.24);
+  border-radius: 50%;
+  color: #ffffff;
+  display: inline-flex;
+  flex: 0 0 42px;
+  font-weight: 900;
+  height: 42px;
+  justify-content: center;
+}
+
+.memberRole,
+.activeInviteCount {
+  color: rgba(123, 243, 245, 0.92);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.memberSince {
+  color: rgba(238, 248, 247, 0.58);
+  flex: 0 0 auto;
+  font-size: 0.76rem;
+  margin: 0;
+}
+
+.activeInviteCount {
+  background: rgba(31, 216, 229, 0.08);
+  border: 1px solid rgba(123, 243, 245, 0.18);
+  border-radius: 999px;
+  padding: 8px 11px;
+}
+
+.inviteComposer {
+  background: linear-gradient(135deg, rgba(31, 216, 229, 0.055), rgba(141, 77, 255, 0.055));
+  border: 1px solid rgba(123, 243, 245, 0.15);
+  border-radius: 16px;
+  display: grid;
+  gap: 12px;
+  padding: 15px;
+}
+
+.inviteComposerRow {
+  align-items: end;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(160px, 240px) auto;
+  justify-content: start;
+}
+
+.invitationSectionHead h3,
+.invitationSectionHead p {
+  margin: 0;
+}
+
+.invitationSectionHead h3 {
+  color: #ffffff;
+  font-size: 1rem;
+}
+
+.invitationSectionHead p {
+  color: rgba(238, 248, 247, 0.58);
+  font-size: 0.8rem;
+  margin-top: 4px;
+}
+
+.invitationHistory {
+  border-top: 1px solid rgba(182, 140, 255, 0.14);
+  padding-top: 14px;
+}
+
+.invitationHistory summary {
+  color: rgba(238, 248, 247, 0.76);
+  cursor: pointer;
+  font-size: 0.84rem;
+  font-weight: 800;
+  list-style-position: inside;
+}
+
+.invitationHistory[open] summary {
+  margin-bottom: 12px;
+}
+
 .statGrid,
 .moduleGrid {
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -3515,6 +3659,13 @@
 }
 
 @media (max-width: 1120px) {
+  .membersStatGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .membersList {
+    grid-template-columns: 1fr;
+  }
   .trainingSummary,
   .trainingWorkspace,
   .trainingLists,
@@ -3869,6 +4020,22 @@
 }
 
 @media (max-width: 640px) {
+  .membersStatGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .memberCard {
+    align-items: flex-start;
+    display: grid;
+  }
+
+  .inviteComposerRow {
+    grid-template-columns: 1fr;
+  }
+
+  .inviteComposerRow .primaryButton {
+    width: 100%;
+  }
   .agendaMonthGrid {
     grid-template-columns: 1fr;
   }
@@ -3879,6 +4046,9 @@
 }
 
 @media (max-width: 520px) {
+  .membersStatGrid {
+    grid-template-columns: 1fr;
+  }
   .header h1,
   .claimPanel h1,
   .topbar h1 {
