@@ -2274,6 +2274,425 @@
   margin-top: 10px;
 }
 
+.statHint {
+  color: rgba(238, 248, 247, 0.54);
+  display: block;
+  font-size: 0.78rem;
+  margin-top: 10px;
+}
+
+.overviewControlBar {
+  align-items: center;
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+.overviewControlBar > div > strong {
+  color: #fff;
+  display: block;
+  font-size: 1.05rem;
+  margin-top: 4px;
+}
+
+.overviewPeriodNav {
+  align-items: center;
+  background: rgba(5, 12, 23, 0.72);
+  border: 1px solid rgba(182, 140, 255, 0.18);
+  border-radius: 12px;
+  display: flex;
+  padding: 4px;
+}
+
+.overviewPeriodNav a {
+  border-radius: 9px;
+  color: rgba(238, 248, 247, 0.62);
+  font-size: 0.82rem;
+  font-weight: 800;
+  padding: 9px 13px;
+}
+
+.overviewPeriodNav a:hover,
+.overviewPeriodNav .overviewPeriodActive {
+  background: rgba(31, 216, 229, 0.12);
+  color: #c8fbfb;
+}
+
+.overviewHeroMain {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.overviewHeroTitle {
+  align-items: center;
+  display: flex;
+  gap: 18px;
+  margin-top: 14px;
+}
+
+.overviewHeroTitle > strong {
+  color: #7bf3f5;
+  font-size: clamp(2rem, 5vw, 4rem);
+  line-height: 1;
+}
+
+.overviewHeroTitle h2 {
+  font-size: clamp(1.4rem, 2.5vw, 2.2rem);
+  margin: 0;
+}
+
+.overviewHeroTitle p {
+  color: rgba(238, 248, 247, 0.6);
+  font-size: 0.9rem;
+  margin: 5px 0 0;
+  text-transform: capitalize;
+}
+
+.overviewHeroDetails {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 24px;
+}
+
+.overviewHeroDetails > span {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(123, 243, 245, 0.1);
+  border-radius: 12px;
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 12px;
+}
+
+.overviewHeroDetails small,
+.overviewQuickGrid small {
+  color: rgba(238, 248, 247, 0.5);
+  font-size: 0.72rem;
+}
+
+.overviewHeroDetails strong {
+  color: #fff;
+  font-size: 0.86rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.overviewHeroLink,
+.overviewTextLink {
+  color: #7bf3f5;
+  font-size: 0.84rem;
+  font-weight: 850;
+}
+
+.overviewHeroLink {
+  align-self: flex-start;
+  margin-top: auto;
+  padding-top: 22px;
+}
+
+.overviewHeroLink span {
+  margin-left: 5px;
+}
+
+.overviewToday {
+  background: rgba(3, 9, 19, 0.62);
+  border: 1px solid rgba(182, 140, 255, 0.16);
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.overviewTodayHead {
+  align-items: flex-start;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.overviewTodayHead strong {
+  color: #fff;
+  display: block;
+  margin-top: 4px;
+}
+
+.overviewTodayHead > a {
+  color: #7bf3f5;
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.overviewTodayList {
+  display: grid;
+  gap: 7px;
+  margin-top: 14px;
+}
+
+.overviewTodayList > a {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.035);
+  border-radius: 10px;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  padding: 10px;
+}
+
+.overviewTodayList > a > strong {
+  color: #fff;
+  font-size: 0.86rem;
+}
+
+.overviewTodayList > a > span {
+  color: rgba(238, 248, 247, 0.8);
+  font-size: 0.8rem;
+  min-width: 0;
+}
+
+.overviewTodayList small {
+  color: rgba(238, 248, 247, 0.48);
+  display: block;
+  margin-top: 3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.overviewTodayList em,
+.overviewSessionStatus em {
+  border-radius: 999px;
+  font-size: 0.65rem;
+  font-style: normal;
+  font-weight: 850;
+  padding: 5px 7px;
+}
+
+.overviewTodayList em[data-status="published"],
+.overviewSessionStatus em[data-status="published"] {
+  background: rgba(22, 163, 136, 0.14);
+  color: #bffcf1;
+}
+
+.overviewTodayList em[data-status="draft"],
+.overviewSessionStatus em[data-status="draft"] {
+  background: rgba(248, 217, 133, 0.12);
+  color: #ffe9a8;
+}
+
+.overviewTodayList > p,
+.overviewEmpty {
+  color: rgba(238, 248, 247, 0.54);
+  font-size: 0.86rem;
+  margin: 12px 0 0;
+}
+
+.overviewEmptyHero h2 {
+  margin-bottom: 10px;
+}
+
+.overviewEmptyHero p {
+  color: rgba(238, 248, 247, 0.6);
+  margin: 0 0 20px;
+}
+
+.overviewMainGrid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(0, 1.65fr) minmax(300px, 0.85fr);
+}
+
+.overviewSessionList,
+.overviewAlertList {
+  display: grid;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.overviewSessionRow {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(182, 140, 255, 0.1);
+  border-radius: 12px;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 76px minmax(130px, 1.2fr) minmax(120px, 0.9fr) auto auto;
+  padding: 12px;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+}
+
+.overviewSessionRow:hover {
+  background: rgba(31, 216, 229, 0.04);
+  border-color: rgba(123, 243, 245, 0.24);
+}
+
+.overviewSessionTime,
+.overviewSessionMain,
+.overviewSessionMeta,
+.overviewSessionStatus {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.overviewSessionTime span,
+.overviewSessionMeta span,
+.overviewSessionStatus > span {
+  color: rgba(238, 248, 247, 0.48);
+  font-size: 0.69rem;
+}
+
+.overviewSessionTime span {
+  text-transform: capitalize;
+}
+
+.overviewSessionTime strong,
+.overviewSessionMain strong {
+  color: #fff;
+}
+
+.overviewSessionMain strong {
+  font-size: 0.84rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.overviewSessionMain > span {
+  color: #7bf3f5;
+  font-size: 0.73rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.overviewSessionMeta span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.overviewSessionArrow {
+  color: rgba(123, 243, 245, 0.6);
+}
+
+.overviewAlertCount {
+  align-items: center;
+  background: rgba(255, 126, 145, 0.12);
+  border: 1px solid rgba(255, 126, 145, 0.18);
+  border-radius: 999px;
+  color: #ffbdc7;
+  display: inline-flex;
+  font-size: 0.78rem;
+  font-weight: 900;
+  height: 30px;
+  justify-content: center;
+  min-width: 30px;
+}
+
+.overviewAlertList > a {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.025);
+  border-radius: 11px;
+  color: rgba(238, 248, 247, 0.6);
+  display: grid;
+  gap: 10px;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  padding: 11px;
+}
+
+.overviewAlertList > a:hover {
+  background: rgba(255, 126, 145, 0.05);
+}
+
+.overviewAlertIcon {
+  align-items: center;
+  background: rgba(255, 126, 145, 0.13);
+  border-radius: 50%;
+  color: #ffbdc7;
+  display: inline-flex;
+  font-size: 0.7rem;
+  font-weight: 900;
+  height: 24px;
+  justify-content: center;
+  width: 24px;
+}
+
+.overviewAlertList strong,
+.overviewAlertList small {
+  display: block;
+}
+
+.overviewAlertList strong {
+  color: #fff;
+  font-size: 0.79rem;
+}
+
+.overviewAlertList small {
+  color: rgba(238, 248, 247, 0.46);
+  font-size: 0.68rem;
+  margin-top: 4px;
+}
+
+.overviewAllGood {
+  background: rgba(22, 163, 136, 0.08);
+  border: 1px solid rgba(123, 243, 245, 0.13);
+  border-radius: 12px;
+  padding: 18px;
+}
+
+.overviewAllGood strong {
+  color: #bffcf1;
+}
+
+.overviewAllGood p {
+  color: rgba(238, 248, 247, 0.52);
+  font-size: 0.8rem;
+  margin: 6px 0 0;
+}
+
+.overviewQuickSection {
+  display: grid;
+  gap: 16px;
+}
+
+.overviewQuickSection h2 {
+  color: #fff;
+  font-size: 1.25rem;
+  margin: 4px 0 0;
+}
+
+.overviewQuickGrid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.overviewQuickGrid > a {
+  background: linear-gradient(180deg, rgba(20, 19, 31, 0.9), rgba(10, 17, 30, 0.94));
+  border: 1px solid rgba(182, 140, 255, 0.16);
+  border-radius: 14px;
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 15px;
+}
+
+.overviewQuickGrid > a:hover {
+  border-color: rgba(123, 243, 245, 0.28);
+}
+
+.overviewQuickGrid > a > span {
+  color: #7bf3f5;
+  font-size: 1.2rem;
+  margin-bottom: 5px;
+}
+
+.overviewQuickGrid strong {
+  color: #fff;
+  font-size: 0.87rem;
+}
+
 .claimPanel {
   margin: 44px auto;
   max-width: 620px;
@@ -3168,6 +3587,41 @@
   .catalogGrid,
   .twoColumn,
   .overviewHero {
+    grid-template-columns: 1fr;
+  }
+
+  .overviewControlBar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .overviewPeriodNav {
+    align-self: flex-start;
+  }
+
+  .overviewMainGrid,
+  .overviewQuickGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .overviewSessionRow {
+    grid-template-columns: 64px minmax(0, 1fr) auto;
+  }
+
+  .overviewSessionMeta,
+  .overviewSessionStatus > span {
+    display: none;
+  }
+
+  .overviewSessionStatus {
+    justify-items: end;
+  }
+
+  .overviewSessionArrow {
+    display: none;
+  }
+
+  .overviewHeroDetails {
     grid-template-columns: 1fr;
   }
 
