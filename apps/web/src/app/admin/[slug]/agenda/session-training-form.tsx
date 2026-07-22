@@ -7,7 +7,6 @@ import { useFormStatus } from "react-dom";
 import type { TrainingPlanLibraryItem } from "../../../../types/saas";
 import { linkOperationalSessionTraining, type AdminFormState } from "../actions";
 import styles from "../admin.module.css";
-import { vesselLabels } from "./grade/base-schedule-utils";
 
 type SessionTrainingFormProps = {
   companyId: string;
@@ -71,8 +70,7 @@ export function SessionTrainingForm({
           <option value="">Treino ainda não definido</option>
           {publishedVersions.map(({ plan, version }) => (
             <option key={version.id} value={version.id}>
-              {plan.title} · {vesselLabels[plan.vessel_class]} · v
-              {version.version_number}
+              {plan.title} · v{version.version_number}
             </option>
           ))}
         </select>

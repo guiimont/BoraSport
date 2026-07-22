@@ -37,7 +37,7 @@ function getPublishedVersions(trainingPlans: TrainingPlanLibraryItem[]) {
       plan.training_plan_versions
         .filter((version) => version.status === "published")
         .map((version) => ({
-          label: `${plan.title} · ${vesselLabels[plan.vessel_class]} · v${version.version_number}`,
+          label: `${plan.title} · v${version.version_number}`,
           plan,
           version,
         })),
