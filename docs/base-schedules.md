@@ -27,6 +27,14 @@ visualizado. Essa projeção não cria registros indefinidos no banco. Quando um
 data recebe uma sessão concreta ligada à recorrência, a sessão concreta prevalece
 e a recorrência projetada não aparece duplicada.
 
+A Agenda é uma linha do tempo única. Semana e mês são apenas atalhos de
+visualização, não planejamentos separados. O gestor também pode informar uma
+data inicial e uma data final para consultar e planejar qualquer período. Todos
+os períodos usam a mesma grade; ao selecionar um dia, a interface apresenta as
+atividades completas desse dia e permite abrir seus detalhes ou criar um novo
+horário. O filtro limita somente o que está visível, nunca o que o clube pode
+planejar.
+
 O treino da Biblioteca deve ser vinculado à sessão concreta. Isso permite que a
 mesma turma recorrente tenha treinos diferentes a cada semana.
 

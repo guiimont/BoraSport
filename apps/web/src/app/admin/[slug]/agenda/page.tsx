@@ -25,11 +25,13 @@ type AdminAgendaPageProps = {
   }>;
   searchParams?: Promise<{
     date?: string;
+    end?: string;
+    start?: string;
     view?: string;
   }>;
 };
 
-type AgendaView = "month" | "week";
+type AgendaView = "month" | "period" | "week";
 type AgendaActivityKind = "projected" | "slot" | "session";
 type AgendaActivityStatus = "cancelled" | "draft" | "published";
 
@@ -102,13 +104,6 @@ function addDays(date: Date, days: number) {
   return next;
 }
 
-function addMonths(date: Date, months: number) {
-  const next = new Date(date);
-  next.setMonth(next.getMonth() + months);
-
-  return next;
-}
-
 function getWeekStart(date: Date) {
   const localDate = new Date(`${toDateKey(date)}T12:00:00-03:00`);
   const day = localDate.getDay();
@@ -120,21 +115,6 @@ function getWeekStart(date: Date) {
 
 function getMonthStart(date: Date) {
   return new Date(date.getFullYear(), date.getMonth(), 1, 12);
-}
-
-function getWeekDays(weekStart: Date) {
-  return Array.from({ length: 7 }, (_, index) => {
-    const date = addDays(weekStart, index);
-    const weekday = index + 1;
-
-    return {
-      date,
-      dateKey: toDateKey(date),
-      label: weekdayLabels[weekday],
-      shortLabel: weekdayLabels[weekday].slice(0, 3).toUpperCase(),
-      weekday,
-    };
-  });
 }
 
 function getMonthGridDays(monthStart: Date) {
@@ -152,6 +132,21 @@ function getMonthGridDays(monthStart: Date) {
   });
 }
 
+function getPeriodDays(start: Date, end: Date) {
+  const days: ReturnType<typeof getMonthGridDays> = [];
+
+  for (let date = start; date <= end; date = addDays(date, 1)) {
+    days.push({
+      currentMonth: true,
+      date,
+      dateKey: toDateKey(date),
+      weekday: date.getDay() === 0 ? 7 : date.getDay(),
+    });
+  }
+
+  return days;
+}
+
 function formatSlotTime(value: string) {
   return new Intl.DateTimeFormat("pt-BR", {
     hour: "2-digit",
@@ -165,7 +160,56 @@ function formatTimeValue(value: string) {
 }
 
 function normalizeView(value?: string | null): AgendaView {
-  return value === "month" ? "month" : "week";
+  if (value === "month" || value === "period") {
+    return value;
+  }
+
+  return "week";
+}
+
+function getPeriodSelection({
+  end,
+  selectedDate,
+  start,
+  view,
+}: {
+  end?: string;
+  selectedDate: Date;
+  start?: string;
+  view: AgendaView;
+}) {
+  if (view === "month") {
+    const monthStart = getMonthStart(selectedDate);
+    const monthDays = getMonthGridDays(monthStart);
+
+    return {
+      days: monthDays,
+      end: monthDays[monthDays.length - 1].date,
+      start: monthDays[0].date,
+    };
+  }
+
+  if (view === "period" && start && end) {
+    const requestedStart = parseDateKey(start);
+    const requestedEnd = parseDateKey(end);
+
+    if (requestedStart <= requestedEnd) {
+      return {
+        days: getPeriodDays(requestedStart, requestedEnd),
+        end: requestedEnd,
+        start: requestedStart,
+      };
+    }
+  }
+
+  const weekStart = getWeekStart(selectedDate);
+  const weekEnd = addDays(weekStart, 6);
+
+  return {
+    days: getPeriodDays(weekStart, weekEnd),
+    end: weekEnd,
+    start: weekStart,
+  };
 }
 
 function getStatusLabel(status: AgendaActivityStatus) {
@@ -343,17 +387,20 @@ export default async function AdminAgendaPage({
   const { company } = context;
   const view = normalizeView(resolvedSearchParams.view);
   const selectedDate = parseDateKey(resolvedSearchParams.date);
-  const selectedDateKey = toDateKey(selectedDate);
-  const weekStart = getWeekStart(selectedDate);
-  const weekDays = getWeekDays(weekStart);
   const monthStart = getMonthStart(selectedDate);
-  const monthDays = getMonthGridDays(monthStart);
-  const periodStartKey =
-    view === "month" ? toDateKey(monthDays[0].date) : weekDays[0].dateKey;
-  const periodEndKey =
-    view === "month"
-      ? toDateKey(monthDays[monthDays.length - 1].date)
-      : weekDays[6].dateKey;
+  const period = getPeriodSelection({
+    end: resolvedSearchParams.end,
+    selectedDate,
+    start: resolvedSearchParams.start,
+    view,
+  });
+  const periodStartKey = toDateKey(period.start);
+  const periodEndKey = toDateKey(period.end);
+  const requestedDateKey = toDateKey(selectedDate);
+  const selectedDateKey =
+    requestedDateKey >= periodStartKey && requestedDateKey <= periodEndKey
+      ? requestedDateKey
+      : periodStartKey;
   const [slots, bookings, baseSchedules, sessions] =
     await Promise.all([
       getCompanySlots(company.id),
@@ -365,10 +412,7 @@ export default async function AdminAgendaPage({
         startDate: periodStartKey,
       }),
     ]);
-  const dateKeys =
-    view === "month"
-      ? monthDays.map((day) => day.dateKey)
-      : weekDays.map((day) => day.dateKey);
+  const dateKeys = period.days.map((day) => day.dateKey);
   const activitiesByDate = buildActivities({
     baseSchedules,
     companySlug: company.slug,
@@ -380,17 +424,22 @@ export default async function AdminAgendaPage({
   const confirmedBookings = bookings.filter(
     (booking) => booking.status === "confirmed",
   );
-  const previousDate =
-    view === "month" ? addMonths(selectedDate, -1) : addDays(weekStart, -7);
-  const nextDate =
-    view === "month" ? addMonths(selectedDate, 1) : addDays(weekStart, 7);
+  const periodLength = period.days.length;
+  const previousStart = addDays(period.start, -periodLength);
+  const previousEnd = addDays(period.end, -periodLength);
+  const nextStart = addDays(period.start, periodLength);
+  const nextEnd = addDays(period.end, periodLength);
   const todayKey = toDateKey(new Date());
   const periodLabel =
     view === "month"
       ? monthTitleFormatter.format(monthStart)
-      : `${weekRangeFormatter.format(weekDays[0].date)} a ${weekRangeFormatter.format(
-          weekDays[6].date,
+      : `${weekRangeFormatter.format(period.start)} a ${weekRangeFormatter.format(
+          period.end,
         )}`;
+  const buildPeriodHref = (start: Date, end: Date, date = start) =>
+    `/admin/${company.slug}/agenda?view=period&start=${toDateKey(start)}&end=${toDateKey(
+      end,
+    )}&date=${toDateKey(date)}`;
 
   return (
     <AdminShell
@@ -425,21 +474,33 @@ export default async function AdminAgendaPage({
               Mês
             </Link>
           </div>
+          <form className={styles.agendaPeriodFilter} method="get">
+            <input name="view" type="hidden" value="period" />
+            <label>
+              De
+              <input defaultValue={periodStartKey} name="start" required type="date" />
+            </label>
+            <label>
+              Até
+              <input defaultValue={periodEndKey} name="end" required type="date" />
+            </label>
+            <button type="submit">Aplicar período</button>
+          </form>
           <Link
             className={styles.secondaryButton}
-            href={`/admin/${company.slug}/agenda?view=${view}&date=${toDateKey(previousDate)}`}
+            href={buildPeriodHref(previousStart, previousEnd)}
           >
             Anterior
           </Link>
           <Link
             className={styles.secondaryButton}
-            href={`/admin/${company.slug}/agenda?view=${view}&date=${todayKey}`}
+            href={`/admin/${company.slug}/agenda?view=week&date=${todayKey}`}
           >
             Hoje
           </Link>
           <Link
             className={styles.secondaryButton}
-            href={`/admin/${company.slug}/agenda?view=${view}&date=${toDateKey(nextDate)}`}
+            href={buildPeriodHref(nextStart, nextEnd)}
           >
             Próximo
           </Link>
@@ -463,23 +524,15 @@ export default async function AdminAgendaPage({
         </div>
       </section>
 
-      {view === "week" ? (
-        <WeekAgenda
-          activitiesByDate={activitiesByDate}
-          companySlug={company.slug}
-          selectedDateKey={selectedDateKey}
-          weekDays={weekDays}
-        />
-      ) : (
-        <MonthAgenda
-          activitiesByDate={activitiesByDate}
-          companySlug={company.slug}
-          monthDays={monthDays}
-          monthStart={monthStart}
-          selectedDateKey={selectedDateKey}
-          selectedDayActivities={selectedDayActivities}
-        />
-      )}
+      <PeriodAgenda
+        activitiesByDate={activitiesByDate}
+        companySlug={company.slug}
+        days={period.days}
+        periodEndKey={periodEndKey}
+        periodStartKey={periodStartKey}
+        selectedDateKey={selectedDateKey}
+        selectedDayActivities={selectedDayActivities}
+      />
 
       <section className={styles.infoBox}>
         <strong>Como a Agenda funciona</strong>
@@ -493,79 +546,27 @@ export default async function AdminAgendaPage({
   );
 }
 
-function WeekAgenda({
+function PeriodAgenda({
   activitiesByDate,
   companySlug,
-  selectedDateKey,
-  weekDays,
-}: {
-  activitiesByDate: Map<string, AgendaActivity[]>;
-  companySlug: string;
-  selectedDateKey: string;
-  weekDays: ReturnType<typeof getWeekDays>;
-}) {
-  return (
-    <>
-      <nav className={styles.dayScroller} aria-label="Datas da semana">
-        {weekDays.map((day) => (
-          <Link
-            aria-current={selectedDateKey === day.dateKey ? "page" : undefined}
-            className={`${styles.dayPill} ${
-              selectedDateKey === day.dateKey ? styles.dayPillActive : ""
-            }`}
-            href={`/admin/${companySlug}/agenda?view=week&date=${day.dateKey}`}
-            key={day.dateKey}
-          >
-            {day.shortLabel}
-            <span>{dayNumberFormatter.format(day.date)}</span>
-          </Link>
-        ))}
-      </nav>
-
-      <section className={styles.agendaDayList}>
-        {weekDays
-          .filter((day) => day.dateKey === selectedDateKey)
-          .map((day) => (
-            <AgendaDay
-              activities={activitiesByDate.get(day.dateKey) ?? []}
-              dateLabel={monthDayFormatter.format(day.date)}
-              key={day.dateKey}
-            />
-          ))}
-      </section>
-
-      <section className={styles.agendaWeekGrid} aria-label="Agenda semanal">
-        {weekDays.map((day) => (
-          <AgendaDay
-            activities={activitiesByDate.get(day.dateKey) ?? []}
-            dateLabel={`${day.shortLabel} · ${monthDayFormatter.format(day.date)}`}
-            key={day.dateKey}
-          />
-        ))}
-      </section>
-    </>
-  );
-}
-
-function MonthAgenda({
-  activitiesByDate,
-  companySlug,
-  monthDays,
-  monthStart,
+  days,
+  periodEndKey,
+  periodStartKey,
   selectedDateKey,
   selectedDayActivities,
 }: {
   activitiesByDate: Map<string, AgendaActivity[]>;
   companySlug: string;
-  monthDays: ReturnType<typeof getMonthGridDays>;
-  monthStart: Date;
+  days: ReturnType<typeof getPeriodDays>;
+  periodEndKey: string;
+  periodStartKey: string;
   selectedDateKey: string;
   selectedDayActivities: AgendaActivity[];
 }) {
   return (
     <>
-      <section className={styles.agendaMonthGrid} aria-label="Agenda mensal">
-        {monthDays.map((day) => {
+      <section className={styles.agendaMonthGrid} aria-label="Agenda do período">
+        {days.map((day) => {
           const activities = activitiesByDate.get(day.dateKey) ?? [];
 
           return (
@@ -573,7 +574,7 @@ function MonthAgenda({
               className={`${styles.agendaMonthCell} ${
                 day.currentMonth ? "" : styles.agendaMonthCellMuted
               } ${selectedDateKey === day.dateKey ? styles.agendaMonthCellActive : ""}`}
-              href={`/admin/${companySlug}/agenda?view=month&date=${day.dateKey}`}
+              href={`/admin/${companySlug}/agenda?view=period&start=${periodStartKey}&end=${periodEndKey}&date=${day.dateKey}#dia-selecionado`}
               key={day.dateKey}
             >
               <strong>{dayNumberFormatter.format(day.date)}</strong>
@@ -593,30 +594,19 @@ function MonthAgenda({
         })}
       </section>
 
-      <section className={styles.agendaMonthMobile}>
+      <section className={styles.agendaSelectedDay} id="dia-selecionado">
         <div className={styles.sectionHeadBalanced}>
           <div>
-            <p className={styles.eyebrow}>{monthTitleFormatter.format(monthStart)}</p>
-            <h2>Resumo do mês</h2>
+            <p className={styles.eyebrow}>Dia selecionado</p>
+            <h2>{monthDayFormatter.format(parseDateKey(selectedDateKey))}</h2>
           </div>
+          <Link
+            className={styles.primaryButtonLink}
+            href={`/admin/${companySlug}/agenda/novo?date=${selectedDateKey}`}
+          >
+            Novo horário neste dia
+          </Link>
         </div>
-        <nav className={styles.dayScroller} aria-label="Datas do mês">
-          {monthDays
-            .filter((day) => day.currentMonth)
-            .map((day) => (
-              <Link
-                aria-current={selectedDateKey === day.dateKey ? "page" : undefined}
-                className={`${styles.dayPill} ${
-                  selectedDateKey === day.dateKey ? styles.dayPillActive : ""
-                }`}
-                href={`/admin/${companySlug}/agenda?view=month&date=${day.dateKey}`}
-                key={day.dateKey}
-              >
-                {weekdayLabels[day.weekday].slice(0, 3).toUpperCase()}
-                <span>{dayNumberFormatter.format(day.date)}</span>
-              </Link>
-            ))}
-        </nav>
         <AgendaDay
           activities={selectedDayActivities}
           dateLabel={monthDayFormatter.format(parseDateKey(selectedDateKey))}
