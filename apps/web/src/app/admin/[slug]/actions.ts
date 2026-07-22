@@ -12,12 +12,14 @@ import {
   createSlotsSkippingDuplicates,
   ensureProfile,
   revokeCompanyInvitation,
+  setOperationalSessionTraining,
   updateBaseScheduleStatus,
   updateCompanyConfiguration,
   updateResource,
   updateResourceOperationalStatus,
   upsertBaseSchedule,
   upsertLandingPage,
+  upsertOperationalSession,
   upsertWeeklyWorkout,
 } from "../../../lib/saas/mutations";
 import { getCurrentUser, getUserCompanyRole } from "../../../lib/saas/queries";
@@ -25,6 +27,7 @@ import { getRequestOrigin } from "../../../lib/saas/auth-redirect";
 import type {
   BaseScheduleStatus,
   DefaultSteererPolicy,
+  OperationalSessionStatus,
   VesselClass,
   VesselStatus,
   VocabularyConfig,
@@ -125,12 +128,26 @@ const baseScheduleStatuses = new Set<BaseScheduleStatus>([
   "inactive",
 ]);
 
+const operationalSessionStatuses = new Set<OperationalSessionStatus>([
+  "draft",
+  "published",
+  "cancelled",
+]);
+
 function readBaseScheduleStatus(formData: FormData): BaseScheduleStatus {
   const value = readText(formData, "status", "active");
 
   return baseScheduleStatuses.has(value as BaseScheduleStatus)
     ? (value as BaseScheduleStatus)
     : "active";
+}
+
+function readOperationalSessionStatus(formData: FormData): OperationalSessionStatus {
+  const value = readText(formData, "status", "draft");
+
+  return operationalSessionStatuses.has(value as OperationalSessionStatus)
+    ? (value as OperationalSessionStatus)
+    : "draft";
 }
 
 function readVesselClass(formData: FormData): VesselClass | null {
@@ -268,6 +285,26 @@ function getReadableError(error: unknown) {
     return "Selecione ao menos uma canoa.";
   }
 
+  if (message.includes("operational_session_resource_conflict")) {
+    return "Essa canoa já está em outra sessão que se sobrepõe nesta data.";
+  }
+
+  if (message.includes("operational_session_resource_unavailable")) {
+    return "Uma das canoas selecionadas está em manutenção ou inativa.";
+  }
+
+  if (message.includes("operational_session_coach_must_belong_to_company")) {
+    return "O treinador precisa ser administrador ou treinador deste clube.";
+  }
+
+  if (message.includes("operational_session_requires_resource")) {
+    return "Selecione ao menos uma canoa.";
+  }
+
+  if (message.includes("operational_session_training_version_invalid")) {
+    return "Selecione um treino publicado da biblioteca deste clube.";
+  }
+
   return message;
 }
 
@@ -388,6 +425,161 @@ export async function changeBaseScheduleStatus(
 
   return {
     success: status === "active" ? "Horário reativado." : "Horário inativado.",
+  };
+}
+
+export async function saveOperationalSchedule(
+  _previousState: AdminFormState,
+  formData: FormData,
+): Promise<AdminFormState> {
+  const companyId = readText(formData, "companyId", "");
+  const slug = readText(formData, "slug", "");
+  const recurrenceMode = readText(formData, "recurrenceMode", "single");
+  const sessionDate = readText(formData, "sessionDate", "");
+  const startTime = readText(formData, "startTime", "");
+  const durationMinutes = Math.floor(readNumber(formData, "durationMinutes", 60));
+  const groupName = readText(formData, "groupName", "");
+  const level = readOptionalText(formData, "level");
+  const coachId = readText(formData, "coachId", "");
+  const resourceIds = readTextList(formData, "resourceIds");
+  const status = readOperationalSessionStatus(formData);
+  const trainingPlanVersionId = readOptionalText(formData, "trainingPlanVersionId");
+
+  if (!companyId || !slug) {
+    return { error: "Não foi possível identificar o clube." };
+  }
+
+  const access = await assertCanAdminTenant(companyId);
+
+  if (access.error || !access.user) {
+    return { error: access.error || "Permissão negada." };
+  }
+
+  if (!sessionDate) {
+    return { error: "Informe a data do horário." };
+  }
+
+  if (!startTime) {
+    return { error: "Informe o horário inicial." };
+  }
+
+  if (durationMinutes < 5 || durationMinutes > 360) {
+    return { error: "Informe uma duração entre 5 e 360 minutos." };
+  }
+
+  if (!groupName) {
+    return { error: "Informe o nome da turma." };
+  }
+
+  if (!coachId) {
+    return { error: "Selecione o treinador responsável." };
+  }
+
+  if (resourceIds.length === 0) {
+    return { error: "Selecione ao menos uma canoa." };
+  }
+
+  try {
+    if (recurrenceMode === "weekly") {
+      const date = new Date(`${sessionDate}T12:00:00-03:00`);
+      const weekday = date.getDay() === 0 ? 7 : date.getDay();
+      const savedScheduleId = await upsertBaseSchedule({
+        coachId,
+        companyId,
+        createdBy: access.user.id,
+        durationMinutes,
+        groupName,
+        level,
+        resourceIds,
+        startTime,
+        status: status === "cancelled" ? "inactive" : "active",
+        weekday,
+      });
+
+      if (trainingPlanVersionId) {
+        await upsertOperationalSession({
+          baseScheduleId: savedScheduleId,
+          coachId,
+          companyId,
+          durationMinutes,
+          groupName,
+          level,
+          resourceIds,
+          sessionDate,
+          startTime,
+          status,
+          trainingPlanVersionId,
+        });
+      }
+    } else {
+      await upsertOperationalSession({
+        coachId,
+        companyId,
+        durationMinutes,
+        groupName,
+        level,
+        resourceIds,
+        sessionDate,
+        startTime,
+        status,
+        trainingPlanVersionId,
+      });
+    }
+
+    revalidatePath(`/admin/${slug}`);
+    revalidatePath(`/admin/${slug}/agenda`);
+    revalidatePath(`/clube/${slug}`);
+  } catch (error) {
+    return {
+      error: `Não foi possível salvar o horário. ${getReadableError(error)}`,
+    };
+  }
+
+  return {
+    success:
+      recurrenceMode === "weekly"
+        ? "Horário recorrente criado na Agenda."
+        : "Sessão criada na Agenda.",
+  };
+}
+
+export async function linkOperationalSessionTraining(
+  _previousState: AdminFormState,
+  formData: FormData,
+): Promise<AdminFormState> {
+  const companyId = readText(formData, "companyId", "");
+  const sessionId = readText(formData, "sessionId", "");
+  const slug = readText(formData, "slug", "");
+  const trainingPlanVersionId = readOptionalText(formData, "trainingPlanVersionId");
+
+  if (!companyId || !sessionId || !slug) {
+    return { error: "Não foi possível identificar a sessão." };
+  }
+
+  const access = await assertCanAdminTenant(companyId);
+
+  if (access.error) {
+    return { error: access.error };
+  }
+
+  try {
+    await setOperationalSessionTraining({
+      sessionId,
+      trainingPlanVersionId,
+    });
+  } catch (error) {
+    return {
+      error: `Não foi possível atualizar o treino. ${getReadableError(error)}`,
+    };
+  }
+
+  revalidatePath(`/admin/${slug}/agenda`);
+  revalidatePath(`/admin/${slug}/agenda/sessoes/${sessionId}`);
+
+  return {
+    success: trainingPlanVersionId
+      ? "Treino vinculado à sessão."
+      : "Treino removido da sessão.",
   };
 }
 

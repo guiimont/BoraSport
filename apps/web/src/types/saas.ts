@@ -194,6 +194,7 @@ export type VesselClass = "v1" | "oc1" | "v3" | "oc4" | "v6" | "oc6" | "outro";
 export type VesselStatus = "disponivel" | "manutencao" | "inativa";
 export type DefaultSteererPolicy = "instrutor" | "aluno" | "definir_treino";
 export type BaseScheduleStatus = "active" | "inactive";
+export type OperationalSessionStatus = "draft" | "published" | "cancelled";
 
 export type BaseScheduleResource = {
   company_id: string;
@@ -218,6 +219,51 @@ export type BaseSchedule = {
   status: BaseScheduleStatus;
   updated_at: string;
   weekday: number;
+};
+
+export type OperationalSessionResource = {
+  company_id: string;
+  created_at: string;
+  resource: Resource | null;
+  resource_id: string;
+  session_id: string;
+};
+
+export type OperationalSessionTrainingVersion = Pick<
+  TrainingPlanVersion,
+  | "company_id"
+  | "duration_seconds"
+  | "id"
+  | "level"
+  | "published_at"
+  | "status"
+  | "training_plan_id"
+  | "version_number"
+> & {
+  training_plan: Pick<
+    TrainingPlan,
+    "id" | "objective" | "title" | "vessel_class"
+  > | null;
+};
+
+export type OperationalSession = {
+  base_schedule_id: string | null;
+  coach: Pick<Profile, "avatar_url" | "id" | "name"> | null;
+  coach_id: string;
+  company_id: string;
+  created_at: string;
+  created_by: string | null;
+  duration_minutes: number;
+  group_name: string;
+  id: string;
+  level: string | null;
+  resources: OperationalSessionResource[];
+  session_date: string;
+  start_time: string;
+  status: OperationalSessionStatus;
+  training_plan_version: OperationalSessionTrainingVersion | null;
+  training_plan_version_id: string | null;
+  updated_at: string;
 };
 
 export type TrainingPlanStatus = "active" | "archived";

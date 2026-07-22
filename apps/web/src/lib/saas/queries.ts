@@ -9,6 +9,8 @@ import type {
   LandingPage,
   MembershipRole,
   MembershipWithCompany,
+  OperationalSession,
+  OperationalSessionResource,
   Profile,
   PublicSportProfile,
   Resource,
@@ -101,6 +103,74 @@ function normalizeBaseSchedule(
     status: row.status,
     updated_at: row.updated_at,
     weekday: row.weekday,
+  };
+}
+
+function normalizeOperationalSessionResource(
+  row: Omit<OperationalSessionResource, "resource"> & {
+    resources?: SupabaseJoin<Resource>;
+  },
+): OperationalSessionResource {
+  return {
+    company_id: row.company_id,
+    created_at: row.created_at,
+    resource: firstJoin(row.resources ?? null)
+      ? normalizeResource(firstJoin(row.resources ?? null) as Resource)
+      : null,
+    resource_id: row.resource_id,
+    session_id: row.session_id,
+  };
+}
+
+function normalizeOperationalSession(
+  row: Omit<OperationalSession, "coach" | "resources" | "training_plan_version"> & {
+    operational_session_resources?: Array<
+      Omit<OperationalSessionResource, "resource"> & { resources?: SupabaseJoin<Resource> }
+    >;
+    profiles?: SupabaseJoin<Pick<Profile, "avatar_url" | "id" | "name">>;
+    training_plan_versions?: SupabaseJoin<
+      Omit<NonNullable<OperationalSession["training_plan_version"]>, "training_plan"> & {
+        training_plans?: SupabaseJoin<
+          NonNullable<OperationalSession["training_plan_version"]>["training_plan"]
+        >;
+      }
+    >;
+  },
+): OperationalSession {
+  const trainingVersion = firstJoin(row.training_plan_versions ?? null);
+
+  return {
+    base_schedule_id: row.base_schedule_id,
+    coach: firstJoin(row.profiles ?? null),
+    coach_id: row.coach_id,
+    company_id: row.company_id,
+    created_at: row.created_at,
+    created_by: row.created_by,
+    duration_minutes: row.duration_minutes,
+    group_name: row.group_name,
+    id: row.id,
+    level: row.level,
+    resources: (row.operational_session_resources ?? []).map(
+      normalizeOperationalSessionResource,
+    ),
+    session_date: row.session_date,
+    start_time: row.start_time,
+    status: row.status,
+    training_plan_version: trainingVersion
+      ? {
+          company_id: trainingVersion.company_id,
+          duration_seconds: trainingVersion.duration_seconds,
+          id: trainingVersion.id,
+          level: trainingVersion.level,
+          published_at: trainingVersion.published_at,
+          status: trainingVersion.status,
+          training_plan: firstJoin(trainingVersion.training_plans ?? null),
+          training_plan_id: trainingVersion.training_plan_id,
+          version_number: trainingVersion.version_number,
+        }
+      : null,
+    training_plan_version_id: row.training_plan_version_id,
+    updated_at: row.updated_at,
   };
 }
 
@@ -582,6 +652,190 @@ export async function getCompanyBaseScheduleById(
   const schedules = await getCompanyBaseSchedules(companyId);
 
   return schedules.find((schedule) => schedule.id === scheduleId) ?? null;
+}
+
+export async function getCompanyOperationalSessions({
+  companyId,
+  endDate,
+  startDate,
+}: {
+  companyId: string;
+  endDate: string;
+  startDate: string;
+}): Promise<OperationalSession[]> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("operational_sessions")
+    .select(
+      `
+        id,
+        company_id,
+        session_date,
+        start_time,
+        duration_minutes,
+        group_name,
+        level,
+        base_schedule_id,
+        coach_id,
+        training_plan_version_id,
+        status,
+        created_by,
+        created_at,
+        updated_at,
+        profiles:coach_id (
+          id,
+          name,
+          avatar_url
+        ),
+        training_plan_versions:training_plan_version_id (
+          id,
+          company_id,
+          training_plan_id,
+          version_number,
+          level,
+          status,
+          duration_seconds,
+          published_at,
+          training_plans:training_plan_id (
+            id,
+            title,
+            objective,
+            vessel_class
+          )
+        ),
+        operational_session_resources (
+          session_id,
+          company_id,
+          resource_id,
+          created_at,
+          resources (
+            id,
+            company_id,
+            name,
+            capacity_maxima,
+            is_active,
+            vessel_class,
+            vessel_status,
+            default_steerer_policy,
+            internal_code,
+            operational_notes,
+            color,
+            created_at,
+            updated_at
+          )
+        )
+      `,
+    )
+    .eq("company_id", companyId)
+    .gte("session_date", startDate)
+    .lte("session_date", endDate)
+    .order("session_date", { ascending: true })
+    .order("start_time", { ascending: true });
+
+  if (error) {
+    if (error.code === "42P01" || error.code === "42703") {
+      return [];
+    }
+
+    throw error;
+  }
+
+  return (data ?? []).map((row) =>
+    normalizeOperationalSession(
+      row as Parameters<typeof normalizeOperationalSession>[0],
+    ),
+  );
+}
+
+export async function getCompanyOperationalSessionById({
+  companyId,
+  sessionId,
+}: {
+  companyId: string;
+  sessionId: string;
+}): Promise<OperationalSession | null> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("operational_sessions")
+    .select(
+      `
+        id,
+        company_id,
+        session_date,
+        start_time,
+        duration_minutes,
+        group_name,
+        level,
+        base_schedule_id,
+        coach_id,
+        training_plan_version_id,
+        status,
+        created_by,
+        created_at,
+        updated_at,
+        profiles:coach_id (
+          id,
+          name,
+          avatar_url
+        ),
+        training_plan_versions:training_plan_version_id (
+          id,
+          company_id,
+          training_plan_id,
+          version_number,
+          level,
+          status,
+          duration_seconds,
+          published_at,
+          training_plans:training_plan_id (
+            id,
+            title,
+            objective,
+            vessel_class
+          )
+        ),
+        operational_session_resources (
+          session_id,
+          company_id,
+          resource_id,
+          created_at,
+          resources (
+            id,
+            company_id,
+            name,
+            capacity_maxima,
+            is_active,
+            vessel_class,
+            vessel_status,
+            default_steerer_policy,
+            internal_code,
+            operational_notes,
+            color,
+            created_at,
+            updated_at
+          )
+        )
+      `,
+    )
+    .eq("company_id", companyId)
+    .eq("id", sessionId)
+    .maybeSingle();
+
+  if (error) {
+    if (error.code === "42P01" || error.code === "42703") {
+      return null;
+    }
+
+    throw error;
+  }
+
+  return data
+    ? normalizeOperationalSession(
+        data as Parameters<typeof normalizeOperationalSession>[0],
+      )
+    : null;
 }
 
 export async function getCompanyServices(

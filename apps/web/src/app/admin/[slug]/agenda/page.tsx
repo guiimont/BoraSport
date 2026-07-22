@@ -1,17 +1,21 @@
 import Link from "next/link";
 
+import type {
+  BaseSchedule,
+  CompanySlot,
+  OperationalSession,
+} from "../../../../types/saas";
 import {
   getCompanyBaseSchedules,
   getCompanyBookings,
+  getCompanyOperationalSessions,
   getCompanySlots,
-  getCompanyWeeklyWorkouts,
 } from "../../../../lib/saas/queries";
 import { getManageAdminContext } from "../admin-context";
 import { AdminShell } from "../admin-shell";
 import styles from "../admin.module.css";
 import {
   formatScheduleTime,
-  getPublicSpotsForSchedule,
   weekdayLabels,
 } from "./grade/base-schedule-utils";
 
@@ -20,31 +24,75 @@ type AdminAgendaPageProps = {
     slug: string;
   }>;
   searchParams?: Promise<{
-    dia?: string;
-    semana?: string;
+    date?: string;
+    view?: string;
   }>;
 };
 
-const dayFormatter = new Intl.DateTimeFormat("pt-BR", {
+type AgendaView = "month" | "week";
+type AgendaActivityKind = "projected" | "slot" | "session";
+type AgendaActivityStatus = "cancelled" | "draft" | "published";
+
+type AgendaActivity = {
+  coachName: string;
+  dateKey: string;
+  durationMinutes: number;
+  href: string;
+  id: string;
+  isConcrete: boolean;
+  kind: AgendaActivityKind;
+  resourceCount: number;
+  startTime: string;
+  status: AgendaActivityStatus;
+  title: string;
+  trainingTitle: string | null;
+};
+
+const dateKeyFormatter = new Intl.DateTimeFormat("en-CA", {
   day: "2-digit",
   month: "2-digit",
   timeZone: "America/Sao_Paulo",
+  year: "numeric",
 });
 
-const longDayFormatter = new Intl.DateTimeFormat("pt-BR", {
-  day: "2-digit",
+const weekRangeFormatter = new Intl.DateTimeFormat("pt-BR", {
+  day: "numeric",
   month: "long",
   timeZone: "America/Sao_Paulo",
-  weekday: "long",
+});
+
+const monthTitleFormatter = new Intl.DateTimeFormat("pt-BR", {
+  month: "long",
+  timeZone: "America/Sao_Paulo",
+  year: "numeric",
+});
+
+const dayNumberFormatter = new Intl.DateTimeFormat("pt-BR", {
+  day: "2-digit",
+  timeZone: "America/Sao_Paulo",
+});
+
+const monthDayFormatter = new Intl.DateTimeFormat("pt-BR", {
+  day: "2-digit",
+  month: "short",
+  timeZone: "America/Sao_Paulo",
+  weekday: "short",
 });
 
 function toDateKey(date: Date) {
-  return new Intl.DateTimeFormat("en-CA", {
-    day: "2-digit",
-    month: "2-digit",
-    timeZone: "America/Sao_Paulo",
-    year: "numeric",
-  }).format(date);
+  return dateKeyFormatter.format(date);
+}
+
+function parseDateKey(value?: string | null) {
+  if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return new Date(`${toDateKey(new Date())}T12:00:00-03:00`);
+  }
+
+  const date = new Date(`${value}T12:00:00-03:00`);
+
+  return Number.isNaN(date.getTime())
+    ? new Date(`${toDateKey(new Date())}T12:00:00-03:00`)
+    : date;
 }
 
 function addDays(date: Date, days: number) {
@@ -54,15 +102,24 @@ function addDays(date: Date, days: number) {
   return next;
 }
 
-function getWeekStart(value?: string | null) {
-  const base = value ? new Date(`${value}T12:00:00-03:00`) : new Date();
-  const safeBase = Number.isNaN(base.getTime()) ? new Date() : base;
-  const localDate = new Date(`${toDateKey(safeBase)}T12:00:00-03:00`);
+function addMonths(date: Date, months: number) {
+  const next = new Date(date);
+  next.setMonth(next.getMonth() + months);
+
+  return next;
+}
+
+function getWeekStart(date: Date) {
+  const localDate = new Date(`${toDateKey(date)}T12:00:00-03:00`);
   const day = localDate.getDay();
   const diffToMonday = day === 0 ? -6 : 1 - day;
   localDate.setDate(localDate.getDate() + diffToMonday);
 
   return localDate;
+}
+
+function getMonthStart(date: Date) {
+  return new Date(date.getFullYear(), date.getMonth(), 1, 12);
 }
 
 function getWeekDays(weekStart: Date) {
@@ -74,8 +131,23 @@ function getWeekDays(weekStart: Date) {
       date,
       dateKey: toDateKey(date),
       label: weekdayLabels[weekday],
-      shortLabel: weekdayLabels[weekday].slice(0, 3),
+      shortLabel: weekdayLabels[weekday].slice(0, 3).toUpperCase(),
       weekday,
+    };
+  });
+}
+
+function getMonthGridDays(monthStart: Date) {
+  const firstWeekStart = getWeekStart(monthStart);
+
+  return Array.from({ length: 42 }, (_, index) => {
+    const date = addDays(firstWeekStart, index);
+
+    return {
+      currentMonth: date.getMonth() === monthStart.getMonth(),
+      date,
+      dateKey: toDateKey(date),
+      weekday: date.getDay() === 0 ? 7 : date.getDay(),
     };
   });
 }
@@ -88,12 +160,177 @@ function formatSlotTime(value: string) {
   }).format(new Date(value));
 }
 
-function getSlotStatus(slot: Awaited<ReturnType<typeof getCompanySlots>>[number]) {
-  if (slot.spots_occupied >= slot.spots_total) {
-    return "Lotada";
+function formatTimeValue(value: string) {
+  return value.slice(0, 5);
+}
+
+function normalizeView(value?: string | null): AgendaView {
+  return value === "month" ? "month" : "week";
+}
+
+function getStatusLabel(status: AgendaActivityStatus) {
+  if (status === "cancelled") {
+    return "Cancelada";
   }
 
-  return "Publicada";
+  if (status === "published") {
+    return "Publicada";
+  }
+
+  return "Rascunho";
+}
+
+function getStatusClass(status: AgendaActivityStatus) {
+  if (status === "cancelled") {
+    return styles.vesselStatus_manutencao;
+  }
+
+  if (status === "published") {
+    return styles.vesselStatus_disponivel;
+  }
+
+  return styles.vesselStatus_inativa;
+}
+
+function getTrainingTitleFromSession(session: OperationalSession) {
+  return session.training_plan_version?.training_plan?.title ?? null;
+}
+
+function makeSessionActivity({
+  companySlug,
+  session,
+}: {
+  companySlug: string;
+  session: OperationalSession;
+}): AgendaActivity {
+  return {
+    coachName: session.coach?.name || "Treinador",
+    dateKey: session.session_date,
+    durationMinutes: session.duration_minutes,
+    href: `/admin/${companySlug}/agenda/sessoes/${session.id}`,
+    id: `session:${session.id}`,
+    isConcrete: true,
+    kind: "session",
+    resourceCount: session.resources.length,
+    startTime: formatTimeValue(session.start_time),
+    status: session.status,
+    title: session.group_name,
+    trainingTitle: getTrainingTitleFromSession(session),
+  };
+}
+
+function makeProjectedActivity({
+  companySlug,
+  dateKey,
+  schedule,
+}: {
+  companySlug: string;
+  dateKey: string;
+  schedule: BaseSchedule;
+}): AgendaActivity {
+  return {
+    coachName: schedule.coach?.name || "Treinador",
+    dateKey,
+    durationMinutes: schedule.duration_minutes,
+    href: `/admin/${companySlug}/agenda/grade/${schedule.id}?date=${dateKey}`,
+    id: `projected:${schedule.id}:${dateKey}`,
+    isConcrete: false,
+    kind: "projected",
+    resourceCount: schedule.resources.length,
+    startTime: formatScheduleTime(schedule.start_time),
+    status: schedule.status === "active" ? "draft" : "cancelled",
+    title: schedule.group_name,
+    trainingTitle: null,
+  };
+}
+
+function makeLegacySlotActivity({
+  companySlug,
+  slot,
+}: {
+  companySlug: string;
+  slot: CompanySlot;
+}): AgendaActivity {
+  return {
+    coachName: "Treinador",
+    dateKey: toDateKey(new Date(slot.start_time)),
+    durationMinutes: slot.services?.duration_minutes ?? 0,
+    href: `/admin/${companySlug}/agenda`,
+    id: `slot:${slot.id}`,
+    isConcrete: true,
+    kind: "slot",
+    resourceCount: slot.resource_id ? 1 : 0,
+    startTime: formatSlotTime(slot.start_time),
+    status: "published",
+    title: slot.services?.name || "Sessão publicada",
+    trainingTitle: null,
+  };
+}
+
+function buildActivities({
+  baseSchedules,
+  companySlug,
+  dateKeys,
+  sessions,
+  slots,
+}: {
+  baseSchedules: BaseSchedule[];
+  companySlug: string;
+  dateKeys: string[];
+  sessions: OperationalSession[];
+  slots: CompanySlot[];
+}) {
+  const activitiesByDate = new Map<string, AgendaActivity[]>();
+  const concreteBaseOccurrences = new Set(
+    sessions
+      .filter((session) => session.base_schedule_id)
+      .map((session) => `${session.base_schedule_id}:${session.session_date}`),
+  );
+
+  const add = (activity: AgendaActivity) => {
+    activitiesByDate.set(activity.dateKey, [
+      ...(activitiesByDate.get(activity.dateKey) ?? []),
+      activity,
+    ]);
+  };
+
+  for (const session of sessions) {
+    add(makeSessionActivity({ companySlug, session }));
+  }
+
+  for (const dateKey of dateKeys) {
+    const date = parseDateKey(dateKey);
+    const weekday = date.getDay() === 0 ? 7 : date.getDay();
+
+    for (const schedule of baseSchedules) {
+      if (schedule.weekday !== weekday || schedule.status !== "active") {
+        continue;
+      }
+
+      if (concreteBaseOccurrences.has(`${schedule.id}:${dateKey}`)) {
+        continue;
+      }
+
+      add(makeProjectedActivity({ companySlug, dateKey, schedule }));
+    }
+  }
+
+  for (const slot of slots) {
+    const dateKey = toDateKey(new Date(slot.start_time));
+
+    if (dateKeys.includes(dateKey)) {
+      add(makeLegacySlotActivity({ companySlug, slot }));
+    }
+  }
+
+  for (const [dateKey, activities] of activitiesByDate) {
+    activitiesByDate.set(
+      dateKey,
+      activities.sort((a, b) => a.startTime.localeCompare(b.startTime)),
+    );
+  }
+
+  return activitiesByDate;
 }
 
 export default async function AdminAgendaPage({
@@ -104,86 +341,119 @@ export default async function AdminAgendaPage({
   const resolvedSearchParams = (await searchParams) ?? {};
   const context = await getManageAdminContext(slug);
   const { company } = context;
-  const weekStart = getWeekStart(resolvedSearchParams.semana);
+  const view = normalizeView(resolvedSearchParams.view);
+  const selectedDate = parseDateKey(resolvedSearchParams.date);
+  const selectedDateKey = toDateKey(selectedDate);
+  const weekStart = getWeekStart(selectedDate);
   const weekDays = getWeekDays(weekStart);
-  const weekStartKey = toDateKey(weekStart);
-  const todayKey = toDateKey(new Date());
-  const selectedDayKey =
-    resolvedSearchParams.dia &&
-    weekDays.some((day) => day.dateKey === resolvedSearchParams.dia)
-      ? resolvedSearchParams.dia
-      : weekDays.find((day) => day.dateKey === todayKey)?.dateKey ?? weekDays[0].dateKey;
-  const [slots, bookings, baseSchedules, weeklyWorkouts] = await Promise.all([
-    getCompanySlots(company.id),
-    getCompanyBookings(company.id),
-    getCompanyBaseSchedules(company.id),
-    getCompanyWeeklyWorkouts(company.id),
-  ]);
-  const slotsByDate = new Map<string, typeof slots>();
-
-  for (const slot of slots) {
-    const dateKey = toDateKey(new Date(slot.start_time));
-
-    if (weekDays.some((day) => day.dateKey === dateKey)) {
-      slotsByDate.set(dateKey, [...(slotsByDate.get(dateKey) ?? []), slot]);
-    }
-  }
-
-  const workoutsByWeekday = new Map(
-    weeklyWorkouts.map((workout) => [workout.weekday, workout]),
-  );
+  const monthStart = getMonthStart(selectedDate);
+  const monthDays = getMonthGridDays(monthStart);
+  const periodStartKey =
+    view === "month" ? toDateKey(monthDays[0].date) : weekDays[0].dateKey;
+  const periodEndKey =
+    view === "month"
+      ? toDateKey(monthDays[monthDays.length - 1].date)
+      : weekDays[6].dateKey;
+  const [slots, bookings, baseSchedules, sessions] =
+    await Promise.all([
+      getCompanySlots(company.id),
+      getCompanyBookings(company.id),
+      getCompanyBaseSchedules(company.id),
+      getCompanyOperationalSessions({
+        companyId: company.id,
+        endDate: periodEndKey,
+        startDate: periodStartKey,
+      }),
+    ]);
+  const dateKeys =
+    view === "month"
+      ? monthDays.map((day) => day.dateKey)
+      : weekDays.map((day) => day.dateKey);
+  const activitiesByDate = buildActivities({
+    baseSchedules,
+    companySlug: company.slug,
+    dateKeys,
+    sessions,
+    slots,
+  });
+  const selectedDayActivities = activitiesByDate.get(selectedDateKey) ?? [];
   const confirmedBookings = bookings.filter(
     (booking) => booking.status === "confirmed",
   );
-  const previousWeekKey = toDateKey(addDays(weekStart, -7));
-  const nextWeekKey = toDateKey(addDays(weekStart, 7));
+  const previousDate =
+    view === "month" ? addMonths(selectedDate, -1) : addDays(weekStart, -7);
+  const nextDate =
+    view === "month" ? addMonths(selectedDate, 1) : addDays(weekStart, 7);
+  const todayKey = toDateKey(new Date());
+  const periodLabel =
+    view === "month"
+      ? monthTitleFormatter.format(monthStart)
+      : `${weekRangeFormatter.format(weekDays[0].date)} a ${weekRangeFormatter.format(
+          weekDays[6].date,
+        )}`;
 
   return (
     <AdminShell
       active="agenda"
       context={context}
-      subtitle="Acompanhe a semana, organize recorrências e publique sessões a partir de uma única agenda operacional."
+      subtitle="Planeje datas, sessões, canoas e o treino do dia em uma única Agenda operacional."
       title="Agenda"
     >
       <section className={styles.agendaToolbar}>
         <div>
-          <p className={styles.eyebrow}>Semana operacional</p>
-          <h2>
-            {dayFormatter.format(weekDays[0].date)} a{" "}
-            {dayFormatter.format(weekDays[6].date)}
-          </h2>
+          <p className={styles.eyebrow}>Agenda operacional</p>
+          <h2>{periodLabel}</h2>
           <p>
-            {slots.length} sessões futuras · {baseSchedules.length} recorrências
-            configuradas · {confirmedBookings.length} reservas confirmadas recentes
+            {sessions.length} sessões concretas · {baseSchedules.length} recorrências ·{" "}
+            {confirmedBookings.length} reservas recentes
           </p>
         </div>
         <div className={styles.agendaActions}>
+          <div className={styles.agendaViewToggle} aria-label="Modo da agenda">
+            <Link
+              aria-current={view === "week" ? "page" : undefined}
+              className={view === "week" ? styles.navPillActive : styles.navPill}
+              href={`/admin/${company.slug}/agenda?view=week&date=${selectedDateKey}`}
+            >
+              Semana
+            </Link>
+            <Link
+              aria-current={view === "month" ? "page" : undefined}
+              className={view === "month" ? styles.navPillActive : styles.navPill}
+              href={`/admin/${company.slug}/agenda?view=month&date=${selectedDateKey}`}
+            >
+              Mês
+            </Link>
+          </div>
           <Link
             className={styles.secondaryButton}
-            href={`/admin/${company.slug}/agenda?semana=${previousWeekKey}`}
+            href={`/admin/${company.slug}/agenda?view=${view}&date=${toDateKey(previousDate)}`}
           >
-            Semana anterior
+            Anterior
           </Link>
-          <Link className={styles.secondaryButton} href={`/admin/${company.slug}/agenda`}>
+          <Link
+            className={styles.secondaryButton}
+            href={`/admin/${company.slug}/agenda?view=${view}&date=${todayKey}`}
+          >
             Hoje
           </Link>
           <Link
             className={styles.secondaryButton}
-            href={`/admin/${company.slug}/agenda?semana=${nextWeekKey}`}
+            href={`/admin/${company.slug}/agenda?view=${view}&date=${toDateKey(nextDate)}`}
           >
-            Próxima semana
+            Próximo
           </Link>
           <Link
             className={styles.primaryButtonLink}
-            href={`/admin/${company.slug}/agenda/grade/novo?semana=${weekStartKey}`}
+            href={`/admin/${company.slug}/agenda/novo?date=${selectedDateKey}`}
           >
             Novo horário
           </Link>
           <details className={styles.agendaMoreActions}>
-            <summary>Ações</summary>
+            <summary>Mais</summary>
             <div>
               <Link href={`/admin/${company.slug}/agenda/grade`}>
-                Configurar recorrências
+                Recorrências
               </Link>
               <Link href={`/admin/${company.slug}/treinos`}>
                 Biblioteca de treinos
@@ -193,35 +463,73 @@ export default async function AdminAgendaPage({
         </div>
       </section>
 
+      {view === "week" ? (
+        <WeekAgenda
+          activitiesByDate={activitiesByDate}
+          companySlug={company.slug}
+          selectedDateKey={selectedDateKey}
+          weekDays={weekDays}
+        />
+      ) : (
+        <MonthAgenda
+          activitiesByDate={activitiesByDate}
+          companySlug={company.slug}
+          monthDays={monthDays}
+          monthStart={monthStart}
+          selectedDateKey={selectedDateKey}
+          selectedDayActivities={selectedDayActivities}
+        />
+      )}
+
+      <section className={styles.infoBox}>
+        <strong>Como a Agenda funciona</strong>
+        <p>
+          A grade-base gera atividades projetadas apenas para o período aberto.
+          Quando uma data recebe treino, cancelamento ou edição própria, a sessão
+          concreta prevalece e a recorrência não aparece duplicada.
+        </p>
+      </section>
+    </AdminShell>
+  );
+}
+
+function WeekAgenda({
+  activitiesByDate,
+  companySlug,
+  selectedDateKey,
+  weekDays,
+}: {
+  activitiesByDate: Map<string, AgendaActivity[]>;
+  companySlug: string;
+  selectedDateKey: string;
+  weekDays: ReturnType<typeof getWeekDays>;
+}) {
+  return (
+    <>
       <nav className={styles.dayScroller} aria-label="Datas da semana">
         {weekDays.map((day) => (
           <Link
-            aria-current={selectedDayKey === day.dateKey ? "page" : undefined}
+            aria-current={selectedDateKey === day.dateKey ? "page" : undefined}
             className={`${styles.dayPill} ${
-              selectedDayKey === day.dateKey ? styles.dayPillActive : ""
+              selectedDateKey === day.dateKey ? styles.dayPillActive : ""
             }`}
-            href={`/admin/${company.slug}/agenda?semana=${weekStartKey}&dia=${day.dateKey}`}
+            href={`/admin/${companySlug}/agenda?view=week&date=${day.dateKey}`}
             key={day.dateKey}
           >
             {day.shortLabel}
-            <span>{dayFormatter.format(day.date)}</span>
+            <span>{dayNumberFormatter.format(day.date)}</span>
           </Link>
         ))}
       </nav>
 
       <section className={styles.agendaDayList}>
         {weekDays
-          .filter((day) => day.dateKey === selectedDayKey)
+          .filter((day) => day.dateKey === selectedDateKey)
           .map((day) => (
             <AgendaDay
-              baseSchedules={baseSchedules.filter(
-                (schedule) => schedule.weekday === day.weekday,
-              )}
-              companySlug={company.slug}
-              dateLabel={longDayFormatter.format(day.date)}
+              activities={activitiesByDate.get(day.dateKey) ?? []}
+              dateLabel={monthDayFormatter.format(day.date)}
               key={day.dateKey}
-              slots={slotsByDate.get(day.dateKey) ?? []}
-              workoutTitle={workoutsByWeekday.get(day.weekday)?.title ?? null}
             />
           ))}
       </section>
@@ -229,128 +537,153 @@ export default async function AdminAgendaPage({
       <section className={styles.agendaWeekGrid} aria-label="Agenda semanal">
         {weekDays.map((day) => (
           <AgendaDay
-            baseSchedules={baseSchedules.filter(
-              (schedule) => schedule.weekday === day.weekday,
-            )}
-            companySlug={company.slug}
-            dateLabel={longDayFormatter.format(day.date)}
+            activities={activitiesByDate.get(day.dateKey) ?? []}
+            dateLabel={`${day.shortLabel} · ${monthDayFormatter.format(day.date)}`}
             key={day.dateKey}
-            slots={slotsByDate.get(day.dateKey) ?? []}
-            workoutTitle={workoutsByWeekday.get(day.weekday)?.title ?? null}
           />
         ))}
       </section>
+    </>
+  );
+}
 
-      <section className={styles.infoBox}>
-        <strong>Camadas da Agenda</strong>
-        <p>
-          Recorrência organiza o modelo semanal. Sessões publicadas abrem vagas
-          reais para remadores. O vínculo com treinos usa a biblioteca existente
-          e será aplicado por sessão concreta.
-        </p>
+function MonthAgenda({
+  activitiesByDate,
+  companySlug,
+  monthDays,
+  monthStart,
+  selectedDateKey,
+  selectedDayActivities,
+}: {
+  activitiesByDate: Map<string, AgendaActivity[]>;
+  companySlug: string;
+  monthDays: ReturnType<typeof getMonthGridDays>;
+  monthStart: Date;
+  selectedDateKey: string;
+  selectedDayActivities: AgendaActivity[];
+}) {
+  return (
+    <>
+      <section className={styles.agendaMonthGrid} aria-label="Agenda mensal">
+        {monthDays.map((day) => {
+          const activities = activitiesByDate.get(day.dateKey) ?? [];
+
+          return (
+            <Link
+              className={`${styles.agendaMonthCell} ${
+                day.currentMonth ? "" : styles.agendaMonthCellMuted
+              } ${selectedDateKey === day.dateKey ? styles.agendaMonthCellActive : ""}`}
+              href={`/admin/${companySlug}/agenda?view=month&date=${day.dateKey}`}
+              key={day.dateKey}
+            >
+              <strong>{dayNumberFormatter.format(day.date)}</strong>
+              <span>{weekdayLabels[day.weekday].slice(0, 3)}</span>
+              <div>
+                {activities.slice(0, 3).map((activity) => (
+                  <small key={activity.id}>
+                    {activity.startTime} · {activity.title}
+                  </small>
+                ))}
+                {activities.length > 3 ? (
+                  <small>+{activities.length - 3} atividades</small>
+                ) : null}
+              </div>
+            </Link>
+          );
+        })}
       </section>
-    </AdminShell>
+
+      <section className={styles.agendaMonthMobile}>
+        <div className={styles.sectionHeadBalanced}>
+          <div>
+            <p className={styles.eyebrow}>{monthTitleFormatter.format(monthStart)}</p>
+            <h2>Resumo do mês</h2>
+          </div>
+        </div>
+        <nav className={styles.dayScroller} aria-label="Datas do mês">
+          {monthDays
+            .filter((day) => day.currentMonth)
+            .map((day) => (
+              <Link
+                aria-current={selectedDateKey === day.dateKey ? "page" : undefined}
+                className={`${styles.dayPill} ${
+                  selectedDateKey === day.dateKey ? styles.dayPillActive : ""
+                }`}
+                href={`/admin/${companySlug}/agenda?view=month&date=${day.dateKey}`}
+                key={day.dateKey}
+              >
+                {weekdayLabels[day.weekday].slice(0, 3).toUpperCase()}
+                <span>{dayNumberFormatter.format(day.date)}</span>
+              </Link>
+            ))}
+        </nav>
+        <AgendaDay
+          activities={selectedDayActivities}
+          dateLabel={monthDayFormatter.format(parseDateKey(selectedDateKey))}
+        />
+      </section>
+    </>
   );
 }
 
 function AgendaDay({
-  baseSchedules,
-  companySlug,
+  activities,
   dateLabel,
-  slots,
-  workoutTitle,
 }: {
-  baseSchedules: Awaited<ReturnType<typeof getCompanyBaseSchedules>>;
-  companySlug: string;
+  activities: AgendaActivity[];
   dateLabel: string;
-  slots: Awaited<ReturnType<typeof getCompanySlots>>;
-  workoutTitle: string | null;
 }) {
-  const hasItems = slots.length > 0 || baseSchedules.length > 0;
-
   return (
     <article className={styles.agendaDayCard}>
       <div className={styles.agendaDayHeader}>
         <div>
           <p className={styles.eyebrow}>{dateLabel}</p>
-          <h2>
-            {workoutTitle ? `Treino: ${workoutTitle}` : "Treino ainda não definido"}
-          </h2>
+          <h2>{activities.length} atividade{activities.length === 1 ? "" : "s"}</h2>
         </div>
         <span className={styles.statusBadge}>
-          {slots.length} publicada{slots.length === 1 ? "" : "s"}
+          {activities.length === 0 ? "Sem horários" : "Operação"}
         </span>
       </div>
 
-      {hasItems ? (
+      {activities.length > 0 ? (
         <div className={styles.agendaSessionList}>
-          {slots.map((slot) => (
-            <div className={styles.agendaSessionCard} key={slot.id}>
-              <span className={styles.baseScheduleTime}>
-                {formatSlotTime(slot.start_time)}
-              </span>
-              <span className={styles.baseScheduleMain}>
-                <strong>{slot.services?.name || "Sessão publicada"}</strong>
-                <small>
-                  {slot.resources?.name || "Canoa"} ·{" "}
-                  {slot.services?.duration_minutes || "--"} min
-                </small>
-                <small>
-                  {slot.spots_occupied}/{slot.spots_total} ocupadas · Treino ainda
-                  não definido
-                </small>
-              </span>
-              <span
-                className={
-                  getSlotStatus(slot) === "Lotada"
-                    ? styles.vesselStatus_manutencao
-                    : styles.vesselStatus_disponivel
-                }
-              >
-                {getSlotStatus(slot)}
-              </span>
-            </div>
-          ))}
-          {baseSchedules.map((schedule) => (
-            <Link
-              className={styles.agendaSessionCard}
-              href={`/admin/${companySlug}/agenda/grade/${schedule.id}`}
-              key={schedule.id}
-            >
-              <span className={styles.baseScheduleTime}>
-                {formatScheduleTime(schedule.start_time)}
-              </span>
-              <span className={styles.baseScheduleMain}>
-                <strong>{schedule.group_name}</strong>
-                <small>
-                  {schedule.coach?.name || "Treinador"} ·{" "}
-                  {schedule.duration_minutes} min
-                </small>
-                <small>
-                  {schedule.resources.length} canoa
-                  {schedule.resources.length === 1 ? "" : "s"} ·{" "}
-                  {getPublicSpotsForSchedule(schedule)} vagas · Treino ainda não
-                  definido
-                </small>
-              </span>
-              <span
-                className={
-                  schedule.status === "active"
-                    ? styles.vesselStatus_inativa
-                    : styles.vesselStatus_manutencao
-                }
-              >
-                {schedule.status === "active" ? "Rascunho" : "Inativa"}
-              </span>
-            </Link>
+          {activities.map((activity) => (
+            <AgendaActivityCard activity={activity} key={activity.id} />
           ))}
         </div>
       ) : (
         <div className={styles.emptyStateCompact}>
           <strong>Dia sem horários</strong>
-          <p>Crie um horário para esta data ou configure uma recorrência semanal.</p>
+          <p>Use “Novo horário” para criar uma sessão ou recorrência.</p>
         </div>
       )}
     </article>
+  );
+}
+
+function AgendaActivityCard({ activity }: { activity: AgendaActivity }) {
+  return (
+    <Link className={styles.agendaSessionCard} href={activity.href}>
+      <span className={styles.baseScheduleTime}>{activity.startTime}</span>
+      <span className={styles.baseScheduleMain}>
+        <strong>{activity.title}</strong>
+        <small>Treinador: {activity.coachName}</small>
+        <small>
+          {activity.trainingTitle
+            ? `Treino: ${activity.trainingTitle}`
+            : "Treino ainda não definido"}
+        </small>
+        <small>
+          {activity.resourceCount} canoa{activity.resourceCount === 1 ? "" : "s"} ·{" "}
+          {activity.durationMinutes || "--"} min
+        </small>
+      </span>
+      <span className={getStatusClass(activity.status)}>
+        {getStatusLabel(activity.status)}
+      </span>
+      <span className={styles.agendaDetailsLink}>
+        {activity.kind === "projected" ? "Recorrência" : "Detalhes"}
+      </span>
+    </Link>
   );
 }

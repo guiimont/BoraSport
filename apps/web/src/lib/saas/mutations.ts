@@ -6,6 +6,7 @@ import type {
   LandingPage,
   MembershipRole,
   NewBooking,
+  OperationalSessionStatus,
   TrainingBlockInput,
   TrainingVersionLevel,
   VesselClass,
@@ -254,6 +255,76 @@ export async function updateBaseScheduleStatus({
     })
     .eq("company_id", companyId)
     .eq("id", scheduleId);
+
+  if (error) {
+    throw error;
+  }
+}
+
+export type UpsertOperationalSessionInput = {
+  baseScheduleId?: string | null;
+  coachId: string;
+  companyId: string;
+  durationMinutes: number;
+  groupName: string;
+  level?: string | null;
+  resourceIds: string[];
+  sessionDate: string;
+  sessionId?: string | null;
+  startTime: string;
+  status: OperationalSessionStatus;
+  trainingPlanVersionId?: string | null;
+};
+
+export async function upsertOperationalSession({
+  baseScheduleId = null,
+  coachId,
+  companyId,
+  durationMinutes,
+  groupName,
+  level = null,
+  resourceIds,
+  sessionDate,
+  sessionId = null,
+  startTime,
+  status,
+  trainingPlanVersionId = null,
+}: UpsertOperationalSessionInput): Promise<string> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("upsert_operational_session", {
+    p_base_schedule_id: baseScheduleId,
+    p_coach_id: coachId,
+    p_company_id: companyId,
+    p_duration_minutes: durationMinutes,
+    p_group_name: groupName,
+    p_level: level,
+    p_resource_ids: [...new Set(resourceIds)],
+    p_session_date: sessionDate,
+    p_session_id: sessionId,
+    p_start_time: startTime,
+    p_status: status,
+    p_training_plan_version_id: trainingPlanVersionId,
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  return data as string;
+}
+
+export async function setOperationalSessionTraining({
+  sessionId,
+  trainingPlanVersionId,
+}: {
+  sessionId: string;
+  trainingPlanVersionId: string | null;
+}) {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("set_operational_session_training", {
+    p_session_id: sessionId,
+    p_training_plan_version_id: trainingPlanVersionId,
+  });
 
   if (error) {
     throw error;
