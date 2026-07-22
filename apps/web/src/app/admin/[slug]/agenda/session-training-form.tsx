@@ -89,7 +89,10 @@ export function SessionTrainingForm({
           </button>
         ) : null}
         <Link className={styles.secondaryButton} href={`/admin/${slug}/treinos`}>
-          Abrir biblioteca
+          Escolher na biblioteca
+        </Link>
+        <Link className={styles.secondaryButton} href={`/admin/${slug}/treinos/novo`}>
+          Criar novo treino
         </Link>
       </div>
 

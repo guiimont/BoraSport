@@ -2035,7 +2035,38 @@
   grid-template-columns: auto minmax(0, 1fr) auto;
   min-width: 0;
   padding: 12px;
+}
+
+.agendaActivityTitleLink,
+.agendaTrainingLink,
+.agendaTrainingEmpty,
+.agendaDetailsLink {
   text-decoration: none;
+}
+
+.agendaActivityTitleLink {
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 850;
+}
+
+.agendaTrainingLink,
+.agendaTrainingEmpty {
+  border-radius: 7px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  justify-self: start;
+  padding: 3px 6px;
+}
+
+.agendaTrainingLink {
+  background: rgba(31, 216, 229, 0.1);
+  color: rgba(123, 243, 245, 0.95);
+}
+
+.agendaTrainingEmpty {
+  background: rgba(182, 140, 255, 0.1);
+  color: rgba(214, 190, 255, 0.92);
 }
 
 .stepperField {
@@ -2926,7 +2957,6 @@
   min-height: 132px;
   min-width: 0;
   padding: 11px;
-  text-decoration: none;
   transition:
     border-color var(--transition-fast),
     transform var(--transition-fast);
@@ -2937,30 +2967,83 @@
   transform: translateY(-1px);
 }
 
-.agendaMonthCell:focus-visible {
+.agendaMonthCell:focus-within {
   outline: var(--focus-ring);
   outline-offset: var(--focus-offset);
 }
 
-.agendaMonthCell strong {
+.agendaMonthDayLink {
+  align-items: baseline;
+  display: flex;
+  gap: 7px;
+  text-decoration: none;
+}
+
+.agendaMonthDayLink strong {
   color: #ffffff;
   font-size: 1rem;
 }
 
-.agendaMonthCell > span {
+.agendaMonthDayLink span {
   color: rgba(238, 248, 247, 0.5);
   font-size: 0.74rem;
   font-weight: 850;
   text-transform: uppercase;
 }
 
-.agendaMonthCell div {
+.agendaMonthActivities {
   display: grid;
   gap: 5px;
   min-width: 0;
 }
 
-.agendaMonthCell small {
+.agendaMonthActivity {
+  border-top: 1px solid rgba(123, 243, 245, 0.08);
+  display: grid;
+  gap: 3px;
+  padding-top: 5px;
+}
+
+.agendaMonthActivity > a:first-child {
+  color: rgba(238, 248, 247, 0.78);
+  display: flex;
+  font-size: 0.75rem;
+  gap: 5px;
+  min-width: 0;
+  text-decoration: none;
+}
+
+.agendaMonthActivity > a:first-child strong {
+  color: #ffffff;
+  font-size: inherit;
+  flex: 0 0 auto;
+}
+
+.agendaMonthActivity > a:first-child span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.agendaMonthTrainingLink,
+.agendaMonthTrainingEmpty {
+  font-size: 0.71rem;
+  font-weight: 800;
+  overflow: hidden;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.agendaMonthTrainingLink {
+  color: rgba(123, 243, 245, 0.92);
+}
+
+.agendaMonthTrainingEmpty {
+  color: rgba(214, 190, 255, 0.84);
+}
+
+.agendaMonthActivities > small {
   color: rgba(238, 248, 247, 0.68);
   font-size: 0.75rem;
   line-height: 1.25;

@@ -281,8 +281,8 @@ export function OperationalScheduleForm({
         <section className={styles.builderSectionCompact}>
           <div className={styles.builderSectionIntro}>
             <span>Treino do dia</span>
-            <h2>Biblioteca de treinos</h2>
-            <p>Opcional. O vínculo fica nesta sessão, não na recorrência inteira.</p>
+            <h2>Qual treino será executado?</h2>
+            <p>Escolha um treino da Biblioteca ou crie um novo. O vínculo vale somente para esta sessão.</p>
           </div>
           <label className={styles.label}>
             Treino vinculado
@@ -300,6 +300,12 @@ export function OperationalScheduleForm({
               </span>
             ) : null}
           </label>
+          <Link
+            className={styles.secondaryButton}
+            href={`/admin/${slug}/treinos/novo`}
+          >
+            Criar novo treino
+          </Link>
         </section>
 
         <div className={styles.builderStickyActions}>

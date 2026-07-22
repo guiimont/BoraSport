@@ -47,6 +47,7 @@ type AgendaActivity = {
   startTime: string;
   status: AgendaActivityStatus;
   title: string;
+  trainingHref: string | null;
   trainingTitle: string | null;
 };
 
@@ -259,6 +260,9 @@ function makeSessionActivity({
     startTime: formatTimeValue(session.start_time),
     status: session.status,
     title: session.group_name,
+    trainingHref: session.training_plan_version?.training_plan
+      ? `/admin/${companySlug}/treinos/${session.training_plan_version.training_plan.id}`
+      : null,
     trainingTitle: getTrainingTitleFromSession(session),
   };
 }
@@ -284,6 +288,7 @@ function makeProjectedActivity({
     startTime: formatScheduleTime(schedule.start_time),
     status: schedule.status === "active" ? "draft" : "cancelled",
     title: schedule.group_name,
+    trainingHref: null,
     trainingTitle: null,
   };
 }
@@ -307,6 +312,7 @@ function makeLegacySlotActivity({
     startTime: formatSlotTime(slot.start_time),
     status: "published",
     title: slot.services?.name || "Sessão publicada",
+    trainingHref: null,
     trainingTitle: null,
   };
 }
@@ -568,26 +574,48 @@ function PeriodAgenda({
           const activities = activitiesByDate.get(day.dateKey) ?? [];
 
           return (
-            <Link
+            <article
               className={`${styles.agendaMonthCell} ${
                 day.currentMonth ? "" : styles.agendaMonthCellMuted
               } ${selectedDateKey === day.dateKey ? styles.agendaMonthCellActive : ""}`}
-              href={`/admin/${companySlug}/agenda?view=period&start=${periodStartKey}&end=${periodEndKey}&date=${day.dateKey}#dia-selecionado`}
               key={day.dateKey}
             >
-              <strong>{dayNumberFormatter.format(day.date)}</strong>
-              <span>{weekdayLabels[day.weekday].slice(0, 3)}</span>
-              <div>
+              <Link
+                className={styles.agendaMonthDayLink}
+                href={`/admin/${companySlug}/agenda?view=period&start=${periodStartKey}&end=${periodEndKey}&date=${day.dateKey}#dia-selecionado`}
+              >
+                <strong>{dayNumberFormatter.format(day.date)}</strong>
+                <span>{weekdayLabels[day.weekday].slice(0, 3)}</span>
+              </Link>
+              <div className={styles.agendaMonthActivities}>
                 {activities.slice(0, 3).map((activity) => (
-                  <small key={activity.id}>
-                    {activity.startTime} · {activity.title}
-                  </small>
+                  <div className={styles.agendaMonthActivity} key={activity.id}>
+                    <Link href={activity.href}>
+                      <strong>{activity.startTime}</strong>
+                      <span>{activity.title}</span>
+                    </Link>
+                    {activity.trainingTitle && activity.trainingHref ? (
+                      <Link
+                        className={styles.agendaMonthTrainingLink}
+                        href={activity.trainingHref}
+                      >
+                        {activity.trainingTitle}
+                      </Link>
+                    ) : (
+                      <Link
+                        className={styles.agendaMonthTrainingEmpty}
+                        href={activity.href}
+                      >
+                        + Definir treino
+                      </Link>
+                    )}
+                  </div>
                 ))}
                 {activities.length > 3 ? (
                   <small>+{activities.length - 3} atividades</small>
                 ) : null}
               </div>
-            </Link>
+            </article>
           );
         })}
       </section>
@@ -651,16 +679,22 @@ function AgendaDay({
 
 function AgendaActivityCard({ activity }: { activity: AgendaActivity }) {
   return (
-    <Link className={styles.agendaSessionCard} href={activity.href}>
+    <article className={styles.agendaSessionCard}>
       <span className={styles.baseScheduleTime}>{activity.startTime}</span>
       <span className={styles.baseScheduleMain}>
-        <strong>{activity.title}</strong>
+        <Link className={styles.agendaActivityTitleLink} href={activity.href}>
+          {activity.title}
+        </Link>
         <small>Treinador: {activity.coachName}</small>
-        <small>
-          {activity.trainingTitle
-            ? `Treino: ${activity.trainingTitle}`
-            : "Treino ainda não definido"}
-        </small>
+        {activity.trainingTitle && activity.trainingHref ? (
+          <Link className={styles.agendaTrainingLink} href={activity.trainingHref}>
+            Treino: {activity.trainingTitle}
+          </Link>
+        ) : (
+          <Link className={styles.agendaTrainingEmpty} href={activity.href}>
+            + Vincular ou criar treino
+          </Link>
+        )}
         <small>
           {activity.resourceCount} canoa{activity.resourceCount === 1 ? "" : "s"} ·{" "}
           {activity.durationMinutes || "--"} min
@@ -669,9 +703,9 @@ function AgendaActivityCard({ activity }: { activity: AgendaActivity }) {
       <span className={getStatusClass(activity.status)}>
         {getStatusLabel(activity.status)}
       </span>
-      <span className={styles.agendaDetailsLink}>
+      <Link className={styles.agendaDetailsLink} href={activity.href}>
         {activity.kind === "projected" ? "Planejar sessão e treino" : "Abrir detalhes"}
-      </span>
-    </Link>
+      </Link>
+    </article>
   );
 }
