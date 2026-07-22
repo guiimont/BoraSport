@@ -1890,13 +1890,33 @@
   overflow-wrap: anywhere;
 }
 
-.agendaActions {
+.agendaControls {
+  align-items: stretch;
+  display: grid;
+  gap: 10px;
+  justify-items: end;
+  min-width: min(100%, 620px);
+}
+
+.agendaPeriodControls,
+.agendaNavigation,
+.agendaPrimaryActions {
   align-items: flex-start;
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
   justify-content: flex-end;
   min-width: 0;
+}
+
+.agendaNavigation {
+  align-items: center;
+}
+
+.agendaPrimaryActions {
+  border-top: 1px solid rgba(182, 140, 255, 0.14);
+  padding-top: 10px;
+  width: 100%;
 }
 
 .agendaMoreActions {
@@ -3234,12 +3254,21 @@
     min-width: 0;
   }
 
-  .agendaActions,
-  .agendaActions .primaryButtonLink,
-  .agendaActions .secondaryButton,
+  .agendaControls,
+  .agendaPeriodControls,
+  .agendaNavigation,
+  .agendaPrimaryActions,
+  .agendaPrimaryActions .primaryButtonLink,
+  .agendaPrimaryActions .secondaryButton,
   .agendaMoreActions,
   .agendaMoreActions summary {
     width: 100%;
+  }
+
+  .agendaPeriodControls,
+  .agendaNavigation,
+  .agendaPrimaryActions {
+    align-items: stretch;
   }
 
   .agendaPeriodFilter,

@@ -1,4 +1,5 @@
 import {
+  getCompanyBaseScheduleById,
   getCompanyMembers,
   getCompanyResources,
   getCompanyTrainingLibrary,
@@ -12,6 +13,7 @@ type NewAgendaSchedulePageProps = {
     slug: string;
   }>;
   searchParams?: Promise<{
+    baseScheduleId?: string;
     date?: string;
   }>;
 };
@@ -34,9 +36,12 @@ export default async function NewAgendaSchedulePage({
   searchParams,
 }: NewAgendaSchedulePageProps) {
   const { slug } = await params;
-  const { date } = (await searchParams) ?? {};
+  const { baseScheduleId, date } = (await searchParams) ?? {};
   const context = await getManageAdminContext(slug);
-  const [members, resources, trainingPlans] = await Promise.all([
+  const [baseSchedule, members, resources, trainingPlans] = await Promise.all([
+    baseScheduleId
+      ? getCompanyBaseScheduleById(context.company.id, baseScheduleId)
+      : Promise.resolve(null),
     getCompanyMembers(context.company.id),
     getCompanyResources(context.company.id),
     getCompanyTrainingLibrary(context.company.id),
@@ -46,11 +51,16 @@ export default async function NewAgendaSchedulePage({
     <AdminShell
       active="agenda"
       context={context}
-      subtitle="Crie uma sessão concreta ou uma recorrência semanal sem sair da Agenda."
-      title="Novo horário"
+      subtitle={
+        baseSchedule
+          ? "Defina o treino e ajuste esta ocorrência sem alterar as demais datas."
+          : "Crie uma sessão ou um horário semanal recorrente sem sair da Agenda."
+      }
+      title={baseSchedule ? "Planejar sessão" : "Novo horário"}
     >
       <OperationalScheduleForm
         companyId={context.company.id}
+        initialSchedule={baseSchedule}
         initialDate={getDateKey(date)}
         members={members}
         resources={resources}

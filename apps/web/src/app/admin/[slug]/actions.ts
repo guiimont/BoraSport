@@ -433,6 +433,7 @@ export async function saveOperationalSchedule(
   formData: FormData,
 ): Promise<AdminFormState> {
   const companyId = readText(formData, "companyId", "");
+  const baseScheduleId = readOptionalText(formData, "baseScheduleId");
   const slug = readText(formData, "slug", "");
   const recurrenceMode = readText(formData, "recurrenceMode", "single");
   const sessionDate = readText(formData, "sessionDate", "");
@@ -513,6 +514,7 @@ export async function saveOperationalSchedule(
       }
     } else {
       await upsertOperationalSession({
+        baseScheduleId,
         coachId,
         companyId,
         durationMinutes,

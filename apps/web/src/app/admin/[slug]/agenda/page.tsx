@@ -276,7 +276,7 @@ function makeProjectedActivity({
     coachName: schedule.coach?.name || "Treinador",
     dateKey,
     durationMinutes: schedule.duration_minutes,
-    href: `/admin/${companySlug}/agenda/grade/${schedule.id}?date=${dateKey}`,
+    href: `/admin/${companySlug}/agenda/novo?date=${dateKey}&baseScheduleId=${schedule.id}`,
     id: `projected:${schedule.id}:${dateKey}`,
     isConcrete: false,
     kind: "projected",
@@ -457,8 +457,9 @@ export default async function AdminAgendaPage({
             {confirmedBookings.length} reservas recentes
           </p>
         </div>
-        <div className={styles.agendaActions}>
-          <div className={styles.agendaViewToggle} aria-label="Modo da agenda">
+        <div className={styles.agendaControls}>
+          <div className={styles.agendaPeriodControls}>
+            <div className={styles.agendaViewToggle} aria-label="Modo da agenda">
             <Link
               aria-current={view === "week" ? "page" : undefined}
               className={view === "week" ? styles.navPillActive : styles.navPill}
@@ -473,8 +474,8 @@ export default async function AdminAgendaPage({
             >
               Mês
             </Link>
-          </div>
-          <form className={styles.agendaPeriodFilter} method="get">
+            </div>
+            <form className={styles.agendaPeriodFilter} method="get">
             <input name="view" type="hidden" value="period" />
             <label>
               De
@@ -485,42 +486,39 @@ export default async function AdminAgendaPage({
               <input defaultValue={periodEndKey} name="end" required type="date" />
             </label>
             <button type="submit">Aplicar período</button>
-          </form>
-          <Link
+            </form>
+          </div>
+          <div className={styles.agendaNavigation} aria-label="Navegação do período">
+            <Link
             className={styles.secondaryButton}
             href={buildPeriodHref(previousStart, previousEnd)}
           >
             Anterior
-          </Link>
-          <Link
+            </Link>
+            <Link
             className={styles.secondaryButton}
             href={`/admin/${company.slug}/agenda?view=week&date=${todayKey}`}
           >
             Hoje
-          </Link>
-          <Link
+            </Link>
+            <Link
             className={styles.secondaryButton}
             href={buildPeriodHref(nextStart, nextEnd)}
           >
             Próximo
-          </Link>
-          <Link
+            </Link>
+          </div>
+          <div className={styles.agendaPrimaryActions}>
+            <Link
             className={styles.primaryButtonLink}
             href={`/admin/${company.slug}/agenda/novo?date=${selectedDateKey}`}
           >
             Novo horário
-          </Link>
-          <details className={styles.agendaMoreActions}>
-            <summary>Mais</summary>
-            <div>
-              <Link href={`/admin/${company.slug}/agenda/grade`}>
-                Recorrências
-              </Link>
-              <Link href={`/admin/${company.slug}/treinos`}>
-                Biblioteca de treinos
-              </Link>
-            </div>
-          </details>
+            </Link>
+            <Link className={styles.secondaryButton} href={`/admin/${company.slug}/treinos`}>
+              Biblioteca de treinos
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -537,9 +535,9 @@ export default async function AdminAgendaPage({
       <section className={styles.infoBox}>
         <strong>Como a Agenda funciona</strong>
         <p>
-          A grade-base gera atividades projetadas apenas para o período aberto.
-          Quando uma data recebe treino, cancelamento ou edição própria, a sessão
-          concreta prevalece e a recorrência não aparece duplicada.
+          Horários recorrentes aparecem automaticamente no período aberto. Ao
+          selecionar uma ocorrência, você pode ajustar a sessão daquele dia e
+          vincular o treino sem alterar as demais datas.
         </p>
       </section>
     </AdminShell>
@@ -672,7 +670,7 @@ function AgendaActivityCard({ activity }: { activity: AgendaActivity }) {
         {getStatusLabel(activity.status)}
       </span>
       <span className={styles.agendaDetailsLink}>
-        {activity.kind === "projected" ? "Recorrência" : "Detalhes"}
+        {activity.kind === "projected" ? "Planejar sessão e treino" : "Abrir detalhes"}
       </span>
     </Link>
   );

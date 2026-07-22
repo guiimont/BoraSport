@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useFormStatus } from "react-dom";
 
 import type {
+  BaseSchedule,
   CompanyMember,
   Resource,
   TrainingPlanLibraryItem,
@@ -20,6 +21,7 @@ import {
 type OperationalScheduleFormProps = {
   companyId: string;
   initialDate: string;
+  initialSchedule?: BaseSchedule | null;
   members: CompanyMember[];
   resources: Resource[];
   slug: string;
@@ -53,13 +55,16 @@ function SubmitButton() {
 export function OperationalScheduleForm({
   companyId,
   initialDate,
+  initialSchedule = null,
   members,
   resources,
   slug,
   trainingPlans,
 }: OperationalScheduleFormProps) {
   const [state, action] = useActionState(saveOperationalSchedule, initialState);
-  const [selectedResources, setSelectedResources] = useState(new Set<string>());
+  const [selectedResources, setSelectedResources] = useState(
+    new Set<string>(initialSchedule?.resources.map((item) => item.resource_id) ?? []),
+  );
   const [recurrenceMode, setRecurrenceMode] = useState("single");
   const coaches = members.filter(
     (member) => member.role === "admin" || member.role === "professional",
@@ -80,14 +85,18 @@ export function OperationalScheduleForm({
     <form action={action} className={styles.builderLayout}>
       <input name="companyId" type="hidden" value={companyId} />
       <input name="slug" type="hidden" value={slug} />
+      {initialSchedule ? (
+        <input name="baseScheduleId" type="hidden" value={initialSchedule.id} />
+      ) : null}
 
       <div className={styles.builderMain}>
         <section className={styles.builderHero}>
           <p className={styles.eyebrow}>Agenda</p>
-          <h2>Novo horário</h2>
+          <h2>{initialSchedule ? "Planejar sessão do dia" : "Novo horário"}</h2>
           <p>
-            Crie uma sessão concreta para uma data ou salve uma recorrência
-            semanal usando a grade-base.
+            {initialSchedule
+              ? "Revise os dados desta ocorrência e escolha o treino que será realizado."
+              : "Crie uma sessão para uma data ou defina um horário semanal recorrente."}
           </p>
         </section>
 
@@ -112,7 +121,7 @@ export function OperationalScheduleForm({
               Horário
               <input
                 className={styles.input}
-                defaultValue="06:00"
+                defaultValue={initialSchedule?.start_time.slice(0, 5) ?? "06:00"}
                 name="startTime"
                 required
                 type="time"
@@ -122,7 +131,7 @@ export function OperationalScheduleForm({
               Duração
               <input
                 className={styles.input}
-                defaultValue="60"
+                defaultValue={initialSchedule?.duration_minutes ?? 60}
                 max="360"
                 min="5"
                 name="durationMinutes"
@@ -136,6 +145,7 @@ export function OperationalScheduleForm({
               Turma ou atividade
               <input
                 className={styles.input}
+                defaultValue={initialSchedule?.group_name ?? ""}
                 name="groupName"
                 placeholder="Treino regular"
                 required
@@ -145,6 +155,7 @@ export function OperationalScheduleForm({
               Nível opcional
               <input
                 className={styles.input}
+                defaultValue={initialSchedule?.level ?? ""}
                 name="level"
                 placeholder="Iniciante, misto, avançado..."
               />
@@ -153,7 +164,12 @@ export function OperationalScheduleForm({
           <div className={styles.builderGrid}>
             <label className={styles.label}>
               Treinador
-              <select className={styles.select} name="coachId" required>
+              <select
+                className={styles.select}
+                defaultValue={initialSchedule?.coach_id ?? ""}
+                name="coachId"
+                required
+              >
                 <option value="">Selecione</option>
                 {coaches.map((member) => (
                   <option key={member.user_id} value={member.user_id}>
@@ -171,7 +187,7 @@ export function OperationalScheduleForm({
               </select>
             </label>
           </div>
-          <fieldset className={styles.checkPanel}>
+          {!initialSchedule ? <fieldset className={styles.checkPanel}>
             <legend>Recorrência</legend>
             <div className={styles.agendaModeGrid}>
               <label className={styles.baseResourceOption}>
@@ -197,11 +213,16 @@ export function OperationalScheduleForm({
                 />
                 <span>
                   <strong>Repetir semanalmente</strong>
-                  <small>Cria uma grade-base no mesmo dia da semana.</small>
+                  <small>Repete este horário no mesmo dia da semana.</small>
                 </span>
               </label>
             </div>
-          </fieldset>
+          </fieldset> : (
+            <div className={styles.infoBox}>
+              <strong>Alteração somente nesta data</strong>
+              <p>As outras ocorrências semanais permanecem como estão.</p>
+            </div>
+          )}
         </section>
 
         <section className={styles.builderSectionCompact}>
