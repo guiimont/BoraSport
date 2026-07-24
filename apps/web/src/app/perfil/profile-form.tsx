@@ -9,6 +9,7 @@ import { type ProfileState, saveProfile } from "./actions";
 import styles from "./profile.module.css";
 
 type ProfileFormProps = {
+  companyName?: string;
   email: string;
   profile: Profile | null;
 };
@@ -25,15 +26,15 @@ function SubmitButton() {
   );
 }
 
-export function ProfileForm({ email, profile }: ProfileFormProps) {
+export function ProfileForm({ companyName, email, profile }: ProfileFormProps) {
   const [state, formAction] = useActionState(saveProfile, initialState);
-  const [avatarUrl, setAvatarUrl] = useState(profile?.avatar_url || "");
   const [localPreview, setLocalPreview] = useState("");
   const displayName = profile?.name || email;
-  const previewUrl = localPreview || avatarUrl;
+  const previewUrl = localPreview || profile?.avatar_url || "";
 
   return (
     <form action={formAction} className={styles.form}>
+      <input name="avatarUrl" type="hidden" value={profile?.avatar_url || ""} />
       <div className={styles.avatarField}>
         <span className={styles.avatarLarge}>
           {previewUrl ? (
@@ -46,14 +47,36 @@ export function ProfileForm({ email, profile }: ProfileFormProps) {
             displayName.slice(0, 1).toUpperCase()
           )}
         </span>
-        <p>
-          Esta é a imagem usada para identificar você nas reservas e listas de
-          participantes quando o clube exibe presença.
-        </p>
+        <div className={styles.profileIntro}>
+          <h2 id="profile-heading">{displayName}</h2>
+          <p>{companyName || "Remador BoraSport"}</p>
+        </div>
+        <div className={styles.photoControl}>
+          <FileField
+            accept="image/*"
+            actionLabel={previewUrl ? "Alterar foto" : "Adicionar foto"}
+            label="Foto do perfil"
+            name="avatarFile"
+            onChange={(event) => {
+              const file = event.target.files?.[0];
+
+              setLocalPreview(file ? URL.createObjectURL(file) : "");
+            }}
+          />
+          <span className={styles.fieldHelp}>
+            Prefira uma foto de rosto, com boa iluminação.
+          </span>
+        </div>
       </div>
 
-      <Field label="Nome público">
+      <div className={styles.formHeading}>
+        <p className={styles.eyebrow}>Dados pessoais</p>
+        <h3>Suas informações</h3>
+      </div>
+
+      <Field label="Nome">
         <input
+          autoComplete="name"
           className={styles.input}
           defaultValue={profile?.name || ""}
           name="name"
@@ -71,34 +94,12 @@ export function ProfileForm({ email, profile }: ProfileFormProps) {
         />
       </Field>
 
-      <div className={styles.fileGroup}>
-        <FileField
-          accept="image/*"
-          actionLabel="Selecionar foto"
-          label="Foto do perfil"
-          name="avatarFile"
-          onChange={(event) => {
-            const file = event.target.files?.[0];
-
-            setLocalPreview(file ? URL.createObjectURL(file) : "");
-          }}
-        />
-        <span className={styles.fieldHelp}>
-          Use uma foto quadrada ou de rosto. O app recorta em formato circular
-          nas listas de confirmados.
-        </span>
-      </div>
-
-      <Field
-        help="Opcional. Use quando a foto já estiver publicada em uma URL segura."
-        label="URL da foto alternativa"
-      >
+      <Field label="E-mail">
         <input
           className={styles.input}
-          name="avatarUrl"
-          onChange={(event) => setAvatarUrl(event.target.value)}
-          placeholder="https://..."
-          value={avatarUrl}
+          disabled
+          type="email"
+          value={email}
         />
       </Field>
 

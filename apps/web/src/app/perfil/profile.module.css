@@ -22,13 +22,6 @@
   padding: clamp(18px, 3vw, 28px);
 }
 
-.profileHeader {
-  align-items: center;
-  display: grid;
-  gap: var(--space-5);
-  grid-template-columns: auto minmax(0, 1fr);
-}
-
 .profileIntro {
   min-width: 0;
 }
@@ -52,13 +45,12 @@
 
 .profileIntro p,
 .cardText,
-.avatarField p {
+.accountEmail {
   color: rgba(238, 248, 247, 0.7);
   line-height: 1.6;
   margin: var(--space-3) 0 0;
 }
 
-.avatar,
 .avatarLarge {
   align-items: center;
   background:
@@ -73,12 +65,6 @@
   font-weight: 800;
   justify-content: center;
   overflow: hidden;
-}
-
-.avatar {
-  font-size: 2rem;
-  height: 96px;
-  width: 96px;
 }
 
 .avatarLarge {
@@ -104,18 +90,26 @@
 
 .avatarField {
   align-items: center;
-  background:
-    linear-gradient(135deg, rgba(31, 216, 229, 0.08), rgba(141, 77, 255, 0.12)),
-    rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(123, 243, 245, 0.12);
-  border-radius: var(--radius-md);
+  border-bottom: 1px solid rgba(216, 231, 231, 0.1);
   display: grid;
   gap: var(--space-4);
-  grid-template-columns: auto minmax(0, 1fr);
-  padding: var(--space-4);
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  padding-bottom: var(--space-5);
 }
 
-.avatarField p {
+.photoControl {
+  display: grid;
+  gap: var(--space-2);
+  justify-items: start;
+}
+
+.formHeading {
+  margin-top: var(--space-2);
+}
+
+.formHeading h3 {
+  color: #ffffff;
+  font-size: 1.25rem;
   margin: 0;
 }
 
@@ -143,10 +137,9 @@
   color: rgba(238, 248, 247, 0.44);
 }
 
-.fileGroup {
-  display: grid;
-  gap: var(--space-2);
-  min-width: 0;
+.input:disabled {
+  color: rgba(238, 248, 247, 0.62);
+  cursor: not-allowed;
 }
 
 .fieldHelp {
@@ -175,34 +168,9 @@
   margin: 0;
 }
 
-.dataList {
-  display: grid;
-  gap: var(--space-3);
-  margin: 0;
-}
-
-.dataList div {
-  border-top: 1px solid rgba(216, 231, 231, 0.1);
-  display: grid;
-  gap: var(--space-1);
-  padding-top: var(--space-3);
-}
-
-.dataList div:first-child {
-  border-top: 0;
-  padding-top: 0;
-}
-
-.dataList dt {
-  color: rgba(238, 248, 247, 0.55);
-  font-size: 0.78rem;
-  font-weight: 800;
-  text-transform: uppercase;
-}
-
-.dataList dd {
+.accountEmail {
   color: rgba(255, 255, 255, 0.92);
-  font-weight: 800;
+  font-weight: 750;
   margin: 0;
   overflow-wrap: anywhere;
 }
@@ -221,13 +189,15 @@
 
   .profileHeader,
   .avatarField {
-    align-items: start;
-    grid-template-columns: 1fr;
+    grid-template-columns: auto minmax(0, 1fr);
   }
 
-  .avatar,
   .avatarLarge {
-    height: 92px;
-    width: 92px;
+    height: 82px;
+    width: 82px;
+  }
+
+  .photoControl {
+    grid-column: 1 / -1;
   }
 }

@@ -528,11 +528,8 @@
 }
 
 .memberHeroContent {
-  align-items: end;
-  display: grid;
-  gap: clamp(22px, 4vw, 44px);
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
-  padding-top: clamp(48px, 8vw, 86px);
+  display: block;
+  padding-top: clamp(34px, 5vw, 58px);
 }
 
 .memberEyebrow {
@@ -545,7 +542,7 @@
 }
 
 .memberHeroContent h1 {
-  font-size: clamp(2.8rem, 7vw, 5.8rem);
+  font-size: clamp(2.35rem, 5vw, 4.2rem);
   letter-spacing: 0;
   line-height: 0.94;
   margin: 0;
@@ -555,39 +552,8 @@
   color: rgba(255, 255, 255, 0.78);
   font-size: clamp(1rem, 1.8vw, 1.16rem);
   line-height: 1.6;
-  margin: var(--space-5) 0 0;
+  margin: var(--space-3) 0 0;
   max-width: 650px;
-}
-
-.memberIdentity {
-  background:
-    linear-gradient(180deg, rgba(21, 18, 34, 0.92), rgba(12, 15, 25, 0.94));
-  border: 1px solid rgba(141, 77, 255, 0.28);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-night-card), 0 0 28px rgba(141, 77, 255, 0.14);
-  color: var(--text-inverse);
-  display: grid;
-  gap: var(--space-2);
-  padding: var(--space-5);
-}
-
-.memberIdentity span,
-.memberIdentity em {
-  color: var(--color-sea-300);
-  font-size: 0.78rem;
-  font-style: normal;
-  font-weight: 800;
-  text-transform: uppercase;
-}
-
-.memberIdentity strong {
-  font-size: 1.1rem;
-  overflow-wrap: anywhere;
-}
-
-.memberIdentity small {
-  color: rgba(238, 248, 247, 0.68);
-  overflow-wrap: anywhere;
 }
 
 .memberContent {
@@ -610,7 +576,6 @@
   }
 
   .memberHeroContent {
-    grid-template-columns: 1fr;
     padding-top: var(--space-12);
   }
 }
