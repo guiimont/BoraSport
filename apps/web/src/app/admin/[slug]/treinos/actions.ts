@@ -183,6 +183,17 @@ export async function publishTrainingVersionAction(formData: FormData) {
   redirect(`/admin/${slug}/treinos/${trainingPlanId}`);
 }
 
+export async function publishAndScheduleTrainingVersionAction(formData: FormData) {
+  const slug = readText(formData, "slug");
+  const trainingPlanVersionId = readText(formData, "trainingPlanVersionId");
+
+  await publishTrainingPlanVersion(trainingPlanVersionId);
+  revalidatePath(`/admin/${slug}/treinos`);
+  redirect(
+    `/admin/${slug}/agenda/novo?trainingPlanVersionId=${trainingPlanVersionId}`,
+  );
+}
+
 export async function archiveTrainingPlanAction(formData: FormData) {
   const slug = readText(formData, "slug");
   const trainingPlanId = readText(formData, "trainingPlanId");

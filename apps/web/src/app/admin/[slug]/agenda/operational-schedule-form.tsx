@@ -22,6 +22,7 @@ type OperationalScheduleFormProps = {
   companyId: string;
   initialDate: string;
   initialSchedule?: BaseSchedule | null;
+  initialTrainingPlanVersionId?: string;
   members: CompanyMember[];
   resources: Resource[];
   slug: string;
@@ -59,6 +60,7 @@ export function OperationalScheduleForm({
   companyId,
   initialDate,
   initialSchedule = null,
+  initialTrainingPlanVersionId = "",
   members,
   resources,
   slug,
@@ -76,6 +78,21 @@ export function OperationalScheduleForm({
     () => getPublishedVersions(trainingPlans),
     [trainingPlans],
   );
+  const initialTraining = publishedVersions.find(
+    ({ version }) => version.id === initialTrainingPlanVersionId,
+  );
+  const initialDurationMinutes = initialTraining?.version.duration_seconds
+    ? Math.round(initialTraining.version.duration_seconds / 60)
+    : 60;
+  const initialLevel = initialTraining?.version.level
+    ? {
+        avancado: "Avançado",
+        competicao: "Competição",
+        iniciante: "Iniciante",
+        intermediario: "Intermediário",
+        personalizado: "Personalizado",
+      }[initialTraining.version.level]
+    : "";
   const selectedResourceRows = resources.filter((resource) =>
     selectedResources.has(resource.id),
   );
@@ -134,7 +151,9 @@ export function OperationalScheduleForm({
               Duração
               <input
                 className={styles.input}
-                defaultValue={initialSchedule?.duration_minutes ?? 60}
+                defaultValue={
+                  initialSchedule?.duration_minutes ?? initialDurationMinutes
+                }
                 max="360"
                 min="5"
                 name="durationMinutes"
@@ -148,7 +167,9 @@ export function OperationalScheduleForm({
               Turma ou atividade
               <input
                 className={styles.input}
-                defaultValue={initialSchedule?.group_name ?? ""}
+                defaultValue={
+                  initialSchedule?.group_name ?? initialTraining?.plan.title ?? ""
+                }
                 name="groupName"
                 placeholder="Treino regular"
                 required
@@ -158,7 +179,7 @@ export function OperationalScheduleForm({
               Nível opcional
               <input
                 className={styles.input}
-                defaultValue={initialSchedule?.level ?? ""}
+                defaultValue={initialSchedule?.level ?? initialLevel}
                 name="level"
                 placeholder="Iniciante, misto, avançado..."
               />
@@ -169,7 +190,9 @@ export function OperationalScheduleForm({
               Treinador
               <select
                 className={styles.select}
-                defaultValue={initialSchedule?.coach_id ?? ""}
+                defaultValue={
+                  initialSchedule?.coach_id ?? initialTraining?.plan.coach_id ?? ""
+                }
                 name="coachId"
                 required
               >
@@ -289,7 +312,11 @@ export function OperationalScheduleForm({
           </div>
           <label className={styles.label}>
             Treino vinculado
-            <select className={styles.select} name="trainingPlanVersionId">
+            <select
+              className={styles.select}
+              defaultValue={initialTraining?.version.id ?? ""}
+              name="trainingPlanVersionId"
+            >
               <option value="">Treino ainda não definido</option>
               {publishedVersions.map(({ label, version }) => (
                 <option key={version.id} value={version.id}>

@@ -15,6 +15,7 @@ type NewAgendaSchedulePageProps = {
   searchParams?: Promise<{
     baseScheduleId?: string;
     date?: string;
+    trainingPlanVersionId?: string;
   }>;
 };
 
@@ -36,7 +37,8 @@ export default async function NewAgendaSchedulePage({
   searchParams,
 }: NewAgendaSchedulePageProps) {
   const { slug } = await params;
-  const { baseScheduleId, date } = (await searchParams) ?? {};
+  const { baseScheduleId, date, trainingPlanVersionId } =
+    (await searchParams) ?? {};
   const context = await getManageAdminContext(slug);
   const [baseSchedule, members, resources, trainingPlans] = await Promise.all([
     baseScheduleId
@@ -62,6 +64,7 @@ export default async function NewAgendaSchedulePage({
         companyId={context.company.id}
         initialSchedule={baseSchedule}
         initialDate={getDateKey(date)}
+        initialTrainingPlanVersionId={trainingPlanVersionId}
         members={members}
         resources={resources}
         slug={context.company.slug}

@@ -18,6 +18,7 @@ import { AdminShell } from "../../admin-shell";
 import styles from "../../admin.module.css";
 import {
   archiveTrainingPlanAction,
+  publishAndScheduleTrainingVersionAction,
   publishTrainingVersionAction,
 } from "../actions";
 
@@ -136,6 +137,27 @@ export default async function TrainingDetailPage({
           <span>{plan.status === "archived" ? "Arquivado" : "Ativo"}</span>
           {version ? <span>{statusLabels[version.status]}</span> : null}
         </div>
+        {plan.status !== "archived" && version?.status === "published" ? (
+          <Link
+            className={styles.primaryButton}
+            href={`/admin/${context.company.slug}/agenda/novo?trainingPlanVersionId=${version.id}`}
+          >
+            Agendar treino
+          </Link>
+        ) : null}
+        {plan.status !== "archived" && version?.status === "draft" ? (
+          <form action={publishAndScheduleTrainingVersionAction}>
+            <input name="slug" type="hidden" value={context.company.slug} />
+            <input
+              name="trainingPlanVersionId"
+              type="hidden"
+              value={version.id}
+            />
+            <button className={styles.primaryButton} type="submit">
+              Publicar e agendar
+            </button>
+          </form>
+        ) : null}
       </section>
 
       <section className={styles.trainingDetailGrid}>
