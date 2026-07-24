@@ -39,6 +39,26 @@ nao deve ser posicionado como sistema generico para academias, boxes ou studios.
 
 ## 3. Personas e areas do sistema
 
+### Arquitetura comercial por modulos
+
+O BoraSport sera evoluido e comercializado em modulos independentes, com
+precificacao por modulo:
+
+- **Gestao:** agenda, reservas, treinos, remadores, planos, canoas e equipe.
+- **Atendimento:** leads, conversas, historico, WhatsApp e acompanhamento
+  comercial.
+- **Marketing:** segmentacao, campanhas, automacoes, eventos, recuperacao de
+  alunos e construcao da presenca digital do clube.
+- **IA:** atendimento, qualificacao, orientacao e execucao de rotinas
+  especificas.
+
+A prioridade atual e concluir e validar o modulo Gestao. Atendimento, Marketing
+e IA nao entram no escopo de desenvolvimento antes dessa etapa. A pagina publica
+operacional de agenda e reservas continua disponivel em `/clube/[slug]` e e
+alimentada pelos dados da Gestao. O construtor existente em `/admin/[slug]/site`
+fica preservado no codigo, mas fora da navegacao da Gestao, ate ser retomado no
+modulo Marketing.
+
 ### Remador
 
 O remador precisa descobrir o clube, criar cadastro, manter perfil e foto,

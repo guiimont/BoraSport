@@ -34,7 +34,6 @@ const navItems: Array<{
   { hrefSuffix: "/remadores", id: "remadores", label: "Remadores" },
   { hrefSuffix: "/canoas", id: "canoas", label: "Canoas" },
   { hrefSuffix: "/treinos", id: "treinos", label: "Treinos" },
-  { hrefSuffix: "/site", id: "site", label: "Site" },
   { hrefSuffix: "/configuracoes", id: "configuracoes", label: "Configurações" },
 ];
 
