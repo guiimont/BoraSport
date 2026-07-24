@@ -166,6 +166,10 @@
   display: none;
 }
 
+.mobileTopbar {
+  display: none;
+}
+
 .header {
   background:
     linear-gradient(180deg, rgba(4, 24, 39, 0.12), rgba(4, 24, 39, 0.8)),
@@ -3906,7 +3910,6 @@
   }
 
   .headerActions,
-  .topbarActions,
   .primaryButton,
   .primaryButtonLink,
   .secondaryButton,
@@ -3919,29 +3922,197 @@
   }
 
   .sidebar {
-    border-bottom: 1px solid rgba(182, 140, 255, 0.16);
-    border-right: 0;
-    padding: var(--space-4);
+    display: none;
   }
 
-  .sidebarNav {
+  .topbar {
+    gap: 18px;
+    padding: 0 var(--space-4) var(--space-5);
+  }
+
+  .mobileTopbar {
+    align-items: center;
+    border-bottom: 1px solid rgba(182, 140, 255, 0.14);
+    display: flex;
+    gap: 11px;
+    margin: 0 calc(var(--space-4) * -1);
+    min-height: 68px;
+    padding: 10px var(--space-4);
+  }
+
+  .mobileBrand {
+    align-items: center;
+    display: flex;
+    flex: 0 0 auto;
+    text-decoration: none;
+  }
+
+  .mobileClubIdentity {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .mobileClubIdentity span {
+    color: rgba(238, 248, 247, 0.5);
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .mobileClubIdentity strong {
+    color: #ffffff;
+    font-size: 0.9rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mobileTopbarActions {
+    align-items: center;
+    display: flex;
+    flex: 0 0 auto;
+    gap: 8px;
+    margin-left: auto;
+  }
+
+  .mobileIconButton,
+  .mobileProfileButton {
+    align-items: center;
+    background: rgba(255, 255, 255, 0.055);
+    border: 1px solid rgba(182, 140, 255, 0.22);
+    color: #ffffff;
+    display: inline-flex;
+    height: 38px;
+    justify-content: center;
+    text-decoration: none;
+    width: 38px;
+  }
+
+  .mobileIconButton {
+    border-radius: 11px;
+  }
+
+  .mobileIconButton svg {
+    fill: none;
+    height: 18px;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+    width: 18px;
+  }
+
+  .mobileProfileButton {
+    background: linear-gradient(135deg, var(--color-sea-500), var(--color-violet-500));
+    border-color: rgba(123, 243, 245, 0.34);
+    border-radius: 50%;
+    color: #04121f;
+    font-size: 0.82rem;
+    font-weight: 900;
+  }
+
+  .mobileBrand:focus-visible,
+  .mobileIconButton:focus-visible,
+  .mobileProfileButton:focus-visible,
+  .mobileNav summary:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-offset);
+  }
+
+  .topbarText {
+    padding-top: 2px;
+  }
+
+  .topbar h1 {
+    font-size: clamp(2rem, 8vw, 3.25rem);
+    line-height: 1;
+    margin-top: 6px;
+  }
+
+  .headerText {
+    font-size: 0.95rem;
+    line-height: 1.45;
+    margin-top: 8px;
+  }
+
+  .sessionBar,
+  .topbarActions {
     display: none;
   }
 
   .mobileNav {
-    background: rgba(3, 9, 19, 0.72);
+    background: rgba(3, 9, 19, 0.86);
     border-bottom: 1px solid rgba(182, 140, 255, 0.14);
+    display: block;
+    padding: 10px var(--space-4);
+  }
+
+  .mobileNav summary {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    list-style: none;
+    min-height: 44px;
+  }
+
+  .mobileNav summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .mobileNav summary > span:first-child {
+    display: grid;
+    gap: 2px;
+  }
+
+  .mobileNav summary small {
+    color: rgba(238, 248, 247, 0.46);
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .mobileNav summary strong {
+    color: #ffffff;
+    font-size: 0.9rem;
+  }
+
+  .mobileMenuLabel {
+    align-items: center;
+    border: 1px solid rgba(123, 243, 245, 0.2);
+    border-radius: 999px;
+    color: rgba(238, 248, 247, 0.82);
+    display: inline-flex;
+    font-size: 0.75rem;
+    font-weight: 850;
+    min-height: 32px;
+    padding: 0 12px;
+  }
+
+  .mobileMenuLabel::after {
+    content: "⌄";
+    font-size: 0.9rem;
+    margin-left: 7px;
+    transition: transform var(--transition-fast);
+  }
+
+  .mobileNav[open] .mobileMenuLabel::after {
+    transform: rotate(180deg);
+  }
+
+  .mobileNavLinks {
     display: grid;
     gap: 8px;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    padding: var(--space-4);
+    padding: 10px 0 6px;
   }
 
   .navPill {
     align-items: center;
     display: flex;
     justify-content: center;
-    min-height: 44px;
+    min-height: 42px;
     text-align: center;
   }
 
@@ -4246,18 +4417,6 @@
   .claimPanel,
   .statCard {
     padding: var(--space-4);
-  }
-
-  .sessionBar span {
-    width: 100%;
-  }
-
-  .topbar {
-    padding: var(--space-5) var(--space-4);
-  }
-
-  .mobileNav {
-    grid-template-columns: 1fr;
   }
 
   .table {
