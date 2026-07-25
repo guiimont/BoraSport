@@ -70,7 +70,7 @@ begin
       )
     )::integer,
     case
-      when count(*) = 1 then min(resources.id)
+      when count(*) = 1 then (array_agg(resources.id))[1]
       else null
     end
   into public_capacity, target_resource_id
