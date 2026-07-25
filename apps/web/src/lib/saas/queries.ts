@@ -334,6 +334,8 @@ export async function getCompanySlots(
         end_time,
         spots_total,
         spots_occupied,
+        operational_session_id,
+        is_public,
         services!inner (
           id,
           name,
@@ -341,7 +343,7 @@ export async function getCompanySlots(
           duration_minutes,
           price
         ),
-        resources!inner (
+        resources (
           id,
           name,
           capacity_maxima
@@ -350,8 +352,8 @@ export async function getCompanySlots(
     )
     .eq("company_id", companyId)
     .gte("start_time", new Date().toISOString())
+    .eq("is_public", true)
     .eq("services.is_active", true)
-    .eq("resources.is_active", true)
     .order("start_time", { ascending: true })
     .limit(12);
 
@@ -365,11 +367,11 @@ export async function getCompanySlots(
 
   const restRows = await getRowsViaRestOrThrow<CompanySlot>("slots", {
     select:
-      "id,company_id,service_id,resource_id,professional_id,start_time,end_time,spots_total,spots_occupied,services!inner(id,name,description,duration_minutes,price),resources!inner(id,name,capacity_maxima)",
+      "id,company_id,service_id,resource_id,professional_id,start_time,end_time,spots_total,spots_occupied,operational_session_id,is_public,services!inner(id,name,description,duration_minutes,price),resources(id,name,capacity_maxima)",
     company_id: `eq.${companyId}`,
     start_time: `gte.${new Date().toISOString()}`,
+    is_public: "eq.true",
     "services.is_active": "eq.true",
-    "resources.is_active": "eq.true",
     order: "start_time.asc",
     limit: "12",
   });

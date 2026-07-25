@@ -71,6 +71,8 @@ export type CompanySlot = {
   end_time: string;
   spots_total: number;
   spots_occupied: number;
+  operational_session_id: string | null;
+  is_public: boolean;
   spots_available?: number;
   services: Pick<
     Service,
