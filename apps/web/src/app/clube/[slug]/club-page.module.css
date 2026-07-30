@@ -453,9 +453,14 @@ a.avatar {
   display: block;
   filter: drop-shadow(0 0 12px rgba(31, 216, 229, 0.045));
   height: auto;
+  min-width: 0;
+  width: 100%;
+}
+
+.v6Stage {
   margin: 0 auto;
   max-width: 210px;
-  min-width: 0;
+  position: relative;
   width: min(100%, 210px);
 }
 
@@ -477,52 +482,38 @@ a.avatar {
   stroke-width: 2;
 }
 
-.v6SeatLink {
-  cursor: pointer;
+.v6HtmlSeat {
+  align-items: center;
+  aspect-ratio: 1;
+  border: 2px solid rgba(210, 222, 229, 0.74);
+  border-radius: 50%;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  position: absolute;
+  text-decoration: none;
+  transform: translate(-50%, -50%);
+  transition: border-color var(--transition-fast);
+  width: 15%;
+  z-index: 1;
+}
+
+.v6HtmlSeat:hover,
+.v6HtmlSeat:focus-visible {
+  border-color: rgba(123, 243, 245, 0.92);
   outline: none;
 }
 
-.v6SeatLink:focus-visible .v6SeatRing,
-.v6SeatLink:hover .v6SeatRing {
-  stroke: rgba(123, 243, 245, 0.92);
-}
-
-.v6SeatRing {
-  fill: rgba(9, 16, 27, 0.62);
-  stroke: rgba(210, 222, 229, 0.74);
-  stroke-width: 2;
-  transition: stroke var(--transition-fast);
-}
-
-.v6AvatarFrame {
-  border-radius: 50%;
-  display: block;
-  overflow: hidden;
-}
-
-.v6AvatarFrame img {
-  display: block;
+.v6HtmlSeat .canoeAvatar {
+  border: 0;
   height: 100%;
-  object-fit: cover;
   width: 100%;
 }
 
-.v6FallbackCircle {
-  fill: rgba(11, 22, 35, 0.96);
-}
-
-.v6FallbackInitial {
-  fill: rgba(238, 248, 247, 0.9);
-  font-family: inherit;
-  font-size: 18px;
-  font-weight: 950;
-}
-
-.v6Vacancy circle {
-  fill: rgba(255, 255, 255, 0.03);
-  stroke: rgba(190, 202, 208, 0.36);
-  stroke-dasharray: 5 5;
-  stroke-width: 2;
+.v6HtmlVacancy {
+  background: rgba(255, 255, 255, 0.03);
+  pointer-events: none;
 }
 
 .canoeParticipant,

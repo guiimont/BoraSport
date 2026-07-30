@@ -102,7 +102,7 @@ function getSeatPosition(index: number, capacity: number) {
   };
 }
 
-function SvgSeat({
+function HtmlSeat({
   index,
   participant,
   total,
@@ -111,68 +111,32 @@ function SvgSeat({
   participant: SlotParticipant | null;
   total: number;
 }) {
-  const [failed, setFailed] = useState(false);
   const { x, y } = getSeatPosition(index, total);
-  const radius = 24;
+  const position = {
+    left: `${(x / 320) * 100}%`,
+    top: `${(y / 520) * 100}%`,
+  };
 
   if (!participant) {
     return (
-      <g aria-label={`Vaga disponível ${index + 1}`} className={styles.v6Vacancy}>
-        <circle cx={x} cy={y} r={radius} />
-      </g>
+      <span
+        aria-label={`Vaga disponível ${index + 1}`}
+        className={`${styles.v6HtmlSeat} ${styles.v6HtmlVacancy}`}
+        style={position}
+      />
     );
   }
 
-  const initial = getInitial(participant.name);
-  const href = `/remadores/${participant.public_profile_id}`;
-  const avatarStyle = {
-    height: `${radius * 2}px`,
-    width: `${radius * 2}px`,
-  };
-
   return (
-    <a
+    <Link
       aria-label={`Abrir perfil esportivo público de ${participant.name}`}
-      className={styles.v6SeatLink}
-      href={href}
+      className={styles.v6HtmlSeat}
+      href={`/remadores/${participant.public_profile_id}`}
+      style={position}
+      title={participant.name}
     >
-      <title>{participant.name}</title>
-      <circle className={styles.v6SeatRing} cx={x} cy={y} r={radius + 1.5} />
-      {participant.avatar_url && !failed ? (
-        <foreignObject
-          height={radius * 2}
-          width={radius * 2}
-          x={x - radius}
-          y={y - radius}
-        >
-          <span
-            aria-hidden="true"
-            className={styles.v6AvatarFrame}
-            style={avatarStyle}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              alt=""
-              onError={() => setFailed(true)}
-              src={participant.avatar_url}
-            />
-          </span>
-        </foreignObject>
-      ) : (
-        <>
-          <circle className={styles.v6FallbackCircle} cx={x} cy={y} r={radius} />
-          <text
-            className={styles.v6FallbackInitial}
-            dominantBaseline="central"
-            textAnchor="middle"
-            x={x}
-            y={y}
-          >
-            {initial}
-          </text>
-        </>
-      )}
-    </a>
+      <ParticipantAvatar participant={participant} />
+    </Link>
   );
 }
 
@@ -183,32 +147,36 @@ function V6Composition({ seats }: { seats: Seat[] }) {
 
   return (
     <div className={styles.v6Composition}>
-      <svg
+      <div
         aria-label={`Va'a com ${participants.length} participantes confirmados em ${seats.length} vagas`}
-        className={styles.v6Diagram}
+        className={styles.v6Stage}
         role="img"
-        viewBox="0 0 320 520"
       >
-        <path
-          className={styles.v6Hull}
-          d="M170 24 C207 80 225 154 225 260 C225 366 207 454 170 496 C133 454 115 366 115 260 C115 154 133 80 170 24 Z"
-        />
-        <line className={styles.v6Iako} x1="86" x2="118" y1="170" y2="170" />
-        <line className={styles.v6Iako} x1="86" x2="118" y1="350" y2="350" />
-        <path
-          className={styles.v6Ama}
-          d="M74 70 C86 120 88 190 88 260 C88 330 86 400 74 450 C62 400 60 330 60 260 C60 190 62 120 74 70 Z"
-        />
-
+        <svg
+          aria-hidden="true"
+          className={styles.v6Diagram}
+          viewBox="0 0 320 520"
+        >
+          <path
+            className={styles.v6Hull}
+            d="M170 24 C207 80 225 154 225 260 C225 366 207 454 170 496 C133 454 115 366 115 260 C115 154 133 80 170 24 Z"
+          />
+          <line className={styles.v6Iako} x1="86" x2="118" y1="170" y2="170" />
+          <line className={styles.v6Iako} x1="86" x2="118" y1="350" y2="350" />
+          <path
+            className={styles.v6Ama}
+            d="M74 70 C86 120 88 190 88 260 C88 330 86 400 74 450 C62 400 60 330 60 260 C60 190 62 120 74 70 Z"
+          />
+        </svg>
         {seats.map(({ participant, seatKey }, index) => (
-          <SvgSeat
+          <HtmlSeat
             index={index}
             key={seatKey}
             participant={participant}
             total={seats.length}
           />
         ))}
-      </svg>
+      </div>
     </div>
   );
 }
