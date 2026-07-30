@@ -46,7 +46,7 @@ export function AdminShell({
   subtitle,
   title,
 }: AdminShellProps) {
-  const { company, role, userLabel } = context;
+  const { company, profileAvatarUrl, role, userLabel } = context;
   const baseHref = `/admin/${company.slug}`;
   const activeLabel =
     navItems.find((item) => item.id === active)?.label ?? "Navegação";
@@ -117,7 +117,12 @@ export function AdminShell({
                   className={styles.mobileProfileButton}
                   href="/perfil"
                 >
-                  {profileInitial}
+                  {profileAvatarUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img alt="" src={profileAvatarUrl} />
+                  ) : (
+                    profileInitial
+                  )}
                 </Link>
               </div>
             </div>

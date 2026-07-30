@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import {
   companyHasMembers,
   getCompanyBySlug,
+  getCurrentProfile,
   getCurrentUser,
   getUserCompanyRole,
 } from "../../../lib/saas/queries";
@@ -12,6 +13,7 @@ export type AdminContext = {
   canClaimTenant: boolean;
   canManageTenant: boolean;
   company: Company;
+  profileAvatarUrl: string | null;
   role: MembershipRole | null;
   user: NonNullable<Awaited<ReturnType<typeof getCurrentUser>>>;
   userLabel: string;
@@ -79,9 +81,10 @@ export async function getAdminContext(slug: string): Promise<AdminContext> {
     redirect(`/login?next=/admin/${company.slug}`);
   }
 
-  const [role, hasMembers] = await Promise.all([
+  const [role, hasMembers, profile] = await Promise.all([
     getUserCompanyRole(company.id, user.id),
     companyHasMembers(company.id),
+    getCurrentProfile(),
   ]);
   const canManageTenant = role === "admin" || role === "professional";
   const canClaimTenant = !hasMembers;
@@ -94,6 +97,7 @@ export async function getAdminContext(slug: string): Promise<AdminContext> {
     canClaimTenant,
     canManageTenant,
     company,
+    profileAvatarUrl: profile?.avatar_url ?? null,
     role,
     user,
     userLabel: getUserLabel(user),
