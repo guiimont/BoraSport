@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useId, useState } from "react";
+import { useState } from "react";
 
 import type { SlotParticipant } from "../../../types/saas";
 import styles from "./club-page.module.css";
@@ -112,10 +112,8 @@ function SvgSeat({
   total: number;
 }) {
   const [failed, setFailed] = useState(false);
-  const id = useId().replace(/:/g, "");
   const { x, y } = getSeatPosition(index, total);
   const radius = 24;
-  const clipId = `seat-${id}`;
 
   if (!participant) {
     return (
@@ -127,6 +125,10 @@ function SvgSeat({
 
   const initial = getInitial(participant.name);
   const href = `/remadores/${participant.public_profile_id}`;
+  const avatarStyle = {
+    height: `${radius * 2}px`,
+    width: `${radius * 2}px`,
+  };
 
   return (
     <a
@@ -135,22 +137,27 @@ function SvgSeat({
       href={href}
     >
       <title>{participant.name}</title>
-      <clipPath id={clipId}>
-        <circle cx={x} cy={y} r={radius} />
-      </clipPath>
       <circle className={styles.v6SeatRing} cx={x} cy={y} r={radius + 1.5} />
       {participant.avatar_url && !failed ? (
-        <image
-          aria-hidden="true"
-          clipPath={`url(#${clipId})`}
+        <foreignObject
           height={radius * 2}
-          href={participant.avatar_url}
-          onError={() => setFailed(true)}
-          preserveAspectRatio="xMidYMid slice"
           width={radius * 2}
           x={x - radius}
           y={y - radius}
-        />
+        >
+          <span
+            aria-hidden="true"
+            className={styles.v6AvatarFrame}
+            style={avatarStyle}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              alt=""
+              onError={() => setFailed(true)}
+              src={participant.avatar_url}
+            />
+          </span>
+        </foreignObject>
       ) : (
         <>
           <circle className={styles.v6FallbackCircle} cx={x} cy={y} r={radius} />

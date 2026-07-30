@@ -127,8 +127,8 @@ export function getActivityExperience(
       ],
       safetyTitle: "Seguranca no mar",
       tabs: [
-        { id: "condicoes", label: "Mar" },
         { id: "agenda", label: "Agenda" },
+        { id: "condicoes", label: "Mar" },
         { id: "semana", label: "Semana" },
         { id: "comunidade", label: "Equipe" },
         { id: "divulgacao", label: "Divulgacao" },

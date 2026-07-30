@@ -494,6 +494,19 @@ a.avatar {
   transition: stroke var(--transition-fast);
 }
 
+.v6AvatarFrame {
+  border-radius: 50%;
+  display: block;
+  overflow: hidden;
+}
+
+.v6AvatarFrame img {
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
 .v6FallbackCircle {
   fill: rgba(11, 22, 35, 0.96);
 }
