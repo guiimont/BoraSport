@@ -482,10 +482,15 @@ a.avatar {
   stroke-width: 2;
 }
 
+.v6SeatCircle {
+  fill: rgba(255, 255, 255, 0.03);
+  stroke: rgba(210, 222, 229, 0.74);
+  stroke-width: 2;
+}
+
 .v6HtmlSeat {
   align-items: center;
   aspect-ratio: 1;
-  border: 2px solid rgba(210, 222, 229, 0.74);
   border-radius: 50%;
   box-sizing: border-box;
   display: flex;
@@ -494,25 +499,36 @@ a.avatar {
   position: absolute;
   text-decoration: none;
   transform: translate(-50%, -50%);
-  transition: border-color var(--transition-fast);
-  width: 15%;
+  width: 13.5%;
   z-index: 1;
 }
 
 .v6HtmlSeat:hover,
 .v6HtmlSeat:focus-visible {
-  border-color: rgba(123, 243, 245, 0.92);
+  box-shadow: 0 0 0 2px rgba(123, 243, 245, 0.92);
   outline: none;
 }
 
-.v6HtmlSeat .canoeAvatar {
-  border: 0;
+.v6SeatAvatar {
+  display: block;
   height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.v6SeatInitial {
+  align-items: center;
+  background: #101923;
+  color: rgba(238, 248, 247, 0.86);
+  display: flex;
+  font-size: 0.78rem;
+  font-weight: 950;
+  height: 100%;
+  justify-content: center;
   width: 100%;
 }
 
 .v6HtmlVacancy {
-  background: rgba(255, 255, 255, 0.03);
   pointer-events: none;
 }
 

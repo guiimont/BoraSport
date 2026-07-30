@@ -111,6 +111,7 @@ function HtmlSeat({
   participant: SlotParticipant | null;
   total: number;
 }) {
+  const [avatarFailed, setAvatarFailed] = useState(false);
   const { x, y } = getSeatPosition(index, total);
   const position = {
     left: `${(x / 320) * 100}%`,
@@ -135,7 +136,20 @@ function HtmlSeat({
       style={position}
       title={participant.name}
     >
-      <ParticipantAvatar participant={participant} />
+      {participant.avatar_url && !avatarFailed ? (
+        // The seat is already a fixed circular crop over the SVG seat marker.
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          alt={`Foto de ${participant.name}`}
+          className={styles.v6SeatAvatar}
+          onError={() => setAvatarFailed(true)}
+          src={participant.avatar_url}
+        />
+      ) : (
+        <span className={styles.v6SeatInitial}>
+          {getInitial(participant.name)}
+        </span>
+      )}
     </Link>
   );
 }
@@ -167,6 +181,19 @@ function V6Composition({ seats }: { seats: Seat[] }) {
             className={styles.v6Ama}
             d="M74 70 C86 120 88 190 88 260 C88 330 86 400 74 450 C62 400 60 330 60 260 C60 190 62 120 74 70 Z"
           />
+          {seats.map((_, index) => {
+            const { x, y } = getSeatPosition(index, seats.length);
+
+            return (
+              <circle
+                className={styles.v6SeatCircle}
+                cx={x}
+                cy={y}
+                key={`seat-circle-${index}`}
+                r="24"
+              />
+            );
+          })}
         </svg>
         {seats.map(({ participant, seatKey }, index) => (
           <HtmlSeat
