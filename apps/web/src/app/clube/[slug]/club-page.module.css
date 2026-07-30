@@ -629,8 +629,8 @@ a.avatar {
 
 .tabsBar {
   backdrop-filter: blur(18px);
-  background: rgba(5, 7, 13, 0.84);
-  border-bottom: 1px solid rgba(182, 140, 255, 0.14);
+  background: rgba(7, 22, 36, 0.68);
+  border-bottom: 1px solid rgba(123, 243, 245, 0.12);
   margin: 0 calc(clamp(16px, 4vw, 34px) * -1);
   padding: 12px clamp(16px, 4vw, 34px);
   position: sticky;
@@ -647,8 +647,8 @@ a.avatar {
 }
 
 .tabButton {
-  background: rgba(255, 255, 255, 0.055);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(184, 198, 205, 0.14);
   border-radius: 12px;
   color: rgba(238, 248, 247, 0.72);
   cursor: pointer;
@@ -666,7 +666,7 @@ a.avatar {
 }
 
 .tabButtonActive {
-  background: rgba(31, 216, 229, 0.12);
+  background: rgba(31, 216, 229, 0.1);
   border-color: rgba(123, 243, 245, 0.46);
   color: #ffffff;
   box-shadow: 0 0 22px rgba(31, 216, 229, 0.1);
