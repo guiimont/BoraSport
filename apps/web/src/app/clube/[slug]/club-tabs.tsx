@@ -305,7 +305,7 @@ async function findSeaLocation(search: string): Promise<SeaLocation> {
 
   const photonResponse = await fetch(photonUrl);
   if (!photonResponse.ok) {
-    throw new Error("Nao foi possivel localizar esse ponto.");
+    throw new Error("Não foi possível localizar esse ponto.");
   }
 
   const photonData = (await photonResponse.json()) as {
@@ -328,7 +328,7 @@ async function findSeaLocation(search: string): Promise<SeaLocation> {
   const coordinates = feature?.geometry?.coordinates;
 
   if (!feature || !coordinates) {
-    throw new Error("Local nao encontrado. Tente cidade, praia ou bairro.");
+    throw new Error("Local não encontrado. Tente cidade, praia ou bairro.");
   }
 
   return {
@@ -373,7 +373,7 @@ async function getSeaConditions(location: SeaLocation): Promise<SeaConditions> {
   ]);
 
   if (!forecastResponse.ok) {
-    throw new Error("Nao foi possivel buscar vento para esse local.");
+    throw new Error("Não foi possível buscar vento para esse local.");
   }
 
   const forecast = (await forecastResponse.json()) as {
@@ -419,7 +419,7 @@ async function getSeaConditions(location: SeaLocation): Promise<SeaConditions> {
             wavePeriod || 0,
           )}s`
         : "Veja no Windy",
-    tide: "Validar tabua local",
+    tide: "Validar tábua local",
     updatedAt: formatHour(current?.time),
     wind:
       typeof current?.wind_speed_10m === "number"
@@ -576,7 +576,7 @@ function ConditionPanel({ experience }: { experience: ActivityExperience }) {
         setError(
           caughtError instanceof Error
             ? caughtError.message
-            : "Nao foi possivel atualizar as condicoes.",
+            : "Não foi possível atualizar as condições.",
         );
       }
     } finally {
@@ -624,7 +624,7 @@ function ConditionPanel({ experience }: { experience: ActivityExperience }) {
           <p className={styles.introLabel}>Local da remada</p>
           <p className={styles.introText}>
             Digite praia, bairro ou cidade para centralizar o Windy e atualizar
-            a leitura rapida.
+            a leitura rápida.
           </p>
         </div>
         <form
@@ -637,7 +637,7 @@ function ConditionPanel({ experience }: { experience: ActivityExperience }) {
           <input
             className={styles.locationInput}
             onChange={(event) => setSearch(event.target.value)}
-            placeholder="Ex: Praia de Santos, Ubatuba, Lagoa da Conceicao"
+            placeholder="Ex.: Praia de Santos, Ubatuba, Lagoa da Conceição"
             value={search}
           />
           <button className={styles.locationButton} disabled={isLoading} type="submit">
@@ -656,18 +656,18 @@ function ConditionPanel({ experience }: { experience: ActivityExperience }) {
             key={`${location.latitude}-${location.longitude}`}
             loading="lazy"
             src={buildWindyUrl(location)}
-            title={`Condicoes do mar em tempo real - ${location.label}`}
+            title={`Condições do mar em tempo real — ${location.label}`}
           />
         </div>
 
         <aside className={styles.card}>
-          <h2 className={styles.sectionTitle}>Leitura rapida</h2>
+          <h2 className={styles.sectionTitle}>Leitura rápida</h2>
           <p className={styles.introText}>{location.label}</p>
           <div className={`${styles.tileGrid} ${styles.tileGridTwo}`}>
             {[
               ["Vento", conditions?.wind || "Atualize o local"],
-              ["Ondulacao", conditions?.swell || "Atualize o local"],
-              ["Mare", conditions?.tide || "Validar tabua local"],
+              ["Ondulação", conditions?.swell || "Atualize o local"],
+              ["Maré", conditions?.tide || "Validar tábua local"],
               [
                 "Sol",
                 conditions
@@ -684,8 +684,8 @@ function ConditionPanel({ experience }: { experience: ActivityExperience }) {
           <p className={styles.introText}>{experience.safetyItems[0]}</p>
           {conditions?.updatedAt ? (
             <p className={styles.conditionFootnote}>
-              Atualizado as {conditions.updatedAt}. Use a leitura junto com o
-              mapa do Windy e a orientacao do clube.
+              Atualizado às {conditions.updatedAt}. Use a leitura junto com o
+              mapa do Windy e a orientação do clube.
             </p>
           ) : null}
         </aside>
@@ -745,11 +745,11 @@ function WeekPanel({
   );
   const weekdays = [
     [1, "Segunda"],
-    [2, "Terca"],
+    [2, "Terça"],
     [3, "Quarta"],
     [4, "Quinta"],
     [5, "Sexta"],
-    [6, "Sabado"],
+    [6, "Sábado"],
     [7, "Domingo"],
   ] as const;
   const saoPauloDateKey = (value: Date | string) =>
@@ -834,7 +834,7 @@ function WeekPanel({
           })
         ) : (
           <p className={styles.emptyState}>
-            Nao ha treinos publicados para esta semana.
+            Não há treinos publicados para esta semana.
           </p>
         )}
       </div>
@@ -863,7 +863,7 @@ function CommunityPanel({
           upcomingWithPeople.map((slot) => (
             <div className={`${styles.tile} ${styles.weekRow}`} key={slot.id}>
               <div>
-                <strong>{slot.services?.name || "Horario"}</strong>
+                <strong>{slot.services?.name || "Horário"}</strong>
                 <p>{formatTime(slot.start_time)}</p>
               </div>
               <AvatarStack participants={participantsBySlot[slot.id] || []} />

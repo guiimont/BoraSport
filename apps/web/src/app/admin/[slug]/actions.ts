@@ -733,7 +733,7 @@ export async function saveResourceOperation(
   const operationalNotes = readOptionalText(formData, "operationalNotes");
 
   if (!companyId || !resourceId || !slug) {
-    return { error: "Nao foi possivel identificar a canoa." };
+    return { error: "Não foi possível identificar a canoa." };
   }
 
   const access = await assertCanAdminTenant(companyId);
@@ -768,7 +768,7 @@ export async function saveResourceOperation(
     });
   } catch (error) {
     return {
-      error: `Nao foi possivel salvar. ${getReadableError(error)}`,
+      error: `Não foi possível salvar. ${getReadableError(error)}`,
     };
   }
 
@@ -790,7 +790,7 @@ export async function updateResourceStatusAction(
   const vesselStatus = readVesselStatus(formData);
 
   if (!companyId || !resourceId || !slug) {
-    return { error: "Nao foi possivel identificar a canoa." };
+    return { error: "Não foi possível identificar a canoa." };
   }
 
   const access = await assertCanAdminTenant(companyId);
@@ -807,7 +807,7 @@ export async function updateResourceStatusAction(
     });
   } catch (error) {
     return {
-      error: `Nao foi possivel atualizar a situacao. ${getReadableError(error)}`,
+      error: `Não foi possível atualizar a situação. ${getReadableError(error)}`,
     };
   }
 
@@ -815,7 +815,7 @@ export async function updateResourceStatusAction(
   revalidatePath(`/admin/${slug}/canoas`);
 
   return {
-    success: "Situacao da canoa atualizada.",
+    success: "Situação da canoa atualizada.",
   };
 }
 

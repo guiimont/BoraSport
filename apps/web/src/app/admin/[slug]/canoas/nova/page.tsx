@@ -21,8 +21,8 @@ export default async function NewCanoaPage({ params }: NewCanoaPageProps) {
       context={context}
       eyebrow="Nova canoa"
       showSessionBar={false}
-      subtitle="Cadastre uma embarcacao com capacidade real e regra operacional de leme."
-      title="Gestao da frota"
+      subtitle="Cadastre uma embarcação com capacidade real e regra operacional de leme."
+      title="Gestão da frota"
     >
       <div className={styles.backRow}>
         <Link

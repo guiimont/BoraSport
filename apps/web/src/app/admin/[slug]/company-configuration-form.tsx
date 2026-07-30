@@ -41,7 +41,7 @@ function SubmitButton() {
       disabled={pending}
       type="submit"
     >
-      {pending ? "Salvando..." : "Salvar configuracao"}
+      {pending ? "Salvando..." : "Salvar configuração"}
     </button>
   );
 }

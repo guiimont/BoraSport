@@ -44,7 +44,7 @@ export const activityPresets: ActivityPreset[] = [
   },
   {
     booking_label: "Reserva",
-    description: "Turmas por horario com coach, cap e lista de espera.",
+    description: "Turmas por horário com coach, capacidade e lista de espera.",
     professional_label: "Coach",
     resource_label: "Box",
     service_label: "Aula",
@@ -60,7 +60,7 @@ export const activityPresets: ActivityPreset[] = [
   },
   {
     booking_label: "Reserva",
-    description: "Quadras, turmas, aulas e aluguel por horario.",
+    description: "Quadras, turmas, aulas e aluguel por horário.",
     professional_label: "Professor",
     resource_label: "Quadra",
     service_label: "Treino",
@@ -80,8 +80,8 @@ const defaultTabs: ActivityExperience["tabs"] = [
   { id: "agenda", label: "Agenda" },
   { id: "semana", label: "Semana" },
   { id: "comunidade", label: "Equipe" },
-  { id: "condicoes", label: "Orientacoes" },
-  { id: "divulgacao", label: "Divulgacao" },
+  { id: "condicoes", label: "Orientações" },
+  { id: "divulgacao", label: "Divulgação" },
 ];
 
 export function getActivityPreset(type?: string | null) {
@@ -113,14 +113,14 @@ export function getActivityExperience(
   if (type === "canoa_havaiana" || type === "esporte") {
     return {
       agendaHint: "Escolha um treino e acompanhe vagas por canoa.",
-      communityTitle: "Tripulacao confirmada",
+      communityTitle: "Tripulação confirmada",
       conditionDescription:
-        "Veja vento, ondulacao e referencia visual antes de sair.",
+        "Veja vento, ondulação e referência visual antes de sair.",
       conditionMode: "sea",
-      conditionTitle: "Condicoes do mar",
+      conditionTitle: "Condições do mar",
       participantLabel: "remadores",
       safetyItems: [
-        "Confira vento, mare e ondulacao antes de sair.",
+        "Confira vento, maré e ondulação antes de sair.",
         `Use colete e siga a orientacao do ${labels.professional_label}.`,
         "Leve agua, protecao solar e documento.",
         "Avise a base se sentir desconforto durante o treino.",
@@ -131,7 +131,7 @@ export function getActivityExperience(
         { id: "condicoes", label: "Mar" },
         { id: "semana", label: "Semana" },
         { id: "comunidade", label: "Equipe" },
-        { id: "divulgacao", label: "Divulgacao" },
+        { id: "divulgacao", label: "Divulgação" },
       ],
     };
   }
@@ -142,15 +142,15 @@ export function getActivityExperience(
         "Escolha uma aula, veja capacidade da turma e quem ja confirmou.",
       communityTitle: "Atletas confirmados",
       conditionDescription:
-        "Organize turma, coach, cap e preparacao do treino do dia.",
+        "Organize turma, coach, capacidade e preparação do treino do dia.",
       conditionMode: "training",
       conditionTitle: "WOD e orientacoes",
       participantLabel: "atletas",
       safetyItems: [
         "Chegue antes do aquecimento.",
         `Avise o ${labels.professional_label} sobre lesoes ou restricoes.`,
-        "Respeite escala de carga e tecnica antes de intensidade.",
-        "Cancele com antecedencia se nao puder comparecer.",
+        "Respeite a escala de carga e a técnica antes da intensidade.",
+        "Cancele com antecedência se não puder comparecer.",
       ],
       safetyTitle: "Boas praticas do box",
       tabs: defaultTabs,
@@ -167,12 +167,12 @@ export function getActivityExperience(
       conditionTitle: "Orientacoes da aula",
       participantLabel: "alunos",
       safetyItems: [
-        "Chegue com alguns minutos de antecedencia.",
+        "Chegue com alguns minutos de antecedência.",
         "Informe restricoes, dores ou indicacoes medicas.",
         "Use roupas confortaveis para mobilidade.",
-        "Cancele com antecedencia para liberar a vaga.",
+        "Cancele com antecedência para liberar a vaga.",
       ],
-      safetyTitle: "Cuidados da sessao",
+      safetyTitle: "Cuidados da sessão",
       tabs: defaultTabs,
     };
   }
@@ -180,16 +180,16 @@ export function getActivityExperience(
   return {
     agendaHint: `Escolha um ${labels.service_label.toLowerCase()} e acompanhe as vagas disponiveis.`,
     communityTitle: "Participantes confirmados",
-    conditionDescription: "Confira as orientacoes antes do horario.",
+    conditionDescription: "Confira as orientações antes do horário.",
     conditionMode: "generic",
     conditionTitle: "Orientacoes",
     participantLabel: "participantes",
     safetyItems: [
-      "Chegue com alguns minutos de antecedencia.",
+      "Chegue com alguns minutos de antecedência.",
       "Avise a equipe em caso de atraso ou cancelamento.",
       "Confira os dados do seu agendamento.",
     ],
-    safetyTitle: "Antes do horario",
+    safetyTitle: "Antes do horário",
     tabs: defaultTabs,
   };
 }
