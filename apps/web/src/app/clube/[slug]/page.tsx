@@ -12,6 +12,7 @@ import {
   getCompanySlots,
   getCompanyWeeklyWorkouts,
   getCurrentUserConfirmedBookingSlotIds,
+  getCurrentUserMemberships,
 } from "../../../lib/saas/queries";
 
 import { ClubTabs } from "./club-tabs";
@@ -51,13 +52,26 @@ export default async function ClubPage({ params }: ClubPageProps) {
     notFound();
   }
 
-  const [slots, participantsBySlot, weeklyWorkouts, currentUserBookedSlotIds] =
+  const [
+    slots,
+    participantsBySlot,
+    weeklyWorkouts,
+    currentUserBookedSlotIds,
+    memberships,
+  ] =
     await Promise.all([
     getCompanySlots(company.id),
     getCompanySlotParticipants(company.id),
     getCompanyWeeklyWorkouts(company.id),
     getCurrentUserConfirmedBookingSlotIds(company.id),
+    getCurrentUserMemberships(),
   ]);
+  const companyMembership = memberships.find(
+    (membership) => membership.company_id === company.id,
+  );
+  const canManage =
+    companyMembership?.role === "admin" ||
+    companyMembership?.role === "professional";
   const nextSlot = slots[0];
   const nextParticipants = nextSlot ? participantsBySlot[nextSlot.id] || [] : [];
   const vocabulary = normalizeVocabulary(company.vocabulary_config);
@@ -83,9 +97,14 @@ export default async function ClubPage({ params }: ClubPageProps) {
               <Link className={styles.contextLinkPrimary} href="/perfil">
                 Área do aluno
               </Link>
-              <Link className={styles.contextLink} href={`/admin/${company.slug}`}>
-                Painel do gestor
-              </Link>
+              {canManage ? (
+                <Link
+                  className={styles.contextLink}
+                  href={`/admin/${company.slug}`}
+                >
+                  Painel do gestor
+                </Link>
+              ) : null}
             </nav>
           </div>
 
@@ -104,7 +123,7 @@ export default async function ClubPage({ params }: ClubPageProps) {
               <>
                 <div className={styles.statGrid}>
                   <div className={styles.stat}>
-                    <span>Vagas</span>
+                    <span>Disponíveis</span>
                     <strong>
                       {remainingSpots(
                         nextSlot.spots_total,

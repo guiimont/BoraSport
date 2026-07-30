@@ -19,8 +19,10 @@ export default async function ProfilePage() {
   const profile = await getCurrentProfile();
   const memberships = await getCurrentUserMemberships();
   const primaryCompany = memberships[0]?.companies ?? null;
+  const hasValidName =
+    Boolean(profile?.name?.trim()) && !profile?.name?.includes("@");
   const isProfileIncomplete =
-    !profile?.name || !profile?.phone || !profile?.avatar_url;
+    !hasValidName || !profile?.phone || !profile?.avatar_url;
 
   return (
     <MemberShell

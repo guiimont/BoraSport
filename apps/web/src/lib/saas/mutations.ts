@@ -637,23 +637,38 @@ export type EnsureProfileInput = {
 
 export async function ensureProfile({
   avatarUrl,
-  email,
   name,
   userId,
 }: EnsureProfileInput) {
   const supabase = await createClient();
-  const profileName = name || email || "Usuario Bora";
+  const { data: existingProfile, error: existingProfileError } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", userId)
+    .maybeSingle();
+
+  if (existingProfileError) {
+    throw existingProfileError;
+  }
+
+  // Reservar um horário nunca deve alterar dados que o remador já salvou.
+  if (existingProfile) {
+    return existingProfile;
+  }
+
+  const metadataName = name.trim();
+  const profileName =
+    metadataName && !metadataName.includes("@")
+      ? metadataName
+      : "Remador BoraSport";
 
   const { data: profile, error } = await supabase
     .from("profiles")
-    .upsert(
-      {
-        avatar_url: avatarUrl ?? null,
-        id: userId,
-        name: profileName,
-      },
-      { onConflict: "id" },
-    )
+    .insert({
+      avatar_url: avatarUrl ?? null,
+      id: userId,
+      name: profileName,
+    })
     .select("*")
     .single();
 
@@ -680,6 +695,15 @@ export async function updateProfile({
   userId,
 }: UpdateProfileInput) {
   const supabase = await createClient();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user || user.id !== userId) {
+    throw new Error("Sessão inválida. Entre novamente para salvar seu perfil.");
+  }
+
   let finalAvatarUrl = avatarUrl;
 
   if (avatarFile && avatarFile.size > 0) {

@@ -517,7 +517,7 @@ export function ClubTabs({
       {activeTab === "condicoes" ? (
         <ConditionPanel experience={experience} />
       ) : null}
-      {activeTab === "agenda" ? (
+      <div hidden={activeTab !== "agenda"}>
         <AgendaPanel
           companyId={companyId}
           currentUserBookedSlotIds={currentUserBookedSlotIds}
@@ -527,7 +527,7 @@ export function ClubTabs({
           slots={slots}
           vocabulary={vocabulary}
         />
-      ) : null}
+      </div>
       {activeTab === "semana" ? (
         <WeekPanel weeklyWorkouts={weeklyWorkouts} />
       ) : null}

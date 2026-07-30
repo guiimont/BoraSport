@@ -29,7 +29,9 @@ function SubmitButton() {
 export function ProfileForm({ companyName, email, profile }: ProfileFormProps) {
   const [state, formAction] = useActionState(saveProfile, initialState);
   const [localPreview, setLocalPreview] = useState("");
-  const displayName = profile?.name || email;
+  const hasValidName =
+    Boolean(profile?.name?.trim()) && !profile?.name?.includes("@");
+  const displayName = hasValidName ? profile!.name : "Seu perfil";
   const previewUrl = localPreview || profile?.avatar_url || "";
 
   return (
@@ -78,9 +80,10 @@ export function ProfileForm({ companyName, email, profile }: ProfileFormProps) {
         <input
           autoComplete="name"
           className={styles.input}
-          defaultValue={profile?.name || ""}
+          defaultValue={hasValidName ? profile?.name : ""}
           name="name"
           placeholder="Seu nome"
+          required
         />
       </Field>
 
