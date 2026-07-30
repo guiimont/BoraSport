@@ -30,7 +30,7 @@ const vesselLabels: Record<VesselClass, string> = {
 const statusLabels: Record<VesselStatus, string> = {
   disponivel: "Disponível",
   inativa: "Inativa",
-  manutencao: "Em manutencao",
+  manutencao: "Em manutenção",
 };
 
 function normalizeText(value: string | null | undefined) {
@@ -159,11 +159,11 @@ export default async function AdminResourcesPage({
             </select>
           </label>
           <label>
-            Situacao
+            Situação
             <select defaultValue={filters.situacao} name="situacao">
               <option value="todas">Todas</option>
               <option value="disponivel">Disponível</option>
-              <option value="manutencao">Em manutencao</option>
+              <option value="manutencao">Em manutenção</option>
               <option value="inativa">Inativa</option>
             </select>
           </label>

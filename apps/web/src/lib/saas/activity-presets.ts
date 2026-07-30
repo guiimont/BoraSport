@@ -121,8 +121,8 @@ export function getActivityExperience(
       participantLabel: "remadores",
       safetyItems: [
         "Confira vento, maré e ondulação antes de sair.",
-        `Use colete e siga a orientacao do ${labels.professional_label}.`,
-        "Leve agua, protecao solar e documento.",
+        `Use colete e siga a orientação do ${labels.professional_label}.`,
+        "Leve água, proteção solar e documento.",
         "Avise a base se sentir desconforto durante o treino.",
       ],
       safetyTitle: "Seguranca no mar",
@@ -139,20 +139,20 @@ export function getActivityExperience(
   if (type === "crossfit") {
     return {
       agendaHint:
-        "Escolha uma aula, veja capacidade da turma e quem ja confirmou.",
+        "Escolha uma aula, veja a capacidade da turma e quem já confirmou.",
       communityTitle: "Atletas confirmados",
       conditionDescription:
         "Organize turma, coach, capacidade e preparação do treino do dia.",
       conditionMode: "training",
-      conditionTitle: "WOD e orientacoes",
+      conditionTitle: "WOD e orientações",
       participantLabel: "atletas",
       safetyItems: [
         "Chegue antes do aquecimento.",
-        `Avise o ${labels.professional_label} sobre lesoes ou restricoes.`,
+        `Avise o ${labels.professional_label} sobre lesões ou restrições.`,
         "Respeite a escala de carga e a técnica antes da intensidade.",
         "Cancele com antecedência se não puder comparecer.",
       ],
-      safetyTitle: "Boas praticas do box",
+      safetyTitle: "Boas práticas do box",
       tabs: defaultTabs,
     };
   }
@@ -162,14 +162,14 @@ export function getActivityExperience(
       agendaHint: "Reserve a aula conforme sala, professor e disponibilidade.",
       communityTitle: "Alunos agendados",
       conditionDescription:
-        "Confira professor, sala, aparelhos e observacoes da aula.",
+        "Confira professor, sala, aparelhos e observações da aula.",
       conditionMode: "training",
-      conditionTitle: "Orientacoes da aula",
+      conditionTitle: "Orientações da aula",
       participantLabel: "alunos",
       safetyItems: [
         "Chegue com alguns minutos de antecedência.",
-        "Informe restricoes, dores ou indicacoes medicas.",
-        "Use roupas confortaveis para mobilidade.",
+        "Informe restrições, dores ou indicações médicas.",
+        "Use roupas confortáveis para mobilidade.",
         "Cancele com antecedência para liberar a vaga.",
       ],
       safetyTitle: "Cuidados da sessão",
@@ -178,11 +178,11 @@ export function getActivityExperience(
   }
 
   return {
-    agendaHint: `Escolha um ${labels.service_label.toLowerCase()} e acompanhe as vagas disponiveis.`,
+    agendaHint: `Escolha um ${labels.service_label.toLowerCase()} e acompanhe as vagas disponíveis.`,
     communityTitle: "Participantes confirmados",
     conditionDescription: "Confira as orientações antes do horário.",
     conditionMode: "generic",
-    conditionTitle: "Orientacoes",
+    conditionTitle: "Orientações",
     participantLabel: "participantes",
     safetyItems: [
       "Chegue com alguns minutos de antecedência.",

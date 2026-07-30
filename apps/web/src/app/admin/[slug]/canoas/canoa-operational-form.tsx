@@ -37,7 +37,7 @@ const vesselOptions: Array<{ label: string; value: VesselClass }> = [
 
 const vesselStatusOptions: Array<{ label: string; value: VesselStatus }> = [
   { label: "Disponível", value: "disponivel" },
-  { label: "Em manutencao", value: "manutencao" },
+  { label: "Em manutenção", value: "manutencao" },
   { label: "Inativa", value: "inativa" },
 ];
 
@@ -47,7 +47,7 @@ const steererPolicyOptions: Array<{
   value: DefaultSteererPolicy;
 }> = [
   {
-    description: "O instrutor ocupa um assento e reduz uma vaga publica.",
+    description: "O instrutor ocupa um assento e reduz uma vaga pública.",
     label: "Instrutor como leme",
     value: "instrutor",
   },
@@ -85,7 +85,7 @@ const vesselLabels: Record<VesselClass, string> = {
 const statusLabels: Record<VesselStatus, string> = {
   disponivel: "Disponível",
   inativa: "Inativa",
-  manutencao: "Em manutencao",
+  manutencao: "Em manutenção",
 };
 
 const steererLabels: Record<DefaultSteererPolicy, string> = {
@@ -224,7 +224,7 @@ export function CanoaOperationalForm({
             <h2>Classe e operação</h2>
             <p>
               Classes conhecidas calculam a capacidade automaticamente. Use
-              Outro apenas para uma embarcacao fora do padrao.
+              Outro apenas para uma embarcação fora do padrão.
             </p>
           </div>
           <div className={styles.builderGridThree}>
@@ -314,9 +314,9 @@ export function CanoaOperationalForm({
 
         <section className={styles.builderSectionCompact}>
           <div className={styles.builderSectionIntro}>
-            <span>Observacoes</span>
+            <span>Observações</span>
             <h2>Contexto operacional</h2>
-            <p>Campo opcional para manutencao, uso recomendado ou cuidado.</p>
+            <p>Campo opcional para manutenção, uso recomendado ou cuidado.</p>
           </div>
           <label className={styles.label}>
             Observacao
@@ -351,7 +351,7 @@ export function CanoaOperationalForm({
             <strong>{statusLabels[vesselStatus]}</strong>
           </div>
           <div>
-            <span>Vagas publicas futuras</span>
+            <span>Vagas públicas futuras</span>
             <strong>{publicSpots}</strong>
           </div>
           <div>
