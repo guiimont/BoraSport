@@ -529,7 +529,7 @@ export function ClubTabs({
         />
       </div>
       {activeTab === "semana" ? (
-        <WeekPanel weeklyWorkouts={weeklyWorkouts} />
+        <WeekPanel slots={slots} weeklyWorkouts={weeklyWorkouts} />
       ) : null}
       {activeTab === "comunidade" ? (
         <CommunityPanel
@@ -734,8 +734,10 @@ function AgendaPanel({
 }
 
 function WeekPanel({
+  slots,
   weeklyWorkouts,
 }: {
+  slots: CompanySlot[];
   weeklyWorkouts: WeeklyWorkout[];
 }) {
   const workoutsByDay = new Map(
@@ -750,21 +752,72 @@ function WeekPanel({
     [6, "Sabado"],
     [7, "Domingo"],
   ] as const;
+  const saoPauloDateKey = (value: Date | string) =>
+    new Intl.DateTimeFormat("en-CA", {
+      day: "2-digit",
+      month: "2-digit",
+      timeZone: "America/Sao_Paulo",
+      year: "numeric",
+    }).format(typeof value === "string" ? new Date(value) : value);
+  const today = new Date(`${saoPauloDateKey(new Date())}T12:00:00-03:00`);
+  const todayWeekday = today.getDay() === 0 ? 7 : today.getDay();
+  const monday = new Date(today);
+  monday.setDate(today.getDate() - todayWeekday + 1);
+  const weekDateKeys = new Map<number, string>(
+    weekdays.map(([weekday]) => {
+      const date = new Date(monday);
+      date.setDate(monday.getDate() + weekday - 1);
+      return [weekday, saoPauloDateKey(date)];
+    }),
+  );
+  const slotsByDay = new Map<number, CompanySlot[]>();
+
+  for (const slot of slots) {
+    const weekday = weekdays.find(
+      ([day]) => weekDateKeys.get(day) === saoPauloDateKey(slot.start_time),
+    )?.[0];
+
+    if (weekday) {
+      slotsByDay.set(weekday, [...(slotsByDay.get(weekday) || []), slot]);
+    }
+  }
+
+  const publishedDays = weekdays.filter(
+    ([weekday]) =>
+      workoutsByDay.has(weekday) || (slotsByDay.get(weekday)?.length || 0) > 0,
+  );
 
   return (
     <div className={styles.card}>
       <h2 className={styles.sectionTitle}>Treinos da semana</h2>
       <div className={styles.tileGrid}>
-        {weeklyWorkouts.length > 0 ? (
-          weekdays.map(([weekday, label]) => {
+        {publishedDays.length > 0 ? (
+          publishedDays.map(([weekday, label]) => {
             const workout = workoutsByDay.get(weekday);
+            const daySlots = slotsByDay.get(weekday) || [];
 
             return (
               <div className={styles.weekWorkout} key={weekday}>
                 <div>
                   <strong>{label}</strong>
-                  <h3>{workout?.title || "Treino nao publicado"}</h3>
+                  {workout ? <h3>{workout.title}</h3> : null}
                   {workout?.description ? <p>{workout.description}</p> : null}
+                  {daySlots.map((slot) => (
+                    <div className={styles.weekSlot} key={slot.id}>
+                      <div>
+                        <h3>{slot.services?.name || "Treino"}</h3>
+                        <p>
+                          {formatTime(slot.start_time)}
+                          {slot.resources?.name
+                            ? ` · ${slot.resources.name}`
+                            : ""}
+                        </p>
+                      </div>
+                      <span className={styles.badge}>
+                        {remainingSpots(slot)}/{slot.spots_total} vagas
+                      </span>
+                    </div>
+                  ))}
                 </div>
                 {workout?.attachment_url ? (
                   <a
@@ -781,7 +834,7 @@ function WeekPanel({
           })
         ) : (
           <p className={styles.emptyState}>
-            Os treinos da semana ainda nao foram publicados.
+            Nao ha treinos publicados para esta semana.
           </p>
         )}
       </div>

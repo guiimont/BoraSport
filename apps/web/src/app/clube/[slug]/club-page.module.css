@@ -186,6 +186,25 @@
   color: rgba(238, 248, 247, 0.66);
 }
 
+.weekSlot {
+  align-items: center;
+  border-top: 1px solid rgba(123, 243, 245, 0.11);
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  margin-top: 12px;
+  padding-top: 12px;
+}
+
+.weekSlot h3,
+.weekSlot p {
+  margin: 0;
+}
+
+.weekSlot p {
+  margin-top: 4px;
+}
+
 .nextTime,
 .slotMeta,
 .participantsText {
