@@ -1,4 +1,5 @@
 import type {
+  ActivityRecord,
   BaseSchedule,
   BaseScheduleResource,
   Booking,
@@ -1000,6 +1001,29 @@ export async function getCurrentProfile(): Promise<Profile | null> {
   }
 
   return (data as Profile | null) ?? null;
+}
+
+export async function getCurrentUserActivityRecords(): Promise<ActivityRecord[]> {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return [];
+  }
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("activity_records")
+    .select(
+      "id,company_id,provider,activity_type,title,started_at,duration_seconds,distance_meters,average_heart_rate,visibility",
+    )
+    .eq("user_id", user.id)
+    .order("started_at", { ascending: false });
+
+  if (error) {
+    return [];
+  }
+
+  return (data as ActivityRecord[] | null) ?? [];
 }
 
 export async function getCurrentUserMemberships(): Promise<MembershipWithCompany[]> {
