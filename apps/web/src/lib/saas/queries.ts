@@ -1,5 +1,4 @@
 import type {
-  ActivityRecord,
   BaseSchedule,
   BaseScheduleResource,
   Booking,
@@ -13,6 +12,7 @@ import type {
   OperationalSession,
   OperationalSessionResource,
   Profile,
+  SessionParticipant,
   PublicSportProfile,
   Resource,
   Service,
@@ -841,6 +841,50 @@ export async function getCompanyOperationalSessionById({
     : null;
 }
 
+export async function getOperationalSessionParticipants({
+  companyId,
+  sessionId,
+}: {
+  companyId: string;
+  sessionId: string;
+}): Promise<SessionParticipant[]> {
+  const supabase = await createClient();
+  const { data: slot, error: slotError } = await supabase
+    .from("slots")
+    .select("id")
+    .eq("company_id", companyId)
+    .eq("operational_session_id", sessionId)
+    .maybeSingle();
+
+  if (slotError || !slot) {
+    return [];
+  }
+
+  const { data: bookings, error } = await supabase
+    .from("bookings")
+    .select("id,slot_id,user_id,company_id,status,created_at,updated_at")
+    .eq("company_id", companyId)
+    .eq("slot_id", slot.id)
+    .neq("status", "cancelled")
+    .order("created_at", { ascending: true });
+
+  if (error || !bookings?.length) {
+    return [];
+  }
+
+  const userIds = bookings.map((booking) => booking.user_id);
+  const { data: profiles } = await supabase
+    .from("profiles")
+    .select("id,name,phone,avatar_url")
+    .in("id", userIds);
+  const profilesById = new Map((profiles ?? []).map((profile) => [profile.id, profile]));
+
+  return bookings.map((booking) => ({
+    ...booking,
+    profile: profilesById.get(booking.user_id) ?? null,
+  })) as SessionParticipant[];
+}
+
 export async function getCompanyServices(
   companyId: string,
 ): Promise<Service[]> {
@@ -956,29 +1000,6 @@ export async function getCurrentProfile(): Promise<Profile | null> {
   }
 
   return (data as Profile | null) ?? null;
-}
-
-export async function getCurrentUserActivityRecords(): Promise<ActivityRecord[]> {
-  const user = await getCurrentUser();
-
-  if (!user) {
-    return [];
-  }
-
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("activity_records")
-    .select(
-      "id,company_id,provider,activity_type,title,started_at,duration_seconds,distance_meters,average_heart_rate,visibility",
-    )
-    .eq("user_id", user.id)
-    .order("started_at", { ascending: false });
-
-  if (error) {
-    return [];
-  }
-
-  return (data as ActivityRecord[] | null) ?? [];
 }
 
 export async function getCurrentUserMemberships(): Promise<MembershipWithCompany[]> {

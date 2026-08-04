@@ -1,5 +1,6 @@
 import type {
   BaseScheduleStatus,
+  BookingStatus,
   CompanyInvitation,
   DefaultSteererPolicy,
   JsonObject,
@@ -32,6 +33,30 @@ export async function createBooking(data: NewBooking) {
   }
 
   return booking;
+}
+
+export async function setBookingAttendance({
+  bookingId,
+  companyId,
+  sessionId,
+  status,
+}: {
+  bookingId: string;
+  companyId: string;
+  sessionId: string;
+  status: Extract<BookingStatus, "attended" | "missed">;
+}) {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("set_booking_attendance", {
+    p_booking_id: bookingId,
+    p_company_id: companyId,
+    p_session_id: sessionId,
+    p_status: status,
+  });
+
+  if (error) {
+    throw error;
+  }
 }
 
 export type UpdateCompanyConfigurationInput = {

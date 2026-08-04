@@ -1781,6 +1781,92 @@
   min-width: 0;
 }
 
+.attendanceList {
+  display: grid;
+  gap: 10px;
+  list-style: none;
+  margin: 20px 0 0;
+  padding: 0;
+}
+
+.attendanceList li {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(123, 243, 245, 0.12);
+  border-radius: 14px;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  padding: 12px 14px;
+}
+
+.attendanceIdentity,
+.attendanceActions {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+}
+
+.attendanceIdentity > span:last-child {
+  display: grid;
+  gap: 3px;
+}
+
+.attendanceIdentity small {
+  color: rgba(238, 248, 247, 0.58);
+}
+
+.attendanceAvatar {
+  align-items: center;
+  background: rgba(31, 216, 229, 0.12);
+  border-radius: 50%;
+  display: flex;
+  height: 44px;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  width: 44px;
+}
+
+.attendanceAvatar img {
+  object-fit: cover;
+}
+
+.attendanceButton,
+.attendanceButtonActive {
+  border: 1px solid rgba(123, 243, 245, 0.2);
+  border-radius: 999px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 800;
+  padding: 8px 12px;
+}
+
+.attendanceButton {
+  background: transparent;
+  color: rgba(238, 248, 247, 0.68);
+}
+
+.attendanceButtonActive {
+  background: rgba(31, 216, 229, 0.18);
+  border-color: rgba(123, 243, 245, 0.48);
+  color: #ffffff;
+}
+
+@media (max-width: 560px) {
+  .attendanceList li {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .attendanceActions form,
+  .attendanceActions button {
+    flex: 1;
+    width: 100%;
+  }
+}
+
 .baseResourceOption {
   background: rgba(255, 255, 255, 0.035);
   border: 1px solid rgba(123, 243, 245, 0.12);

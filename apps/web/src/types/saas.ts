@@ -171,19 +171,6 @@ export type Profile = {
   updated_at: string;
 };
 
-export type ActivityRecord = {
-  activity_type: string;
-  average_heart_rate: number | null;
-  company_id: string;
-  distance_meters: number | null;
-  duration_seconds: number | null;
-  id: string;
-  provider: string;
-  started_at: string;
-  title: string | null;
-  visibility: "private" | "team" | "company";
-};
-
 export type Booking = {
   id: string;
   slot_id: string;
@@ -192,6 +179,10 @@ export type Booking = {
   status: BookingStatus;
   created_at: string;
   updated_at: string;
+};
+
+export type SessionParticipant = Booking & {
+  profile: Pick<Profile, "avatar_url" | "id" | "name" | "phone"> | null;
 };
 
 export type NewBooking = Pick<Booking, "company_id" | "slot_id" | "user_id"> & {

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import {
   getCompanyOperationalSessionById,
   getCompanyTrainingLibrary,
+  getOperationalSessionParticipants,
 } from "../../../../../../lib/saas/queries";
 import { getManageAdminContext } from "../../../admin-context";
 import { AdminShell } from "../../../admin-shell";
@@ -13,6 +14,7 @@ import {
   vesselLabels,
 } from "../../grade/base-schedule-utils";
 import { SessionTrainingForm } from "../../session-training-form";
+import { AttendanceList } from "./attendance-list";
 
 type SessionDetailPageProps = {
   params: Promise<{
@@ -50,12 +52,13 @@ export default async function SessionDetailPage({
 }: SessionDetailPageProps) {
   const { sessionId, slug } = await params;
   const context = await getManageAdminContext(slug);
-  const [session, trainingPlans] = await Promise.all([
+  const [session, trainingPlans, participants] = await Promise.all([
     getCompanyOperationalSessionById({
       companyId: context.company.id,
       sessionId,
     }),
     getCompanyTrainingLibrary(context.company.id),
+    getOperationalSessionParticipants({ companyId: context.company.id, sessionId }),
   ]);
 
   if (!session) {
@@ -128,6 +131,22 @@ export default async function SessionDetailPage({
             </div>
           </div>
         </aside>
+      </section>
+
+      <section className={styles.trainingPrimaryPanel}>
+        <div className={styles.sectionHeadBalanced}>
+          <div>
+            <p className={styles.eyebrow}>Chamada</p>
+            <h2>Presença dos remadores</h2>
+          </div>
+          <span className={styles.statusBadge}>{participants.length} reservados</span>
+        </div>
+        <AttendanceList
+          companyId={context.company.id}
+          participants={participants}
+          sessionId={session.id}
+          slug={context.company.slug}
+        />
       </section>
 
       <section className={styles.trainingPrimaryPanel}>

@@ -12,6 +12,7 @@ import {
   createSlotsSkippingDuplicates,
   ensureProfile,
   revokeCompanyInvitation,
+  setBookingAttendance,
   setOperationalSessionTraining,
   updateBaseScheduleStatus,
   updateCompanyConfiguration,
@@ -46,6 +47,27 @@ export type AdminFormState = {
 export type InvitationFormState = AdminFormState & {
   inviteLink?: string;
 };
+
+export async function updateAttendanceAction(formData: FormData) {
+  const companyId = readText(formData, "companyId", "");
+  const sessionId = readText(formData, "sessionId", "");
+  const bookingId = readText(formData, "bookingId", "");
+  const slug = readText(formData, "slug", "");
+  const status = readText(formData, "status", "");
+  const permissionError = await assertCanManageTenant(companyId);
+
+  if (permissionError) {
+    return;
+  }
+
+  if (!bookingId || !sessionId || !slug || (status !== "attended" && status !== "missed")) {
+    return;
+  }
+
+  await setBookingAttendance({ bookingId, companyId, sessionId, status });
+  revalidatePath(`/admin/${slug}/agenda/sessoes/${sessionId}`);
+  revalidatePath("/perfil");
+}
 
 const defaultVocabulary: Required<VocabularyConfig> = {
   booking_label: "Reserva",
