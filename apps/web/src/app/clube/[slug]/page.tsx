@@ -11,7 +11,7 @@ import {
   getCompanySlotParticipants,
   getCompanySlots,
   getCompanyWeeklyWorkouts,
-  getCurrentUserConfirmedBookingSlotIds,
+  getCurrentUserActiveBookings,
   getCurrentUserMemberships,
 } from "../../../lib/saas/queries";
 
@@ -56,14 +56,14 @@ export default async function ClubPage({ params }: ClubPageProps) {
     slots,
     participantsBySlot,
     weeklyWorkouts,
-    currentUserBookedSlotIds,
+    currentUserBookings,
     memberships,
   ] =
     await Promise.all([
     getCompanySlots(company.id),
     getCompanySlotParticipants(company.id),
     getCompanyWeeklyWorkouts(company.id),
-    getCurrentUserConfirmedBookingSlotIds(company.id),
+    getCurrentUserActiveBookings(company.id),
     getCurrentUserMemberships(),
   ]);
   const companyMembership = memberships.find(
@@ -168,7 +168,7 @@ export default async function ClubPage({ params }: ClubPageProps) {
 
       <ClubTabs
         companyId={company.id}
-        currentUserBookedSlotIds={currentUserBookedSlotIds}
+        currentUserBookings={currentUserBookings}
         experience={experience}
         participantsBySlot={participantsBySlot}
         slug={company.slug}

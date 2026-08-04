@@ -3,7 +3,11 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import { createBooking, ensureProfile } from "../../../lib/saas/mutations";
+import {
+  cancelOwnSlotBooking,
+  ensureProfile,
+  reserveAvailableSlot,
+} from "../../../lib/saas/mutations";
 import { createClient } from "../../../lib/saas/supabase-server";
 
 export async function reserveSlot(formData: FormData) {
@@ -34,11 +38,9 @@ export async function reserveSlot(formData: FormData) {
     userId: user.id,
   });
 
-  await createBooking({
-    company_id: companyId,
-    slot_id: slotId,
-    user_id: user.id,
-    status: "confirmed",
+  await reserveAvailableSlot({
+    companyId,
+    slotId,
   });
 
   revalidatePath(slug ? `/clube/${slug}` : "/clube/[slug]");
@@ -62,17 +64,7 @@ export async function cancelSlotReservation(formData: FormData) {
     redirect(`/login?next=${encodeURIComponent(slug ? `/clube/${slug}` : "/perfil")}`);
   }
 
-  const { error } = await supabase
-    .from("bookings")
-    .update({ status: "cancelled" })
-    .eq("company_id", companyId)
-    .eq("slot_id", slotId)
-    .eq("user_id", user.id)
-    .eq("status", "confirmed");
-
-  if (error) {
-    throw error;
-  }
+  await cancelOwnSlotBooking({ companyId, slotId });
 
   revalidatePath(slug ? `/clube/${slug}` : "/clube/[slug]");
 }

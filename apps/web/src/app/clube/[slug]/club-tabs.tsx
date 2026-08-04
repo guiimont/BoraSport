@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { ActivityExperience } from "../../../lib/saas/activity-presets";
 import type {
   CompanySlot,
+  CurrentUserBooking,
   SlotParticipant,
   VocabularyConfig,
   WeeklyWorkout,
@@ -16,7 +17,7 @@ import { ReservationSlots } from "./reservation-slots";
 
 type ClubTabsProps = {
   companyId: string;
-  currentUserBookedSlotIds: string[];
+  currentUserBookings: CurrentUserBooking[];
   experience: ActivityExperience;
   participantsBySlot: Record<string, SlotParticipant[]>;
   slug: string;
@@ -470,7 +471,7 @@ function AvatarStack({ participants }: { participants: SlotParticipant[] }) {
 
 export function ClubTabs({
   companyId,
-  currentUserBookedSlotIds,
+  currentUserBookings,
   experience,
   participantsBySlot,
   slug,
@@ -520,7 +521,7 @@ export function ClubTabs({
       <div hidden={activeTab !== "agenda"}>
         <AgendaPanel
           companyId={companyId}
-          currentUserBookedSlotIds={currentUserBookedSlotIds}
+          currentUserBookings={currentUserBookings}
           experience={experience}
           participantsBySlot={participantsBySlot}
           slug={slug}
@@ -696,7 +697,7 @@ function ConditionPanel({ experience }: { experience: ActivityExperience }) {
 
 function AgendaPanel({
   companyId,
-  currentUserBookedSlotIds,
+  currentUserBookings,
   experience,
   participantsBySlot,
   slug,
@@ -704,7 +705,7 @@ function AgendaPanel({
   vocabulary,
 }: {
   companyId: string;
-  currentUserBookedSlotIds: string[];
+  currentUserBookings: CurrentUserBooking[];
   experience: ActivityExperience;
   participantsBySlot: Record<string, SlotParticipant[]>;
   slug: string;
@@ -722,7 +723,7 @@ function AgendaPanel({
 
       <ReservationSlots
         companyId={companyId}
-        currentUserBookedSlotIds={currentUserBookedSlotIds}
+        currentUserBookings={currentUserBookings}
         experience={experience}
         participantsBySlot={participantsBySlot}
         slug={slug}

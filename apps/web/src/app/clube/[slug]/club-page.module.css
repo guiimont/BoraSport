@@ -870,6 +870,13 @@ a.avatar {
   padding: 0 18px 18px;
 }
 
+.bookingStatus {
+  color: rgba(238, 248, 247, 0.72);
+  font-size: 0.86rem;
+  margin: -8px 18px 18px;
+  text-align: right;
+}
+
 .reserveButton {
   border-radius: 12px;
   cursor: pointer;

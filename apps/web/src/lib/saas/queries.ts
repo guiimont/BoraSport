@@ -7,6 +7,7 @@ import type {
   CompanyInvitation,
   CompanyMember,
   CompanySlot,
+  CurrentUserBooking,
   LandingPage,
   MembershipRole,
   MembershipWithCompany,
@@ -409,9 +410,9 @@ export async function getCompanySlotParticipants(
   return grouped;
 }
 
-export async function getCurrentUserConfirmedBookingSlotIds(
+export async function getCurrentUserActiveBookings(
   companyId: string,
-): Promise<string[]> {
+): Promise<CurrentUserBooking[]> {
   const user = await getCurrentUser();
 
   if (!user) {
@@ -419,18 +420,15 @@ export async function getCurrentUserConfirmedBookingSlotIds(
   }
 
   const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("bookings")
-    .select("slot_id")
-    .eq("company_id", companyId)
-    .eq("user_id", user.id)
-    .eq("status", "confirmed");
+  const { data, error } = await supabase.rpc("get_my_active_bookings", {
+    p_company_id: companyId,
+  });
 
   if (error) {
     return [];
   }
 
-  return (data ?? []).map((booking) => booking.slot_id);
+  return (data ?? []) as CurrentUserBooking[];
 }
 
 export async function getPublicSportProfile(

@@ -126,7 +126,18 @@ export type PublicSportProfile = {
   public_id: string;
 };
 
-export type BookingStatus = "confirmed" | "cancelled" | "attended" | "missed";
+export type BookingStatus =
+  | "confirmed"
+  | "waitlisted"
+  | "cancelled"
+  | "attended"
+  | "missed";
+
+export type CurrentUserBooking = {
+  slot_id: string;
+  status: Extract<BookingStatus, "confirmed" | "waitlisted">;
+  waitlist_position: number | null;
+};
 export type MembershipRole = "admin" | "client" | "professional";
 
 export type Membership = {
@@ -196,10 +207,6 @@ export type Booking = {
 
 export type SessionParticipant = Booking & {
   profile: Pick<Profile, "avatar_url" | "id" | "name" | "phone"> | null;
-};
-
-export type NewBooking = Pick<Booking, "company_id" | "slot_id" | "user_id"> & {
-  status?: BookingStatus;
 };
 
 export type BoraZone =

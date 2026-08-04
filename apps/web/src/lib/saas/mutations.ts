@@ -6,7 +6,6 @@ import type {
   JsonObject,
   LandingPage,
   MembershipRole,
-  NewBooking,
   OperationalSessionStatus,
   TrainingBlockInput,
   TrainingMode,
@@ -19,20 +18,42 @@ import type {
 import { createHash, randomBytes } from "node:crypto";
 import { createClient } from "./supabase-server";
 
-export async function createBooking(data: NewBooking) {
+export async function reserveAvailableSlot({
+  companyId,
+  slotId,
+}: {
+  companyId: string;
+  slotId: string;
+}) {
   const supabase = await createClient();
-
-  const { data: booking, error } = await supabase
-    .from("bookings")
-    .insert(data)
-    .select("*")
-    .single();
+  const { data, error } = await supabase.rpc("reserve_slot", {
+    p_company_id: companyId,
+    p_slot_id: slotId,
+  });
 
   if (error) {
     throw error;
   }
 
-  return booking;
+  return data;
+}
+
+export async function cancelOwnSlotBooking({
+  companyId,
+  slotId,
+}: {
+  companyId: string;
+  slotId: string;
+}) {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("cancel_my_slot_booking", {
+    p_company_id: companyId,
+    p_slot_id: slotId,
+  });
+
+  if (error) {
+    throw error;
+  }
 }
 
 export async function setBookingAttendance({
