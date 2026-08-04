@@ -1,7 +1,14 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useActionState, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useFormStatus } from "react-dom";
 import type { CompanyMember, MembershipRole } from "../../../../types/saas";
+import {
+  type MembershipFormState,
+  removeMemberAction,
+  updateMemberRoleAction,
+} from "../actions";
 import styles from "../admin.module.css";
 
 const PAGE_SIZE = 20;
@@ -13,19 +20,83 @@ function getRoleLabel(role: MembershipRole) {
 }
 
 function normalized(value: string | null | undefined) {
-  return (value ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  return (value ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
 }
 
-export function MembersDirectory({ members }: { members: CompanyMember[] }) {
+const initialActionState: MembershipFormState = {};
+
+function MemberActionButton({
+  label,
+  pendingLabel,
+  tone = "default",
+}: {
+  label: string;
+  pendingLabel: string;
+  tone?: "danger" | "default";
+}) {
+  const { pending } = useFormStatus();
+
+  return (
+    <button
+      className={
+        tone === "danger"
+          ? styles.memberDangerButton
+          : styles.memberSaveButton
+      }
+      disabled={pending}
+      type="submit"
+    >
+      {pending ? pendingLabel : label}
+    </button>
+  );
+}
+
+type MembersDirectoryProps = {
+  canManage: boolean;
+  companyId: string;
+  currentUserId: string;
+  members: CompanyMember[];
+  slug: string;
+};
+
+export function MembersDirectory({
+  canManage,
+  companyId,
+  currentUserId,
+  members,
+  slug,
+}: MembersDirectoryProps) {
+  const router = useRouter();
   const [query, setQuery] = useState("");
   const [role, setRole] = useState<"all" | MembershipRole>("all");
   const [page, setPage] = useState(1);
+  const [updateState, updateAction] = useActionState(
+    updateMemberRoleAction,
+    initialActionState,
+  );
+  const [removeState, removeAction] = useActionState(
+    removeMemberAction,
+    initialActionState,
+  );
+
+  useEffect(() => {
+    if (updateState.success || removeState.success) {
+      router.refresh();
+    }
+  }, [removeState.success, router, updateState.success]);
 
   const filteredMembers = useMemo(() => {
     const search = normalized(query);
     return members.filter((member) => {
       const matchesRole = role === "all" || member.role === role;
-      const matchesSearch = !search || normalized(`${member.profile?.name ?? ""} ${member.profile?.phone ?? ""}`).includes(search);
+      const matchesSearch =
+        !search ||
+        normalized(
+          `${member.profile?.name ?? ""} ${member.profile?.phone ?? ""}`,
+        ).includes(search);
       return matchesRole && matchesSearch;
     });
   }, [members, query, role]);
@@ -69,9 +140,19 @@ export function MembersDirectory({ members }: { members: CompanyMember[] }) {
       </div>
 
       {visibleMembers.length ? (
-        <div className={styles.membersTable} role="table" aria-label="Pessoas do clube">
+        <div
+          aria-label="Pessoas do clube"
+          className={styles.membersTable}
+          data-manage={canManage ? "true" : "false"}
+          role="table"
+        >
           <div className={styles.membersTableHead} role="row">
-            <span>Pessoa</span><span>Função</span><span>Status</span><span>Celular</span><span>Entrada</span>
+            <span>Pessoa</span>
+            <span>Função</span>
+            <span>Status</span>
+            <span>Celular</span>
+            <span>Entrada</span>
+            {canManage ? <span>Ações</span> : null}
           </div>
           {visibleMembers.map((member) => (
             <div className={styles.memberRow} role="row" key={member.id}>
@@ -81,10 +162,77 @@ export function MembersDirectory({ members }: { members: CompanyMember[] }) {
                 </span>
                 <strong>{member.profile?.name || "Usuário BoraSport"}</strong>
               </div>
-              <span className={styles.memberRole} data-label="Função" role="cell">{getRoleLabel(member.role)}</span>
+              {canManage ? (
+                <form
+                  action={updateAction}
+                  className={styles.memberRoleForm}
+                  role="cell"
+                >
+                  <input name="companyId" type="hidden" value={companyId} />
+                  <input name="membershipId" type="hidden" value={member.id} />
+                  <input name="slug" type="hidden" value={slug} />
+                  <label>
+                    <span className={styles.srOnly}>
+                      Função de {member.profile?.name || "usuário"}
+                    </span>
+                    <select defaultValue={member.role} name="role">
+                      <option value="client">Remador</option>
+                      <option value="professional">Treinador</option>
+                      <option value="admin">Admin</option>
+                    </select>
+                  </label>
+                  <MemberActionButton
+                    label="Salvar"
+                    pendingLabel="Salvando..."
+                  />
+                </form>
+              ) : (
+                <span className={styles.memberRole} data-label="Função" role="cell">{getRoleLabel(member.role)}</span>
+              )}
               <span className={styles.memberActive} data-label="Status" role="cell">Ativo</span>
               <span className={styles.memberPhone} data-label="Celular" role="cell">{member.profile?.phone || "Não informado"}</span>
               <span className={styles.memberSince} data-label="Entrada" role="cell">{new Date(member.created_at).toLocaleDateString("pt-BR")}</span>
+              {canManage ? (
+                <div className={styles.memberActions} data-label="Ações" role="cell">
+                  {member.user_id === currentUserId ? (
+                    <span className={styles.memberSelfLabel}>Seu acesso</span>
+                  ) : (
+                    <form
+                      action={removeAction}
+                      onSubmit={(event) => {
+                        if (
+                          !window.confirm(
+                            `Remover ${member.profile?.name || "esta pessoa"} do clube?`,
+                          )
+                        ) {
+                          event.preventDefault();
+                        }
+                      }}
+                    >
+                      <input name="companyId" type="hidden" value={companyId} />
+                      <input name="membershipId" type="hidden" value={member.id} />
+                      <input name="slug" type="hidden" value={slug} />
+                      <MemberActionButton
+                        label="Remover"
+                        pendingLabel="Removendo..."
+                        tone="danger"
+                      />
+                    </form>
+                  )}
+                </div>
+              ) : null}
+              {updateState.membershipId === member.id &&
+              updateState.success ? (
+                <p className={styles.memberActionSuccess}>
+                  {updateState.success}
+                </p>
+              ) : null}
+              {updateState.membershipId === member.id && updateState.error ? (
+                <p className={styles.memberActionError}>{updateState.error}</p>
+              ) : null}
+              {removeState.membershipId === member.id && removeState.error ? (
+                <p className={styles.memberActionError}>{removeState.error}</p>
+              ) : null}
             </div>
           ))}
         </div>

@@ -2290,9 +2290,14 @@
   align-items: center;
   display: grid;
   gap: 12px;
-  grid-template-columns: minmax(210px, 1.5fr) minmax(90px, 0.65fr) minmax(72px, 0.48fr) minmax(130px, 0.85fr) minmax(90px, 0.58fr);
+  grid-template-columns: minmax(190px, 1.35fr) minmax(170px, 1fr) minmax(72px, 0.48fr) minmax(120px, 0.8fr) minmax(82px, 0.55fr) minmax(82px, 0.55fr);
   min-width: 0;
   padding: 11px 14px;
+}
+
+.membersTable[data-manage="false"] .membersTableHead,
+.membersTable[data-manage="false"] .memberRow {
+  grid-template-columns: minmax(210px, 1.5fr) minmax(90px, 0.65fr) minmax(72px, 0.48fr) minmax(130px, 0.85fr) minmax(90px, 0.58fr);
 }
 
 .membersTableHead {
@@ -2384,6 +2389,98 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.memberRoleForm {
+  align-items: center;
+  display: flex;
+  gap: 7px;
+  min-width: 0;
+}
+
+.memberRoleForm label {
+  min-width: 0;
+}
+
+.srOnly {
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+.memberRoleForm select {
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(182, 140, 255, 0.2);
+  border-radius: 9px;
+  color: #ffffff;
+  font: inherit;
+  font-size: 0.76rem;
+  min-height: 36px;
+  padding: 0 8px;
+  width: 100%;
+}
+
+.memberRoleForm option {
+  background: #101322;
+}
+
+.memberSaveButton,
+.memberDangerButton {
+  border-radius: 9px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 850;
+  min-height: 36px;
+  padding: 0 9px;
+}
+
+.memberSaveButton {
+  background: rgba(31, 216, 229, 0.1);
+  border: 1px solid rgba(123, 243, 245, 0.25);
+  color: #9af6f4;
+}
+
+.memberDangerButton {
+  background: rgba(255, 99, 120, 0.08);
+  border: 1px solid rgba(255, 120, 137, 0.22);
+  color: #ffb0bc;
+}
+
+.memberSaveButton:disabled,
+.memberDangerButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.memberActions {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.memberSelfLabel {
+  color: rgba(238, 248, 247, 0.48);
+  font-size: 0.72rem;
+  font-weight: 750;
+}
+
+.memberActionSuccess,
+.memberActionError {
+  font-size: 0.72rem;
+  grid-column: 1 / -1;
+  margin: -4px 0 2px 54px;
+}
+
+.memberActionSuccess {
+  color: #8ef3c2;
+}
+
+.memberActionError {
+  color: #ffb0bc;
 }
 
 .membersPagination {
@@ -3884,6 +3981,17 @@
   .membersTableHead,
   .memberRow {
     min-width: 760px;
+  }
+
+  .memberRoleForm {
+    align-items: stretch;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .memberActionSuccess,
+  .memberActionError {
+    margin-left: 0;
   }
   .trainingSummary,
   .trainingWorkspace,

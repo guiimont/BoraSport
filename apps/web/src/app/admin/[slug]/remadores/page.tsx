@@ -76,7 +76,13 @@ export default async function AdminMembersPage({ params }: AdminMembersPageProps
             </a>
           ) : null}
         </div>
-        <MembersDirectory members={members} />
+        <MembersDirectory
+          canManage={role === "admin"}
+          companyId={company.id}
+          currentUserId={context.user.id}
+          members={members}
+          slug={company.slug}
+        />
       </section>
 
       {role === "admin" ? (

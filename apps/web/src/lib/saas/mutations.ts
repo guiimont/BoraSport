@@ -825,6 +825,51 @@ export async function createMembership({
   return membership;
 }
 
+export type UpdateMembershipRoleInput = {
+  companyId: string;
+  membershipId: string;
+  role: MembershipRole;
+};
+
+export async function updateMembershipRole({
+  companyId,
+  membershipId,
+  role,
+}: UpdateMembershipRoleInput) {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("update_company_membership_role", {
+    p_company_id: companyId,
+    p_membership_id: membershipId,
+    p_role: role,
+  });
+
+  if (error) {
+    throw error;
+  }
+
+}
+
+export type DeleteMembershipInput = {
+  companyId: string;
+  membershipId: string;
+};
+
+export async function deleteMembership({
+  companyId,
+  membershipId,
+}: DeleteMembershipInput) {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("delete_company_membership", {
+    p_company_id: companyId,
+    p_membership_id: membershipId,
+  });
+
+  if (error) {
+    throw error;
+  }
+
+}
+
 function createRawInvitationToken() {
   return randomBytes(32).toString("base64url");
 }

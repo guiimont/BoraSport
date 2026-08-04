@@ -10,12 +10,14 @@ import {
   createService,
   createSlot,
   createSlotsSkippingDuplicates,
+  deleteMembership,
   ensureProfile,
   revokeCompanyInvitation,
   setBookingAttendance,
   setOperationalSessionTraining,
   updateBaseScheduleStatus,
   updateCompanyConfiguration,
+  updateMembershipRole,
   updateResource,
   updateResourceOperationalStatus,
   upsertBaseSchedule,
@@ -29,6 +31,7 @@ import type {
   BaseScheduleStatus,
   DefaultSteererPolicy,
   OperationalSessionStatus,
+  MembershipRole,
   VesselClass,
   VesselStatus,
   VocabularyConfig,
@@ -46,6 +49,10 @@ export type AdminFormState = {
 
 export type InvitationFormState = AdminFormState & {
   inviteLink?: string;
+};
+
+export type MembershipFormState = AdminFormState & {
+  membershipId?: string;
 };
 
 export async function updateAttendanceAction(formData: FormData) {
@@ -325,6 +332,18 @@ function getReadableError(error: unknown) {
 
   if (message.includes("operational_session_training_version_invalid")) {
     return "Selecione um treino publicado da biblioteca deste clube.";
+  }
+
+  if (message.includes("last_company_admin")) {
+    return "O clube precisa manter pelo menos um administrador.";
+  }
+
+  if (message.includes("membership_not_found")) {
+    return "Este vínculo não existe mais. Atualize a página.";
+  }
+
+  if (message.includes("membership_identity_immutable")) {
+    return "A identidade do vínculo não pode ser alterada.";
   }
 
   return message;
@@ -1378,6 +1397,75 @@ export async function revokeClientInvitation(
   } catch (error) {
     return {
       error: `Não foi possível revogar. ${getReadableError(error)}`,
+    };
+  }
+}
+
+export async function updateMemberRoleAction(
+  _previousState: MembershipFormState,
+  formData: FormData,
+): Promise<MembershipFormState> {
+  const companyId = readText(formData, "companyId", "");
+  const membershipId = readText(formData, "membershipId", "");
+  const slug = readText(formData, "slug", "");
+  const role = readText(formData, "role", "") as MembershipRole;
+
+  if (!companyId || !membershipId || !slug) {
+    return { error: "Não foi possível identificar o vínculo.", membershipId };
+  }
+
+  if (role !== "admin" && role !== "professional" && role !== "client") {
+    return { error: "Selecione uma função válida.", membershipId };
+  }
+
+  const access = await assertCanAdminTenant(companyId);
+
+  if (access.error) {
+    return { error: access.error, membershipId };
+  }
+
+  try {
+    await updateMembershipRole({ companyId, membershipId, role });
+    revalidatePath(`/admin/${slug}/remadores`);
+    revalidatePath(`/admin/${slug}`);
+
+    return { membershipId, success: "Função atualizada." };
+  } catch (error) {
+    return {
+      error: `Não foi possível atualizar a função. ${getReadableError(error)}`,
+      membershipId,
+    };
+  }
+}
+
+export async function removeMemberAction(
+  _previousState: MembershipFormState,
+  formData: FormData,
+): Promise<MembershipFormState> {
+  const companyId = readText(formData, "companyId", "");
+  const membershipId = readText(formData, "membershipId", "");
+  const slug = readText(formData, "slug", "");
+
+  if (!companyId || !membershipId || !slug) {
+    return { error: "Não foi possível identificar o vínculo.", membershipId };
+  }
+
+  const access = await assertCanAdminTenant(companyId);
+
+  if (access.error) {
+    return { error: access.error, membershipId };
+  }
+
+  try {
+    await deleteMembership({ companyId, membershipId });
+    revalidatePath(`/admin/${slug}/remadores`);
+    revalidatePath(`/admin/${slug}`);
+
+    return { membershipId, success: "Vínculo removido do clube." };
+  } catch (error) {
+    return {
+      error: `Não foi possível remover o vínculo. ${getReadableError(error)}`,
+      membershipId,
     };
   }
 }
