@@ -493,7 +493,7 @@
 
 .memberHorizon {
   background: linear-gradient(90deg, transparent, rgba(34, 210, 214, 0.66), transparent);
-  bottom: 24%;
+  bottom: 0;
   height: 1px;
   left: 0;
   position: absolute;
