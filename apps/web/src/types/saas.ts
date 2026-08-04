@@ -171,6 +171,19 @@ export type Profile = {
   updated_at: string;
 };
 
+export type ActivityRecord = {
+  activity_type: string;
+  average_heart_rate: number | null;
+  company_id: string;
+  distance_meters: number | null;
+  duration_seconds: number | null;
+  id: string;
+  provider: string;
+  started_at: string;
+  title: string | null;
+  visibility: "private" | "team" | "company";
+};
+
 export type Booking = {
   id: string;
   slot_id: string;

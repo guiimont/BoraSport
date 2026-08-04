@@ -1,3 +1,43 @@
+.sportSummary {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-bottom: var(--space-6);
+}
+
+.summaryCard {
+  background: linear-gradient(145deg, rgba(20, 28, 43, 0.96), rgba(7, 16, 29, 0.98));
+  border: 1px solid rgba(31, 216, 229, 0.16);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-night-card);
+  color: var(--text-inverse);
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+  padding: var(--space-5);
+}
+
+.summaryCard span,
+.summaryCard small {
+  color: rgba(238, 248, 247, 0.62);
+}
+
+.summaryCard span {
+  font-size: 0.8rem;
+  font-weight: 750;
+}
+
+.summaryCard strong {
+  color: #ffffff;
+  font-size: clamp(1.45rem, 3vw, 2rem);
+  line-height: 1;
+}
+
+.summaryCard small {
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
 .layout {
   align-items: start;
   display: grid;
@@ -49,6 +89,77 @@
   color: rgba(238, 248, 247, 0.7);
   line-height: 1.6;
   margin: var(--space-3) 0 0;
+}
+
+.activityList,
+.clubList {
+  display: grid;
+  gap: var(--space-3);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.activityList li {
+  border-top: 1px solid rgba(216, 231, 231, 0.1);
+  display: grid;
+  gap: var(--space-2);
+  padding-top: var(--space-3);
+}
+
+.activityList li:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.activityList div {
+  display: grid;
+  gap: 3px;
+}
+
+.activityList strong,
+.clubList strong {
+  color: #ffffff;
+}
+
+.activityList span,
+.activityList p {
+  color: rgba(238, 248, 247, 0.64);
+  font-size: 0.82rem;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.emptyJourney {
+  align-items: center;
+  background: rgba(31, 216, 229, 0.06);
+  border: 1px dashed rgba(31, 216, 229, 0.2);
+  border-radius: var(--radius-md);
+  display: grid;
+  gap: var(--space-2);
+  justify-items: center;
+  padding: var(--space-5);
+  text-align: center;
+}
+
+.emptyJourney span {
+  color: var(--color-sea-300);
+  font-size: 2rem;
+}
+
+.emptyJourney p {
+  color: rgba(238, 248, 247, 0.68);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.clubList li {
+  align-items: center;
+  border-bottom: 1px solid rgba(216, 231, 231, 0.1);
+  display: flex;
+  gap: var(--space-3);
+  justify-content: space-between;
+  padding-bottom: var(--space-3);
 }
 
 .avatarLarge {
@@ -176,12 +287,23 @@
 }
 
 @media (max-width: 860px) {
+  .sportSummary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .layout {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 560px) {
+  .sportSummary {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .summaryCard {
+    padding: var(--space-4);
+  }
   .profilePanel,
   .card {
     padding: var(--space-4);

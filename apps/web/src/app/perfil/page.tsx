@@ -3,11 +3,37 @@ import { redirect } from "next/navigation";
 import {
   getCurrentProfile,
   getCurrentUser,
+  getCurrentUserActivityRecords,
   getCurrentUserMemberships,
 } from "../../lib/saas/queries";
 import { ActionLink, Alert, MemberShell } from "../../components/ui";
 import { ProfileForm } from "./profile-form";
 import styles from "./profile.module.css";
+
+const numberFormatter = new Intl.NumberFormat("pt-BR", {
+  maximumFractionDigits: 1,
+});
+
+const dateFormatter = new Intl.DateTimeFormat("pt-BR", {
+  day: "2-digit",
+  month: "short",
+  timeZone: "America/Sao_Paulo",
+  year: "numeric",
+});
+
+function formatDuration(totalSeconds: number | null) {
+  if (!totalSeconds) {
+    return "—";
+  }
+
+  const totalMinutes = Math.round(totalSeconds / 60);
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+
+  return hours
+    ? `${hours}h ${minutes.toString().padStart(2, "0")}min`
+    : `${minutes}min`;
+}
 
 export default async function ProfilePage() {
   const user = await getCurrentUser();
@@ -16,9 +42,27 @@ export default async function ProfilePage() {
     redirect("/login?next=/perfil");
   }
 
-  const profile = await getCurrentProfile();
-  const memberships = await getCurrentUserMemberships();
+  const [profile, memberships, activities] = await Promise.all([
+    getCurrentProfile(),
+    getCurrentUserMemberships(),
+    getCurrentUserActivityRecords(),
+  ]);
   const primaryCompany = memberships[0]?.companies ?? null;
+  const companiesById = new Map(
+    memberships.flatMap((membership) =>
+      membership.companies
+        ? [[membership.company_id, membership.companies.name] as const]
+        : [],
+    ),
+  );
+  const totalDistanceMeters = activities.reduce(
+    (total, activity) => total + (activity.distance_meters ?? 0),
+    0,
+  );
+  const totalDurationSeconds = activities.reduce(
+    (total, activity) => total + (activity.duration_seconds ?? 0),
+    0,
+  );
   const hasValidName =
     Boolean(profile?.name?.trim()) && !profile?.name?.includes("@");
   const isProfileIncomplete =
@@ -28,8 +72,32 @@ export default async function ProfilePage() {
     <MemberShell
       company={primaryCompany}
       context="Perfil do remador"
-      title="Meu perfil"
+      description="Sua identidade no va'a: clubes, remadas e evolução reunidos em uma única jornada."
+      title="Meu perfil esportivo"
     >
+      <section className={styles.sportSummary} aria-label="Resumo esportivo">
+        <article className={styles.summaryCard}>
+          <span>Remadas registradas</span>
+          <strong>{activities.length}</strong>
+          <small>Atividades no seu histórico</small>
+        </article>
+        <article className={styles.summaryCard}>
+          <span>Distância acumulada</span>
+          <strong>{numberFormatter.format(totalDistanceMeters / 1000)} km</strong>
+          <small>Somente atividades com distância</small>
+        </article>
+        <article className={styles.summaryCard}>
+          <span>Tempo na água</span>
+          <strong>{formatDuration(totalDurationSeconds)}</strong>
+          <small>Duração total registrada</small>
+        </article>
+        <article className={styles.summaryCard}>
+          <span>Clubes</span>
+          <strong>{memberships.length}</strong>
+          <small>Vínculos ativos no BoraSport</small>
+        </article>
+      </section>
+
       <div className={styles.layout}>
         <section className={styles.profilePanel} aria-labelledby="profile-heading">
           {isProfileIncomplete ? (
@@ -52,16 +120,65 @@ export default async function ProfilePage() {
 
         <aside className={styles.sidePanel} aria-label="Resumo do perfil">
           <section className={styles.card}>
-            <p className={styles.eyebrow}>Meu clube</p>
-            {primaryCompany ? (
-              <>
-                <h3>{primaryCompany.name}</h3>
-                <p className={styles.cardText}>
-                  Veja os próximos horários e faça suas reservas.
+            <p className={styles.eyebrow}>Minha jornada</p>
+            <h3>Atividades recentes</h3>
+            {activities.length ? (
+              <ol className={styles.activityList}>
+                {activities.slice(0, 5).map((activity) => (
+                  <li key={activity.id}>
+                    <div>
+                      <strong>{activity.title || "Remada"}</strong>
+                      <span>
+                        {dateFormatter.format(new Date(activity.started_at))}
+                        {companiesById.get(activity.company_id)
+                          ? ` · ${companiesById.get(activity.company_id)}`
+                          : ""}
+                      </span>
+                    </div>
+                    <p>
+                      {activity.distance_meters !== null
+                        ? `${numberFormatter.format(activity.distance_meters / 1000)} km`
+                        : "Distância não informada"}
+                      {activity.duration_seconds
+                        ? ` · ${formatDuration(activity.duration_seconds)}`
+                        : ""}
+                    </p>
+                  </li>
+                ))}
+              </ol>
+            ) : (
+              <div className={styles.emptyJourney}>
+                <span aria-hidden>≈</span>
+                <p>
+                  Suas remadas aparecerão aqui quando uma atividade for
+                  concluída ou sincronizada.
                 </p>
-                <ActionLink href={`/clube/${primaryCompany.slug}`} variant="primary">
-                  Acessar clube
-                </ActionLink>
+              </div>
+            )}
+          </section>
+
+          <section className={styles.card}>
+            <p className={styles.eyebrow}>Meus clubes</p>
+            {memberships.length ? (
+              <>
+                <ul className={styles.clubList}>
+                  {memberships.map((membership) =>
+                    membership.companies ? (
+                      <li key={membership.id}>
+                        <strong>{membership.companies.name}</strong>
+                        <ActionLink
+                          href={`/clube/${membership.companies.slug}`}
+                          variant="secondary"
+                        >
+                          Acessar
+                        </ActionLink>
+                      </li>
+                    ) : null,
+                  )}
+                </ul>
+                <p className={styles.cardText}>
+                  Seus vínculos acompanham você entre clubes, equipes e viagens.
+                </p>
               </>
             ) : (
               <p className={styles.cardText}>

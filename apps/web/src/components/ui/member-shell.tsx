@@ -13,6 +13,7 @@ type MemberShellProps = {
   children: ReactNode;
   company?: MemberShellCompany;
   context: string;
+  description?: string;
   title: string;
 };
 
@@ -20,6 +21,7 @@ export function MemberShell({
   children,
   company = null,
   context,
+  description = "Atualize seus dados pessoais e acesse as informações do seu clube.",
   title,
 }: MemberShellProps) {
   return (
@@ -48,9 +50,7 @@ export function MemberShell({
         <div className={styles.memberHeroContent}>
           <p className={styles.memberEyebrow}>{context}</p>
           <h1>{title}</h1>
-          <p>
-            Atualize seus dados pessoais e acesse as informações do seu clube.
-          </p>
+          <p>{description}</p>
         </div>
       </header>
 
