@@ -55,7 +55,10 @@ export type MembershipFormState = AdminFormState & {
   membershipId?: string;
 };
 
-export async function updateAttendanceAction(formData: FormData) {
+export async function updateAttendanceAction(
+  _previousState: AdminFormState,
+  formData: FormData,
+): Promise<AdminFormState> {
   const companyId = readText(formData, "companyId", "");
   const sessionId = readText(formData, "sessionId", "");
   const bookingId = readText(formData, "bookingId", "");
@@ -64,16 +67,27 @@ export async function updateAttendanceAction(formData: FormData) {
   const permissionError = await assertCanManageTenant(companyId);
 
   if (permissionError) {
-    return;
+    return { error: permissionError };
   }
 
   if (!bookingId || !sessionId || !slug || (status !== "attended" && status !== "missed")) {
-    return;
+    return { error: "Não foi possível identificar a presença para atualizar." };
   }
 
-  await setBookingAttendance({ bookingId, companyId, sessionId, status });
+  try {
+    await setBookingAttendance({ bookingId, companyId, sessionId, status });
+  } catch (error) {
+    return {
+      error: `Não foi possível registrar a presença. ${getReadableError(error)}`,
+    };
+  }
+
   revalidatePath(`/admin/${slug}/agenda/sessoes/${sessionId}`);
   revalidatePath("/perfil");
+
+  return {
+    success: status === "attended" ? "Presença registrada." : "Falta registrada.",
+  };
 }
 
 const defaultVocabulary: Required<VocabularyConfig> = {
