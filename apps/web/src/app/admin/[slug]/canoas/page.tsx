@@ -28,9 +28,9 @@ const vesselLabels: Record<VesselClass, string> = {
 };
 
 const statusLabels: Record<VesselStatus, string> = {
-  disponivel: "Disponivel",
+  disponivel: "Disponível",
   inativa: "Inativa",
-  manutencao: "Em manutencao",
+  manutencao: "Em manutenção",
 };
 
 function normalizeText(value: string | null | undefined) {
@@ -112,9 +112,9 @@ export default async function AdminResourcesPage({
     <AdminShell
       active="canoas"
       context={context}
-      eyebrow="Operacao do clube"
+      eyebrow="Operação do clube"
       showSessionBar={false}
-      subtitle="Organize a frota e localize rapidamente quais canoas estao disponiveis para a operacao."
+      subtitle="Organize a frota e localize rapidamente quais canoas estão disponíveis para a operação."
       title="Canoas"
     >
       <section className={styles.vesselTopStrip} aria-label="Resumo da frota">
@@ -141,7 +141,7 @@ export default async function AdminResourcesPage({
             <input
               defaultValue={filters.q}
               name="q"
-              placeholder="Nome ou identificacao"
+              placeholder="Nome ou identificação"
             />
           </label>
           <label>
@@ -155,15 +155,15 @@ export default async function AdminResourcesPage({
               <option value="v6">V6</option>
               <option value="oc6">OC6</option>
               <option value="outro">Outro</option>
-              <option value="sem-classe">Classe nao definida</option>
+              <option value="sem-classe">Classe não definida</option>
             </select>
           </label>
           <label>
-            Situacao
+            Situação
             <select defaultValue={filters.situacao} name="situacao">
               <option value="todas">Todas</option>
-              <option value="disponivel">Disponivel</option>
-              <option value="manutencao">Em manutencao</option>
+              <option value="disponivel">Disponível</option>
+              <option value="manutencao">Em manutenção</option>
               <option value="inativa">Inativa</option>
             </select>
           </label>
@@ -179,14 +179,14 @@ export default async function AdminResourcesPage({
             <span>Canoa</span>
             <span>Classe</span>
             <span>Capacidade</span>
-            <span>Situacao</span>
+            <span>Situação</span>
             <span>Detalhes</span>
           </div>
           {filteredResources.map((resource) => {
             const status = getResourceStatus(resource);
             const vesselClass = resource.vessel_class
               ? vesselLabels[resource.vessel_class]
-              : "Classe nao definida";
+              : "Classe não definida";
 
             return (
               <Link

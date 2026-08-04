@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { ActivityExperience } from "../../../lib/saas/activity-presets";
 import type {
   CompanySlot,
+  CurrentUserBooking,
   SlotParticipant,
   VocabularyConfig,
   WeeklyWorkout,
@@ -16,7 +17,7 @@ import { ReservationSlots } from "./reservation-slots";
 
 type ClubTabsProps = {
   companyId: string;
-  currentUserBookedSlotIds: string[];
+  currentUserBookings: CurrentUserBooking[];
   experience: ActivityExperience;
   participantsBySlot: Record<string, SlotParticipant[]>;
   slug: string;
@@ -305,7 +306,7 @@ async function findSeaLocation(search: string): Promise<SeaLocation> {
 
   const photonResponse = await fetch(photonUrl);
   if (!photonResponse.ok) {
-    throw new Error("Nao foi possivel localizar esse ponto.");
+    throw new Error("Não foi possível localizar esse ponto.");
   }
 
   const photonData = (await photonResponse.json()) as {
@@ -328,7 +329,7 @@ async function findSeaLocation(search: string): Promise<SeaLocation> {
   const coordinates = feature?.geometry?.coordinates;
 
   if (!feature || !coordinates) {
-    throw new Error("Local nao encontrado. Tente cidade, praia ou bairro.");
+    throw new Error("Local não encontrado. Tente cidade, praia ou bairro.");
   }
 
   return {
@@ -373,7 +374,7 @@ async function getSeaConditions(location: SeaLocation): Promise<SeaConditions> {
   ]);
 
   if (!forecastResponse.ok) {
-    throw new Error("Nao foi possivel buscar vento para esse local.");
+    throw new Error("Não foi possível buscar vento para esse local.");
   }
 
   const forecast = (await forecastResponse.json()) as {
@@ -419,7 +420,7 @@ async function getSeaConditions(location: SeaLocation): Promise<SeaConditions> {
             wavePeriod || 0,
           )}s`
         : "Veja no Windy",
-    tide: "Validar tabua local",
+    tide: "Validar tábua local",
     updatedAt: formatHour(current?.time),
     wind:
       typeof current?.wind_speed_10m === "number"
@@ -470,7 +471,7 @@ function AvatarStack({ participants }: { participants: SlotParticipant[] }) {
 
 export function ClubTabs({
   companyId,
-  currentUserBookedSlotIds,
+  currentUserBookings,
   experience,
   participantsBySlot,
   slug,
@@ -517,19 +518,19 @@ export function ClubTabs({
       {activeTab === "condicoes" ? (
         <ConditionPanel experience={experience} />
       ) : null}
-      {activeTab === "agenda" ? (
+      <div hidden={activeTab !== "agenda"}>
         <AgendaPanel
           companyId={companyId}
-          currentUserBookedSlotIds={currentUserBookedSlotIds}
+          currentUserBookings={currentUserBookings}
           experience={experience}
           participantsBySlot={participantsBySlot}
           slug={slug}
           slots={slots}
           vocabulary={vocabulary}
         />
-      ) : null}
+      </div>
       {activeTab === "semana" ? (
-        <WeekPanel weeklyWorkouts={weeklyWorkouts} />
+        <WeekPanel slots={slots} weeklyWorkouts={weeklyWorkouts} />
       ) : null}
       {activeTab === "comunidade" ? (
         <CommunityPanel
@@ -576,7 +577,7 @@ function ConditionPanel({ experience }: { experience: ActivityExperience }) {
         setError(
           caughtError instanceof Error
             ? caughtError.message
-            : "Nao foi possivel atualizar as condicoes.",
+            : "Não foi possível atualizar as condições.",
         );
       }
     } finally {
@@ -624,7 +625,7 @@ function ConditionPanel({ experience }: { experience: ActivityExperience }) {
           <p className={styles.introLabel}>Local da remada</p>
           <p className={styles.introText}>
             Digite praia, bairro ou cidade para centralizar o Windy e atualizar
-            a leitura rapida.
+            a leitura rápida.
           </p>
         </div>
         <form
@@ -637,7 +638,7 @@ function ConditionPanel({ experience }: { experience: ActivityExperience }) {
           <input
             className={styles.locationInput}
             onChange={(event) => setSearch(event.target.value)}
-            placeholder="Ex: Praia de Santos, Ubatuba, Lagoa da Conceicao"
+            placeholder="Ex.: Praia de Santos, Ubatuba, Lagoa da Conceição"
             value={search}
           />
           <button className={styles.locationButton} disabled={isLoading} type="submit">
@@ -656,18 +657,18 @@ function ConditionPanel({ experience }: { experience: ActivityExperience }) {
             key={`${location.latitude}-${location.longitude}`}
             loading="lazy"
             src={buildWindyUrl(location)}
-            title={`Condicoes do mar em tempo real - ${location.label}`}
+            title={`Condições do mar em tempo real — ${location.label}`}
           />
         </div>
 
         <aside className={styles.card}>
-          <h2 className={styles.sectionTitle}>Leitura rapida</h2>
+          <h2 className={styles.sectionTitle}>Leitura rápida</h2>
           <p className={styles.introText}>{location.label}</p>
           <div className={`${styles.tileGrid} ${styles.tileGridTwo}`}>
             {[
               ["Vento", conditions?.wind || "Atualize o local"],
-              ["Ondulacao", conditions?.swell || "Atualize o local"],
-              ["Mare", conditions?.tide || "Validar tabua local"],
+              ["Ondulação", conditions?.swell || "Atualize o local"],
+              ["Maré", conditions?.tide || "Validar tábua local"],
               [
                 "Sol",
                 conditions
@@ -684,8 +685,8 @@ function ConditionPanel({ experience }: { experience: ActivityExperience }) {
           <p className={styles.introText}>{experience.safetyItems[0]}</p>
           {conditions?.updatedAt ? (
             <p className={styles.conditionFootnote}>
-              Atualizado as {conditions.updatedAt}. Use a leitura junto com o
-              mapa do Windy e a orientacao do clube.
+              Atualizado às {conditions.updatedAt}. Use a leitura junto com o
+              mapa do Windy e a orientação do clube.
             </p>
           ) : null}
         </aside>
@@ -696,7 +697,7 @@ function ConditionPanel({ experience }: { experience: ActivityExperience }) {
 
 function AgendaPanel({
   companyId,
-  currentUserBookedSlotIds,
+  currentUserBookings,
   experience,
   participantsBySlot,
   slug,
@@ -704,7 +705,7 @@ function AgendaPanel({
   vocabulary,
 }: {
   companyId: string;
-  currentUserBookedSlotIds: string[];
+  currentUserBookings: CurrentUserBooking[];
   experience: ActivityExperience;
   participantsBySlot: Record<string, SlotParticipant[]>;
   slug: string;
@@ -722,7 +723,7 @@ function AgendaPanel({
 
       <ReservationSlots
         companyId={companyId}
-        currentUserBookedSlotIds={currentUserBookedSlotIds}
+        currentUserBookings={currentUserBookings}
         experience={experience}
         participantsBySlot={participantsBySlot}
         slug={slug}
@@ -734,8 +735,10 @@ function AgendaPanel({
 }
 
 function WeekPanel({
+  slots,
   weeklyWorkouts,
 }: {
+  slots: CompanySlot[];
   weeklyWorkouts: WeeklyWorkout[];
 }) {
   const workoutsByDay = new Map(
@@ -743,28 +746,79 @@ function WeekPanel({
   );
   const weekdays = [
     [1, "Segunda"],
-    [2, "Terca"],
+    [2, "Terça"],
     [3, "Quarta"],
     [4, "Quinta"],
     [5, "Sexta"],
-    [6, "Sabado"],
+    [6, "Sábado"],
     [7, "Domingo"],
   ] as const;
+  const saoPauloDateKey = (value: Date | string) =>
+    new Intl.DateTimeFormat("en-CA", {
+      day: "2-digit",
+      month: "2-digit",
+      timeZone: "America/Sao_Paulo",
+      year: "numeric",
+    }).format(typeof value === "string" ? new Date(value) : value);
+  const today = new Date(`${saoPauloDateKey(new Date())}T12:00:00-03:00`);
+  const todayWeekday = today.getDay() === 0 ? 7 : today.getDay();
+  const monday = new Date(today);
+  monday.setDate(today.getDate() - todayWeekday + 1);
+  const weekDateKeys = new Map<number, string>(
+    weekdays.map(([weekday]) => {
+      const date = new Date(monday);
+      date.setDate(monday.getDate() + weekday - 1);
+      return [weekday, saoPauloDateKey(date)];
+    }),
+  );
+  const slotsByDay = new Map<number, CompanySlot[]>();
+
+  for (const slot of slots) {
+    const weekday = weekdays.find(
+      ([day]) => weekDateKeys.get(day) === saoPauloDateKey(slot.start_time),
+    )?.[0];
+
+    if (weekday) {
+      slotsByDay.set(weekday, [...(slotsByDay.get(weekday) || []), slot]);
+    }
+  }
+
+  const publishedDays = weekdays.filter(
+    ([weekday]) =>
+      workoutsByDay.has(weekday) || (slotsByDay.get(weekday)?.length || 0) > 0,
+  );
 
   return (
     <div className={styles.card}>
       <h2 className={styles.sectionTitle}>Treinos da semana</h2>
       <div className={styles.tileGrid}>
-        {weeklyWorkouts.length > 0 ? (
-          weekdays.map(([weekday, label]) => {
+        {publishedDays.length > 0 ? (
+          publishedDays.map(([weekday, label]) => {
             const workout = workoutsByDay.get(weekday);
+            const daySlots = slotsByDay.get(weekday) || [];
 
             return (
               <div className={styles.weekWorkout} key={weekday}>
                 <div>
                   <strong>{label}</strong>
-                  <h3>{workout?.title || "Treino nao publicado"}</h3>
+                  {workout ? <h3>{workout.title}</h3> : null}
                   {workout?.description ? <p>{workout.description}</p> : null}
+                  {daySlots.map((slot) => (
+                    <div className={styles.weekSlot} key={slot.id}>
+                      <div>
+                        <h3>{slot.services?.name || "Treino"}</h3>
+                        <p>
+                          {formatTime(slot.start_time)}
+                          {slot.resources?.name
+                            ? ` · ${slot.resources.name}`
+                            : ""}
+                        </p>
+                      </div>
+                      <span className={styles.badge}>
+                        {remainingSpots(slot)}/{slot.spots_total} vagas
+                      </span>
+                    </div>
+                  ))}
                 </div>
                 {workout?.attachment_url ? (
                   <a
@@ -781,7 +835,7 @@ function WeekPanel({
           })
         ) : (
           <p className={styles.emptyState}>
-            Os treinos da semana ainda nao foram publicados.
+            Não há treinos publicados para esta semana.
           </p>
         )}
       </div>
@@ -810,7 +864,7 @@ function CommunityPanel({
           upcomingWithPeople.map((slot) => (
             <div className={`${styles.tile} ${styles.weekRow}`} key={slot.id}>
               <div>
-                <strong>{slot.services?.name || "Horario"}</strong>
+                <strong>{slot.services?.name || "Horário"}</strong>
                 <p>{formatTime(slot.start_time)}</p>
               </div>
               <AvatarStack participants={participantsBySlot[slot.id] || []} />

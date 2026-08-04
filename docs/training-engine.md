@@ -67,23 +67,16 @@ interface ou logica completa desses alvos.
 Um grupo de repeticao pode conter blocos simples ordenados. O MVP rejeita grupo
 dentro de grupo para evitar recursao ilimitada.
 
-## Embarcacoes
+## Formato do treino
 
-Classes suportadas:
+Formatos suportados:
 
-- V1;
-- OC1;
-- V3;
-- OC4;
-- V6;
-- OC6;
-- outro.
+- individual;
+- coletivo.
 
-V1 e OC1 sao individuais. V3, OC4, V6 e OC6 sao coletivas. O numero representa
-a classe/capacidade da embarcacao, mas a capacidade operacional continua vindo
-de `resources.capacity_maxima` e dos horarios publicados.
-
-Esta sprint nao implementa montagem, leme nem assentos 1-6.
+O formato descreve como o treino sera conduzido. Ele nao vincula a prescricao
+a uma classe de embarcacao. Se o professor quiser indicar OC6, V1 ou outro
+contexto especifico, deve usar as observacoes do treino.
 
 ## Relacoes com agenda e semana
 

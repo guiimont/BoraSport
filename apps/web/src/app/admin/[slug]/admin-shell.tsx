@@ -34,7 +34,6 @@ const navItems: Array<{
   { hrefSuffix: "/remadores", id: "remadores", label: "Remadores" },
   { hrefSuffix: "/canoas", id: "canoas", label: "Canoas" },
   { hrefSuffix: "/treinos", id: "treinos", label: "Treinos" },
-  { hrefSuffix: "/site", id: "site", label: "Site" },
   { hrefSuffix: "/configuracoes", id: "configuracoes", label: "Configurações" },
 ];
 
@@ -47,8 +46,12 @@ export function AdminShell({
   subtitle,
   title,
 }: AdminShellProps) {
-  const { company, role, userLabel } = context;
+  const { company, profileAvatarUrl, role, userLabel } = context;
   const baseHref = `/admin/${company.slug}`;
+  const activeLabel =
+    navItems.find((item) => item.id === active)?.label ?? "Navegação";
+  const profileInitial =
+    userLabel.trim().charAt(0).toLocaleUpperCase("pt-BR") || "P";
 
   return (
     <main className={styles.page}>
@@ -82,6 +85,48 @@ export function AdminShell({
 
         <section className={styles.mainColumn}>
           <header className={styles.topbar}>
+            <div className={styles.mobileTopbar}>
+              <Link
+                aria-label="Início do BoraSport"
+                className={styles.mobileBrand}
+                href="/"
+              >
+                <BrandMark
+                  iconOnly
+                  label="BoraSport"
+                  tone="light"
+                  variant="monochromeLight"
+                />
+              </Link>
+              <div className={styles.mobileClubIdentity}>
+                <span>Gestão do clube</span>
+                <strong>{company.name}</strong>
+              </div>
+              <div className={styles.mobileTopbarActions}>
+                <Link
+                  aria-label="Abrir página pública do clube"
+                  className={styles.mobileIconButton}
+                  href={`/clube/${company.slug}`}
+                >
+                  <svg aria-hidden="true" viewBox="0 0 24 24">
+                    <path d="M14 5h5v5M19 5l-8 8M18 13v5a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" />
+                  </svg>
+                </Link>
+                <Link
+                  aria-label="Abrir meu perfil"
+                  className={styles.mobileProfileButton}
+                  href="/perfil"
+                >
+                  {profileAvatarUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img alt="" src={profileAvatarUrl} />
+                  ) : (
+                    profileInitial
+                  )}
+                </Link>
+              </div>
+            </div>
+
             <div className={styles.topbarText}>
               <p className={styles.eyebrow}>{eyebrow}</p>
               <h1>{title}</h1>
@@ -108,20 +153,32 @@ export function AdminShell({
             </div>
           </header>
 
-          <nav className={styles.mobileNav} aria-label="Módulos do gestor">
-            {navItems.map((item) => (
-              <Link
-                aria-current={active === item.id ? "page" : undefined}
-                className={`${styles.navPill} ${
-                  active === item.id ? styles.navPillActive : ""
-                }`}
-                href={`${baseHref}${item.hrefSuffix}`}
-                key={item.id}
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
+          <details className={styles.mobileNav}>
+            <summary>
+              <span>
+                <small>Você está em</small>
+                <strong>{activeLabel}</strong>
+              </span>
+              <span className={styles.mobileMenuLabel}>Menu</span>
+            </summary>
+            <nav
+              className={styles.mobileNavLinks}
+              aria-label="Módulos do gestor"
+            >
+              {navItems.map((item) => (
+                <Link
+                  aria-current={active === item.id ? "page" : undefined}
+                  className={`${styles.navPill} ${
+                    active === item.id ? styles.navPillActive : ""
+                  }`}
+                  href={`${baseHref}${item.hrefSuffix}`}
+                  key={item.id}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
+          </details>
 
           <div className={styles.content}>{children}</div>
         </section>

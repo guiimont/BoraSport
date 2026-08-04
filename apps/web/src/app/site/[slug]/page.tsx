@@ -55,7 +55,7 @@ export default async function SitePage({ params }: SitePageProps) {
         ) : (
           <article className={styles.card}>
             <span>Agenda integrada</span>
-            <p>Escolha um horario disponivel e reserve direto pela plataforma.</p>
+            <p>Escolha um horário disponível e reserve diretamente pela plataforma.</p>
           </article>
         )}
       </section>

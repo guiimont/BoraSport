@@ -71,6 +71,8 @@ export type CompanySlot = {
   end_time: string;
   spots_total: number;
   spots_occupied: number;
+  operational_session_id: string | null;
+  is_public: boolean;
   spots_available?: number;
   services: Pick<
     Service,
@@ -124,7 +126,18 @@ export type PublicSportProfile = {
   public_id: string;
 };
 
-export type BookingStatus = "confirmed" | "cancelled" | "attended" | "missed";
+export type BookingStatus =
+  | "confirmed"
+  | "waitlisted"
+  | "cancelled"
+  | "attended"
+  | "missed";
+
+export type CurrentUserBooking = {
+  slot_id: string;
+  status: Extract<BookingStatus, "confirmed" | "waitlisted">;
+  waitlist_position: number | null;
+};
 export type MembershipRole = "admin" | "client" | "professional";
 
 export type Membership = {
@@ -141,7 +154,7 @@ export type MembershipWithCompany = Membership & {
 };
 
 export type CompanyMember = Membership & {
-  profile: Pick<Profile, "avatar_url" | "id" | "name"> | null;
+  profile: Pick<Profile, "avatar_url" | "id" | "name" | "phone"> | null;
 };
 
 export type CompanyInvitationStatus = "active" | "expired" | "revoked" | "used";
@@ -169,6 +182,19 @@ export type Profile = {
   updated_at: string;
 };
 
+export type ActivityRecord = {
+  activity_type: string;
+  average_heart_rate: number | null;
+  company_id: string;
+  distance_meters: number | null;
+  duration_seconds: number | null;
+  id: string;
+  provider: string;
+  started_at: string;
+  title: string | null;
+  visibility: "private" | "team" | "company";
+};
+
 export type Booking = {
   id: string;
   slot_id: string;
@@ -179,8 +205,8 @@ export type Booking = {
   updated_at: string;
 };
 
-export type NewBooking = Pick<Booking, "company_id" | "slot_id" | "user_id"> & {
-  status?: BookingStatus;
+export type SessionParticipant = Booking & {
+  profile: Pick<Profile, "avatar_url" | "id" | "name" | "phone"> | null;
 };
 
 export type BoraZone =
@@ -193,8 +219,81 @@ export type BoraZone =
 export type VesselClass = "v1" | "oc1" | "v3" | "oc4" | "v6" | "oc6" | "outro";
 export type VesselStatus = "disponivel" | "manutencao" | "inativa";
 export type DefaultSteererPolicy = "instrutor" | "aluno" | "definir_treino";
+export type BaseScheduleStatus = "active" | "inactive";
+export type OperationalSessionStatus = "draft" | "published" | "cancelled";
+
+export type BaseScheduleResource = {
+  company_id: string;
+  created_at: string;
+  resource: Resource | null;
+  resource_id: string;
+  schedule_id: string;
+};
+
+export type BaseSchedule = {
+  coach: Pick<Profile, "avatar_url" | "id" | "name"> | null;
+  coach_id: string;
+  company_id: string;
+  created_at: string;
+  created_by: string | null;
+  duration_minutes: number;
+  group_name: string;
+  id: string;
+  level: string | null;
+  resources: BaseScheduleResource[];
+  start_time: string;
+  status: BaseScheduleStatus;
+  updated_at: string;
+  weekday: number;
+};
+
+export type OperationalSessionResource = {
+  company_id: string;
+  created_at: string;
+  resource: Resource | null;
+  resource_id: string;
+  session_id: string;
+};
+
+export type OperationalSessionTrainingVersion = Pick<
+  TrainingPlanVersion,
+  | "company_id"
+  | "duration_seconds"
+  | "id"
+  | "level"
+  | "published_at"
+  | "status"
+  | "training_plan_id"
+  | "version_number"
+> & {
+  training_plan: Pick<
+    TrainingPlan,
+    "id" | "objective" | "title" | "training_mode"
+  > | null;
+};
+
+export type OperationalSession = {
+  base_schedule_id: string | null;
+  coach: Pick<Profile, "avatar_url" | "id" | "name"> | null;
+  coach_id: string;
+  company_id: string;
+  created_at: string;
+  created_by: string | null;
+  duration_minutes: number;
+  group_name: string;
+  id: string;
+  level: string | null;
+  resources: OperationalSessionResource[];
+  session_date: string;
+  start_time: string;
+  status: OperationalSessionStatus;
+  training_plan_version: OperationalSessionTrainingVersion | null;
+  training_plan_version_id: string | null;
+  updated_at: string;
+};
 
 export type TrainingPlanStatus = "active" | "archived";
+export type TrainingMode = "individual" | "coletivo";
 export type TrainingVersionStatus = "draft" | "published" | "archived";
 export type TrainingVersionLevel =
   | "iniciante"
@@ -233,7 +332,7 @@ export type TrainingPlan = {
   status: TrainingPlanStatus;
   title: string;
   updated_at: string;
-  vessel_class: VesselClass;
+  training_mode: TrainingMode;
 };
 
 export type TrainingPlanVersion = {

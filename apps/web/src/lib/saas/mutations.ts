@@ -1,11 +1,14 @@
 import type {
+  BaseScheduleStatus,
+  BookingStatus,
   CompanyInvitation,
   DefaultSteererPolicy,
   JsonObject,
   LandingPage,
   MembershipRole,
-  NewBooking,
+  OperationalSessionStatus,
   TrainingBlockInput,
+  TrainingMode,
   TrainingVersionLevel,
   VesselClass,
   VesselStatus,
@@ -15,20 +18,66 @@ import type {
 import { createHash, randomBytes } from "node:crypto";
 import { createClient } from "./supabase-server";
 
-export async function createBooking(data: NewBooking) {
+export async function reserveAvailableSlot({
+  companyId,
+  slotId,
+}: {
+  companyId: string;
+  slotId: string;
+}) {
   const supabase = await createClient();
-
-  const { data: booking, error } = await supabase
-    .from("bookings")
-    .insert(data)
-    .select("*")
-    .single();
+  const { data, error } = await supabase.rpc("reserve_slot", {
+    p_company_id: companyId,
+    p_slot_id: slotId,
+  });
 
   if (error) {
     throw error;
   }
 
-  return booking;
+  return data;
+}
+
+export async function cancelOwnSlotBooking({
+  companyId,
+  slotId,
+}: {
+  companyId: string;
+  slotId: string;
+}) {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("cancel_my_slot_booking", {
+    p_company_id: companyId,
+    p_slot_id: slotId,
+  });
+
+  if (error) {
+    throw error;
+  }
+}
+
+export async function setBookingAttendance({
+  bookingId,
+  companyId,
+  sessionId,
+  status,
+}: {
+  bookingId: string;
+  companyId: string;
+  sessionId: string;
+  status: Extract<BookingStatus, "attended" | "missed">;
+}) {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("set_booking_attendance", {
+    p_booking_id: bookingId,
+    p_company_id: companyId,
+    p_session_id: sessionId,
+    p_status: status,
+  });
+
+  if (error) {
+    throw error;
+  }
 }
 
 export type UpdateCompanyConfigurationInput = {
@@ -182,6 +231,151 @@ export async function updateResourceOperationalStatus({
   }
 
   return resource;
+}
+
+export type UpsertBaseScheduleInput = {
+  coachId: string;
+  companyId: string;
+  createdBy: string;
+  durationMinutes: number;
+  groupName: string;
+  level?: string | null;
+  resourceIds: string[];
+  scheduleId?: string | null;
+  startTime: string;
+  status: BaseScheduleStatus;
+  weekday: number;
+};
+
+export async function upsertBaseSchedule({
+  coachId,
+  companyId,
+  createdBy,
+  durationMinutes,
+  groupName,
+  level = null,
+  resourceIds,
+  scheduleId = null,
+  startTime,
+  status,
+  weekday,
+}: UpsertBaseScheduleInput): Promise<string> {
+  const supabase = await createClient();
+  const uniqueResourceIds = [...new Set(resourceIds)];
+  const { data, error } = await supabase.rpc("upsert_base_schedule", {
+    p_coach_id: coachId,
+    p_company_id: companyId,
+    p_duration_minutes: durationMinutes,
+    p_group_name: groupName,
+    p_level: level,
+    p_resource_ids: uniqueResourceIds,
+    p_schedule_id: scheduleId,
+    p_start_time: startTime,
+    p_status: status,
+    p_weekday: weekday,
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  void createdBy;
+
+  return data as string;
+}
+
+export async function updateBaseScheduleStatus({
+  companyId,
+  scheduleId,
+  status,
+}: {
+  companyId: string;
+  scheduleId: string;
+  status: BaseScheduleStatus;
+}) {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("base_schedules")
+    .update({
+      status,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("company_id", companyId)
+    .eq("id", scheduleId);
+
+  if (error) {
+    throw error;
+  }
+}
+
+export type UpsertOperationalSessionInput = {
+  baseScheduleId?: string | null;
+  coachId: string;
+  companyId: string;
+  durationMinutes: number;
+  groupName: string;
+  level?: string | null;
+  resourceIds: string[];
+  sessionDate: string;
+  sessionId?: string | null;
+  startTime: string;
+  status: OperationalSessionStatus;
+  trainingPlanVersionId?: string | null;
+};
+
+export async function upsertOperationalSession({
+  baseScheduleId = null,
+  coachId,
+  companyId,
+  durationMinutes,
+  groupName,
+  level = null,
+  resourceIds,
+  sessionDate,
+  sessionId = null,
+  startTime,
+  status,
+  trainingPlanVersionId = null,
+}: UpsertOperationalSessionInput): Promise<string> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("upsert_operational_session", {
+    p_base_schedule_id: baseScheduleId,
+    p_coach_id: coachId,
+    p_company_id: companyId,
+    p_duration_minutes: durationMinutes,
+    p_group_name: groupName,
+    p_level: level,
+    p_resource_ids: [...new Set(resourceIds)],
+    p_session_date: sessionDate,
+    p_session_id: sessionId,
+    p_start_time: startTime,
+    p_status: status,
+    p_training_plan_version_id: trainingPlanVersionId,
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  return data as string;
+}
+
+export async function setOperationalSessionTraining({
+  sessionId,
+  trainingPlanVersionId,
+}: {
+  sessionId: string;
+  trainingPlanVersionId: string | null;
+}) {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("set_operational_session_training", {
+    p_session_id: sessionId,
+    p_training_plan_version_id: trainingPlanVersionId,
+  });
+
+  if (error) {
+    throw error;
+  }
 }
 
 export type CreateServiceInput = {
@@ -489,23 +683,38 @@ export type EnsureProfileInput = {
 
 export async function ensureProfile({
   avatarUrl,
-  email,
   name,
   userId,
 }: EnsureProfileInput) {
   const supabase = await createClient();
-  const profileName = name || email || "Usuario Bora";
+  const { data: existingProfile, error: existingProfileError } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", userId)
+    .maybeSingle();
+
+  if (existingProfileError) {
+    throw existingProfileError;
+  }
+
+  // Reservar um horário nunca deve alterar dados que o remador já salvou.
+  if (existingProfile) {
+    return existingProfile;
+  }
+
+  const metadataName = name.trim();
+  const profileName =
+    metadataName && !metadataName.includes("@")
+      ? metadataName
+      : "Remador BoraSport";
 
   const { data: profile, error } = await supabase
     .from("profiles")
-    .upsert(
-      {
-        avatar_url: avatarUrl ?? null,
-        id: userId,
-        name: profileName,
-      },
-      { onConflict: "id" },
-    )
+    .insert({
+      avatar_url: avatarUrl ?? null,
+      id: userId,
+      name: profileName,
+    })
     .select("*")
     .single();
 
@@ -532,6 +741,15 @@ export async function updateProfile({
   userId,
 }: UpdateProfileInput) {
   const supabase = await createClient();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user || user.id !== userId) {
+    throw new Error("Sessão inválida. Entre novamente para salvar seu perfil.");
+  }
+
   let finalAvatarUrl = avatarUrl;
 
   if (avatarFile && avatarFile.size > 0) {
@@ -607,6 +825,51 @@ export async function createMembership({
   return membership;
 }
 
+export type UpdateMembershipRoleInput = {
+  companyId: string;
+  membershipId: string;
+  role: MembershipRole;
+};
+
+export async function updateMembershipRole({
+  companyId,
+  membershipId,
+  role,
+}: UpdateMembershipRoleInput) {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("update_company_membership_role", {
+    p_company_id: companyId,
+    p_membership_id: membershipId,
+    p_role: role,
+  });
+
+  if (error) {
+    throw error;
+  }
+
+}
+
+export type DeleteMembershipInput = {
+  companyId: string;
+  membershipId: string;
+};
+
+export async function deleteMembership({
+  companyId,
+  membershipId,
+}: DeleteMembershipInput) {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("delete_company_membership", {
+    p_company_id: companyId,
+    p_membership_id: membershipId,
+  });
+
+  if (error) {
+    throw error;
+  }
+
+}
+
 function createRawInvitationToken() {
   return randomBytes(32).toString("base64url");
 }
@@ -677,7 +940,7 @@ export type CreateTrainingPlanDraftInput = {
   groupLabel?: string | null;
   objective?: string | null;
   title: string;
-  vesselClass?: VesselClass;
+  trainingMode?: TrainingMode;
 };
 
 export async function createTrainingPlanDraft({
@@ -687,7 +950,7 @@ export async function createTrainingPlanDraft({
   groupLabel = null,
   objective = null,
   title,
-  vesselClass = "outro",
+  trainingMode = "coletivo",
 }: CreateTrainingPlanDraftInput): Promise<string> {
   const supabase = await createClient();
   const { data, error } = await supabase.rpc("create_training_plan_draft", {
@@ -697,7 +960,7 @@ export async function createTrainingPlanDraft({
     p_group_label: groupLabel,
     p_objective: objective,
     p_title: title,
-    p_vessel_class: vesselClass,
+    p_training_mode: trainingMode,
   });
 
   if (error) {

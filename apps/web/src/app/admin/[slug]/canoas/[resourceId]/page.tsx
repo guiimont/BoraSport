@@ -30,7 +30,7 @@ export default async function EditCanoaPage({ params }: EditCanoaPageProps) {
       context={context}
       eyebrow="Canoa"
       showSessionBar={false}
-      subtitle="Revise capacidade, situacao e regra de leme sem alterar historico de reservas."
+      subtitle="Revise capacidade, situação e regra de leme sem alterar o histórico de reservas."
       title={resource.name}
     >
       <div className={styles.backRow}>
@@ -41,13 +41,13 @@ export default async function EditCanoaPage({ params }: EditCanoaPageProps) {
           Voltar para frota
         </Link>
       </div>
-      <section className={styles.vesselDetailActions} aria-label="Acoes da canoa">
+      <section className={styles.vesselDetailActions} aria-label="Ações da canoa">
         <div>
-          <p className={styles.eyebrow}>Situacao operacional</p>
-          <h2>Acoes da frota</h2>
+          <p className={styles.eyebrow}>Situação operacional</p>
+          <h2>Ações da frota</h2>
           <p>
-            Use estas acoes para preservar historico sem apagar a canoa ou suas
-            relacoes com horarios antigos.
+            Use estas ações para preservar o histórico sem apagar a canoa ou suas
+            relações com horários antigos.
           </p>
         </div>
         <div className={styles.vesselActions}>

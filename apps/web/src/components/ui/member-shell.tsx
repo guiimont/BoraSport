@@ -13,18 +13,16 @@ type MemberShellProps = {
   children: ReactNode;
   company?: MemberShellCompany;
   context: string;
+  description?: string;
   title: string;
-  userEmail?: string | null;
-  userName?: string | null;
 };
 
 export function MemberShell({
   children,
   company = null,
   context,
+  description = "Atualize seus dados pessoais e acesse as informações do seu clube.",
   title,
-  userEmail,
-  userName,
 }: MemberShellProps) {
   return (
     <main className={styles.memberPage}>
@@ -50,21 +48,9 @@ export function MemberShell({
         </div>
 
         <div className={styles.memberHeroContent}>
-          <div>
-            <p className={styles.memberEyebrow}>{context}</p>
-            <h1>{title}</h1>
-            <p>
-              Mantenha seus dados atualizados para aparecer corretamente nas
-              reservas e na rotina do clube.
-            </p>
-          </div>
-
-          <aside className={styles.memberIdentity} aria-label="Usuário conectado">
-            <span>Conta conectada</span>
-            <strong>{userName || userEmail || "Remador BoraSport"}</strong>
-            {userEmail ? <small>{userEmail}</small> : null}
-            {company ? <em>{company.name}</em> : null}
-          </aside>
+          <p className={styles.memberEyebrow}>{context}</p>
+          <h1>{title}</h1>
+          <p>{description}</p>
         </div>
       </header>
 

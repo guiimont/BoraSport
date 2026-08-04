@@ -6,24 +6,13 @@ import { getManageAdminContext } from "../admin-context";
 import { AdminShell } from "../admin-shell";
 import styles from "../admin.module.css";
 import { TenantInvitations } from "../tenant-invitations";
+import { MembersDirectory } from "./members-directory";
 
 type AdminMembersPageProps = {
   params: Promise<{
     slug: string;
   }>;
 };
-
-function getRoleLabel(role: string) {
-  if (role === "admin") {
-    return "Admin";
-  }
-
-  if (role === "professional") {
-    return "Treinador";
-  }
-
-  return "Remador";
-}
 
 export default async function AdminMembersPage({ params }: AdminMembersPageProps) {
   const { slug } = await params;
@@ -33,6 +22,14 @@ export default async function AdminMembersPage({ params }: AdminMembersPageProps
     getCompanyMembers(company.id),
     getCompanyInvitations(company.id),
   ]);
+  const remadores = members.filter((member) => member.role === "client").length;
+  const equipe = members.length - remadores;
+  const activeInvitations = invitations.filter(
+    (invitation) =>
+      !invitation.used_at &&
+      !invitation.revoked_at &&
+      new Date(invitation.expires_at).getTime() > Date.now(),
+  ).length;
 
   return (
     <AdminShell
@@ -41,41 +38,51 @@ export default async function AdminMembersPage({ params }: AdminMembersPageProps
       subtitle="Gerencie vínculos do clube e convites individuais de acesso."
       title="Remadores"
     >
-      <section className={styles.statGrid} aria-label="Resumo dos remadores">
+      <section className={styles.membersStatGrid} aria-label="Resumo das pessoas do clube">
         <article className={styles.statCard}>
-          <p>Vinculados</p>
+          <p>Pessoas no clube</p>
           <strong>{members.length}</strong>
+          <span>Todos os acessos vinculados</span>
         </article>
         <article className={styles.statCard}>
-          <p>Convites emitidos</p>
-          <strong>{invitations.length}</strong>
+          <p>Remadores</p>
+          <strong>{remadores}</strong>
+          <span>Atletas com acesso ao clube</span>
+        </article>
+        <article className={styles.statCard}>
+          <p>Equipe</p>
+          <strong>{equipe}</strong>
+          <span>Gestores e treinadores</span>
+        </article>
+        <article className={styles.statCard}>
+          <p>Convites ativos</p>
+          <strong>{activeInvitations}</strong>
+          <span>Aguardando aceite</span>
         </article>
       </section>
 
-      <section className={styles.panel}>
-        <div className={styles.sectionHead}>
+      <section className={`${styles.panel} ${styles.membersPanel}`}>
+        <div className={styles.sectionHeadBalanced}>
           <div>
-            <p className={styles.eyebrow}>Membros do clube</p>
-            <h2>Remadores e equipe vinculados</h2>
+            <p className={styles.eyebrow}>Pessoas do clube</p>
+            <h2>Remadores e equipe</h2>
+            <p className={styles.muted}>
+              Consulte quem já possui acesso e qual é a função de cada pessoa.
+            </p>
           </div>
+          {role === "admin" ? (
+            <a className={styles.primaryButtonLink} href="#convidar-remador">
+              Convidar remador
+            </a>
+          ) : null}
         </div>
-        <div className={styles.list}>
-          {members.length > 0 ? (
-            members.map((member) => (
-              <div className={styles.listItem} key={member.id}>
-                <div>
-                  <strong>{member.profile?.name || "Usuário BoraSport"}</strong>
-                  <p className={styles.itemDescription}>
-                    {getRoleLabel(member.role)}
-                  </p>
-                </div>
-                <span>{new Date(member.created_at).toLocaleDateString("pt-BR")}</span>
-              </div>
-            ))
-          ) : (
-            <p className={styles.empty}>Nenhum remador vinculado ainda.</p>
-          )}
-        </div>
+        <MembersDirectory
+          canManage={role === "admin"}
+          companyId={company.id}
+          currentUserId={context.user.id}
+          members={members}
+          slug={company.slug}
+        />
       </section>
 
       {role === "admin" ? (

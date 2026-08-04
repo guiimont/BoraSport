@@ -1,13 +1,20 @@
 import type {
+  ActivityRecord,
+  BaseSchedule,
+  BaseScheduleResource,
   Booking,
   Company,
   CompanyInvitation,
   CompanyMember,
   CompanySlot,
+  CurrentUserBooking,
   LandingPage,
   MembershipRole,
   MembershipWithCompany,
+  OperationalSession,
+  OperationalSessionResource,
   Profile,
+  SessionParticipant,
   PublicSportProfile,
   Resource,
   Service,
@@ -55,6 +62,118 @@ function normalizeResource(resource: Partial<Resource> & Pick<Resource, "id" | "
     updated_at: resource.updated_at,
     vessel_class: resource.vessel_class ?? null,
     vessel_status: resource.vessel_status ?? (resource.is_active ? "disponivel" : "inativa"),
+  };
+}
+
+function normalizeBaseScheduleResource(
+  row: Omit<BaseScheduleResource, "resource"> & {
+    resources?: SupabaseJoin<Resource>;
+  },
+): BaseScheduleResource {
+  return {
+    company_id: row.company_id,
+    created_at: row.created_at,
+    resource: firstJoin(row.resources ?? null)
+      ? normalizeResource(firstJoin(row.resources ?? null) as Resource)
+      : null,
+    resource_id: row.resource_id,
+    schedule_id: row.schedule_id,
+  };
+}
+
+function normalizeBaseSchedule(
+  row: Omit<BaseSchedule, "coach" | "resources"> & {
+    base_schedule_resources?: Array<
+      Omit<BaseScheduleResource, "resource"> & { resources?: SupabaseJoin<Resource> }
+    >;
+    profiles?: SupabaseJoin<Pick<Profile, "avatar_url" | "id" | "name">>;
+  },
+): BaseSchedule {
+  return {
+    coach: firstJoin(row.profiles ?? null),
+    coach_id: row.coach_id,
+    company_id: row.company_id,
+    created_at: row.created_at,
+    created_by: row.created_by,
+    duration_minutes: row.duration_minutes,
+    group_name: row.group_name,
+    id: row.id,
+    level: row.level,
+    resources: (row.base_schedule_resources ?? []).map(
+      normalizeBaseScheduleResource,
+    ),
+    start_time: row.start_time,
+    status: row.status,
+    updated_at: row.updated_at,
+    weekday: row.weekday,
+  };
+}
+
+function normalizeOperationalSessionResource(
+  row: Omit<OperationalSessionResource, "resource"> & {
+    resources?: SupabaseJoin<Resource>;
+  },
+): OperationalSessionResource {
+  return {
+    company_id: row.company_id,
+    created_at: row.created_at,
+    resource: firstJoin(row.resources ?? null)
+      ? normalizeResource(firstJoin(row.resources ?? null) as Resource)
+      : null,
+    resource_id: row.resource_id,
+    session_id: row.session_id,
+  };
+}
+
+function normalizeOperationalSession(
+  row: Omit<OperationalSession, "coach" | "resources" | "training_plan_version"> & {
+    operational_session_resources?: Array<
+      Omit<OperationalSessionResource, "resource"> & { resources?: SupabaseJoin<Resource> }
+    >;
+    profiles?: SupabaseJoin<Pick<Profile, "avatar_url" | "id" | "name">>;
+    training_plan_versions?: SupabaseJoin<
+      Omit<NonNullable<OperationalSession["training_plan_version"]>, "training_plan"> & {
+        training_plans?: SupabaseJoin<
+          NonNullable<OperationalSession["training_plan_version"]>["training_plan"]
+        >;
+      }
+    >;
+  },
+): OperationalSession {
+  const trainingVersion = firstJoin(row.training_plan_versions ?? null);
+
+  return {
+    base_schedule_id: row.base_schedule_id,
+    coach: firstJoin(row.profiles ?? null),
+    coach_id: row.coach_id,
+    company_id: row.company_id,
+    created_at: row.created_at,
+    created_by: row.created_by,
+    duration_minutes: row.duration_minutes,
+    group_name: row.group_name,
+    id: row.id,
+    level: row.level,
+    resources: (row.operational_session_resources ?? []).map(
+      normalizeOperationalSessionResource,
+    ),
+    session_date: row.session_date,
+    start_time: row.start_time,
+    status: row.status,
+    training_plan_version: trainingVersion
+      ? {
+          company_id: trainingVersion.company_id,
+          duration_seconds: trainingVersion.duration_seconds,
+          id: trainingVersion.id,
+          level: trainingVersion.level,
+          published_at: trainingVersion.published_at,
+          status: trainingVersion.status,
+          training_plan: firstJoin(trainingVersion.training_plans ?? null),
+          training_plan_id: trainingVersion.training_plan_id,
+          version_number: trainingVersion.version_number,
+        }
+      : null,
+    training_plan_version_id: row.training_plan_version_id,
+    updated_at: row.updated_at,
   };
 }
 
@@ -218,6 +337,8 @@ export async function getCompanySlots(
         end_time,
         spots_total,
         spots_occupied,
+        operational_session_id,
+        is_public,
         services!inner (
           id,
           name,
@@ -225,7 +346,7 @@ export async function getCompanySlots(
           duration_minutes,
           price
         ),
-        resources!inner (
+        resources (
           id,
           name,
           capacity_maxima
@@ -234,8 +355,8 @@ export async function getCompanySlots(
     )
     .eq("company_id", companyId)
     .gte("start_time", new Date().toISOString())
+    .eq("is_public", true)
     .eq("services.is_active", true)
-    .eq("resources.is_active", true)
     .order("start_time", { ascending: true })
     .limit(12);
 
@@ -249,11 +370,11 @@ export async function getCompanySlots(
 
   const restRows = await getRowsViaRestOrThrow<CompanySlot>("slots", {
     select:
-      "id,company_id,service_id,resource_id,professional_id,start_time,end_time,spots_total,spots_occupied,services!inner(id,name,description,duration_minutes,price),resources!inner(id,name,capacity_maxima)",
+      "id,company_id,service_id,resource_id,professional_id,start_time,end_time,spots_total,spots_occupied,operational_session_id,is_public,services!inner(id,name,description,duration_minutes,price),resources(id,name,capacity_maxima)",
     company_id: `eq.${companyId}`,
     start_time: `gte.${new Date().toISOString()}`,
+    is_public: "eq.true",
     "services.is_active": "eq.true",
-    "resources.is_active": "eq.true",
     order: "start_time.asc",
     limit: "12",
   });
@@ -289,9 +410,9 @@ export async function getCompanySlotParticipants(
   return grouped;
 }
 
-export async function getCurrentUserConfirmedBookingSlotIds(
+export async function getCurrentUserActiveBookings(
   companyId: string,
-): Promise<string[]> {
+): Promise<CurrentUserBooking[]> {
   const user = await getCurrentUser();
 
   if (!user) {
@@ -299,18 +420,15 @@ export async function getCurrentUserConfirmedBookingSlotIds(
   }
 
   const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("bookings")
-    .select("slot_id")
-    .eq("company_id", companyId)
-    .eq("user_id", user.id)
-    .eq("status", "confirmed");
+  const { data, error } = await supabase.rpc("get_my_active_bookings", {
+    p_company_id: companyId,
+  });
 
   if (error) {
     return [];
   }
 
-  return (data ?? []).map((booking) => booking.slot_id);
+  return (data ?? []) as CurrentUserBooking[];
 }
 
 export async function getPublicSportProfile(
@@ -465,6 +583,307 @@ export async function getCompanyResourceById(
   return resources.find((resource) => resource.id === resourceId) ?? null;
 }
 
+export async function getCompanyBaseSchedules(
+  companyId: string,
+): Promise<BaseSchedule[]> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("base_schedules")
+    .select(
+      `
+        id,
+        company_id,
+        weekday,
+        start_time,
+        duration_minutes,
+        group_name,
+        level,
+        coach_id,
+        status,
+        created_by,
+        created_at,
+        updated_at,
+        profiles:coach_id (
+          id,
+          name,
+          avatar_url
+        ),
+        base_schedule_resources (
+          schedule_id,
+          company_id,
+          resource_id,
+          created_at,
+          resources (
+            id,
+            company_id,
+            name,
+            capacity_maxima,
+            is_active,
+            vessel_class,
+            vessel_status,
+            default_steerer_policy,
+            internal_code,
+            operational_notes,
+            color,
+            created_at,
+            updated_at
+          )
+        )
+      `,
+    )
+    .eq("company_id", companyId)
+    .order("weekday", { ascending: true })
+    .order("start_time", { ascending: true });
+
+  if (error) {
+    if (error.code === "42P01" || error.code === "42703") {
+      return [];
+    }
+
+    throw error;
+  }
+
+  return (data ?? []).map((row) => normalizeBaseSchedule(row as Parameters<typeof normalizeBaseSchedule>[0]));
+}
+
+export async function getCompanyBaseScheduleById(
+  companyId: string,
+  scheduleId: string,
+): Promise<BaseSchedule | null> {
+  const schedules = await getCompanyBaseSchedules(companyId);
+
+  return schedules.find((schedule) => schedule.id === scheduleId) ?? null;
+}
+
+export async function getCompanyOperationalSessions({
+  companyId,
+  endDate,
+  startDate,
+}: {
+  companyId: string;
+  endDate: string;
+  startDate: string;
+}): Promise<OperationalSession[]> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("operational_sessions")
+    .select(
+      `
+        id,
+        company_id,
+        session_date,
+        start_time,
+        duration_minutes,
+        group_name,
+        level,
+        base_schedule_id,
+        coach_id,
+        training_plan_version_id,
+        status,
+        created_by,
+        created_at,
+        updated_at,
+        profiles:coach_id (
+          id,
+          name,
+          avatar_url
+        ),
+        training_plan_versions:training_plan_versions!operational_sessions_training_version_company_fk (
+          id,
+          company_id,
+          training_plan_id,
+          version_number,
+          level,
+          status,
+          duration_seconds,
+          published_at,
+          training_plans:training_plans!training_plan_versions_plan_company_fk (
+            id,
+            title,
+            objective,
+            training_mode
+          )
+        ),
+        operational_session_resources (
+          session_id,
+          company_id,
+          resource_id,
+          created_at,
+          resources (
+            id,
+            company_id,
+            name,
+            capacity_maxima,
+            is_active,
+            vessel_class,
+            vessel_status,
+            default_steerer_policy,
+            internal_code,
+            operational_notes,
+            color,
+            created_at,
+            updated_at
+          )
+        )
+      `,
+    )
+    .eq("company_id", companyId)
+    .gte("session_date", startDate)
+    .lte("session_date", endDate)
+    .order("session_date", { ascending: true })
+    .order("start_time", { ascending: true });
+
+  if (error) {
+    if (error.code === "42P01" || error.code === "42703") {
+      return [];
+    }
+
+    throw error;
+  }
+
+  return (data ?? []).map((row) =>
+    normalizeOperationalSession(
+      row as Parameters<typeof normalizeOperationalSession>[0],
+    ),
+  );
+}
+
+export async function getCompanyOperationalSessionById({
+  companyId,
+  sessionId,
+}: {
+  companyId: string;
+  sessionId: string;
+}): Promise<OperationalSession | null> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("operational_sessions")
+    .select(
+      `
+        id,
+        company_id,
+        session_date,
+        start_time,
+        duration_minutes,
+        group_name,
+        level,
+        base_schedule_id,
+        coach_id,
+        training_plan_version_id,
+        status,
+        created_by,
+        created_at,
+        updated_at,
+        profiles:coach_id (
+          id,
+          name,
+          avatar_url
+        ),
+        training_plan_versions:training_plan_versions!operational_sessions_training_version_company_fk (
+          id,
+          company_id,
+          training_plan_id,
+          version_number,
+          level,
+          status,
+          duration_seconds,
+          published_at,
+          training_plans:training_plans!training_plan_versions_plan_company_fk (
+            id,
+            title,
+            objective,
+            training_mode
+          )
+        ),
+        operational_session_resources (
+          session_id,
+          company_id,
+          resource_id,
+          created_at,
+          resources (
+            id,
+            company_id,
+            name,
+            capacity_maxima,
+            is_active,
+            vessel_class,
+            vessel_status,
+            default_steerer_policy,
+            internal_code,
+            operational_notes,
+            color,
+            created_at,
+            updated_at
+          )
+        )
+      `,
+    )
+    .eq("company_id", companyId)
+    .eq("id", sessionId)
+    .maybeSingle();
+
+  if (error) {
+    if (error.code === "42P01" || error.code === "42703") {
+      return null;
+    }
+
+    throw error;
+  }
+
+  return data
+    ? normalizeOperationalSession(
+        data as Parameters<typeof normalizeOperationalSession>[0],
+      )
+    : null;
+}
+
+export async function getOperationalSessionParticipants({
+  companyId,
+  sessionId,
+}: {
+  companyId: string;
+  sessionId: string;
+}): Promise<SessionParticipant[]> {
+  const supabase = await createClient();
+  const { data: slot, error: slotError } = await supabase
+    .from("slots")
+    .select("id")
+    .eq("company_id", companyId)
+    .eq("operational_session_id", sessionId)
+    .maybeSingle();
+
+  if (slotError || !slot) {
+    return [];
+  }
+
+  const { data: bookings, error } = await supabase
+    .from("bookings")
+    .select("id,slot_id,user_id,company_id,status,created_at,updated_at")
+    .eq("company_id", companyId)
+    .eq("slot_id", slot.id)
+    .neq("status", "cancelled")
+    .order("created_at", { ascending: true });
+
+  if (error || !bookings?.length) {
+    return [];
+  }
+
+  const userIds = bookings.map((booking) => booking.user_id);
+  const { data: profiles } = await supabase
+    .from("profiles")
+    .select("id,name,phone,avatar_url")
+    .in("id", userIds);
+  const profilesById = new Map((profiles ?? []).map((profile) => [profile.id, profile]));
+
+  return bookings.map((booking) => ({
+    ...booking,
+    profile: profilesById.get(booking.user_id) ?? null,
+  })) as SessionParticipant[];
+}
+
 export async function getCompanyServices(
   companyId: string,
 ): Promise<Service[]> {
@@ -534,7 +953,7 @@ export async function getCompanyMembers(
   const userIds = memberships.map((membership) => membership.user_id);
   const { data: profiles } = await supabase
     .from("profiles")
-    .select("id,name,avatar_url")
+    .select("id,name,phone,avatar_url")
     .in("id", userIds);
 
   const profilesById = new Map(
@@ -580,6 +999,29 @@ export async function getCurrentProfile(): Promise<Profile | null> {
   }
 
   return (data as Profile | null) ?? null;
+}
+
+export async function getCurrentUserActivityRecords(): Promise<ActivityRecord[]> {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return [];
+  }
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("activity_records")
+    .select(
+      "id,company_id,provider,activity_type,title,started_at,duration_seconds,distance_meters,average_heart_rate,visibility",
+    )
+    .eq("user_id", user.id)
+    .order("started_at", { ascending: false });
+
+  if (error) {
+    return [];
+  }
+
+  return (data as ActivityRecord[] | null) ?? [];
 }
 
 export async function getCurrentUserMemberships(): Promise<MembershipWithCompany[]> {
@@ -694,7 +1136,7 @@ export async function getCompanyTrainingLibrary(
         company_id,
         title,
         objective,
-        vessel_class,
+        training_mode,
         default_duration_seconds,
         group_label,
         coach_id,
@@ -770,7 +1212,7 @@ export async function getTrainingPlanWithVersion({
   const { data: plan, error: planError } = await supabase
     .from("training_plans")
     .select(
-      "id,company_id,title,objective,vessel_class,default_duration_seconds,group_label,coach_id,status,created_by,archived_at,created_at,updated_at",
+      "id,company_id,title,objective,training_mode,default_duration_seconds,group_label,coach_id,status,created_by,archived_at,created_at,updated_at",
     )
     .eq("company_id", companyId)
     .eq("id", trainingPlanId)

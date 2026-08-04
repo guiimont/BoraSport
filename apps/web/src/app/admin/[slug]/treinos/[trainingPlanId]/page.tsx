@@ -9,15 +9,16 @@ import type {
   BoraZone,
   TrainingBlock,
   TrainingBlockType,
+  TrainingMode,
   TrainingVersionLevel,
   TrainingVersionStatus,
-  VesselClass,
 } from "../../../../../types/saas";
 import { getManageAdminContext } from "../../admin-context";
 import { AdminShell } from "../../admin-shell";
 import styles from "../../admin.module.css";
 import {
   archiveTrainingPlanAction,
+  publishAndScheduleTrainingVersionAction,
   publishTrainingVersionAction,
 } from "../actions";
 
@@ -45,14 +46,9 @@ const levelLabels: Record<TrainingVersionLevel, string> = {
   personalizado: "Personalizado",
 };
 
-const vesselLabels: Record<VesselClass, string> = {
-  oc1: "OC1",
-  oc4: "OC4",
-  oc6: "OC6",
-  outro: "Outro",
-  v1: "V1",
-  v3: "V3",
-  v6: "V6",
+const trainingModeLabels: Record<TrainingMode, string> = {
+  coletivo: "Coletivo",
+  individual: "Individual",
 };
 
 const blockTypeLabels: Record<TrainingBlockType, string> = {
@@ -132,7 +128,7 @@ export default async function TrainingDetailPage({
       <section className={styles.trainingDetailHero}>
         <div>
           <span className={styles.trainingPlanVessel}>
-            {vesselLabels[plan.vessel_class]}
+            {trainingModeLabels[plan.training_mode]}
           </span>
           <h2>{plan.title}</h2>
           <p>{plan.objective || "Objetivo ainda não informado."}</p>
@@ -141,6 +137,27 @@ export default async function TrainingDetailPage({
           <span>{plan.status === "archived" ? "Arquivado" : "Ativo"}</span>
           {version ? <span>{statusLabels[version.status]}</span> : null}
         </div>
+        {plan.status !== "archived" && version?.status === "published" ? (
+          <Link
+            className={styles.primaryButton}
+            href={`/admin/${context.company.slug}/agenda/novo?trainingPlanVersionId=${version.id}`}
+          >
+            Agendar treino
+          </Link>
+        ) : null}
+        {plan.status !== "archived" && version?.status === "draft" ? (
+          <form action={publishAndScheduleTrainingVersionAction}>
+            <input name="slug" type="hidden" value={context.company.slug} />
+            <input
+              name="trainingPlanVersionId"
+              type="hidden"
+              value={version.id}
+            />
+            <button className={styles.primaryButton} type="submit">
+              Publicar e agendar
+            </button>
+          </form>
+        ) : null}
       </section>
 
       <section className={styles.trainingDetailGrid}>

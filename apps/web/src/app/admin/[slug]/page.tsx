@@ -2,29 +2,92 @@ import Link from "next/link";
 
 import {
   getCompanyBookings,
-  getCompanyInvitations,
-  getCompanyLandingPage,
   getCompanyMembers,
+  getCompanyOperationalSessions,
   getCompanyResources,
-  getCompanyServices,
   getCompanySlots,
-  getCompanyTrainingLibrary,
 } from "../../../lib/saas/queries";
+import type { OperationalSession } from "../../../types/saas";
 import { ClaimCompanyForm } from "./claim-company-form";
-import { formatDateTime, getAdminContext } from "./admin-context";
+import { getAdminContext } from "./admin-context";
 import { AdminShell } from "./admin-shell";
 import styles from "./admin.module.css";
 
 type AdminPageProps = {
-  params: Promise<{
-    slug: string;
-  }>;
+  params: Promise<{ slug: string }>;
+  searchParams?: Promise<{ period?: string }>;
 };
 
+type OverviewPeriod = 1 | 7 | 30;
+
+const dateKeyFormatter = new Intl.DateTimeFormat("en-CA", {
+  day: "2-digit",
+  month: "2-digit",
+  timeZone: "America/Sao_Paulo",
+  year: "numeric",
+});
+
+const sessionDateFormatter = new Intl.DateTimeFormat("pt-BR", {
+  day: "2-digit",
+  month: "short",
+  timeZone: "America/Sao_Paulo",
+  weekday: "short",
+});
+
+function toDateKey(date: Date) {
+  return dateKeyFormatter.format(date);
+}
+
+function addDays(date: Date, days: number) {
+  const next = new Date(date);
+  next.setDate(next.getDate() + days);
+  return next;
+}
+
+function normalizePeriod(value?: string): OverviewPeriod {
+  if (value === "1" || value === "7") return Number(value) as OverviewPeriod;
+  return 30;
+}
+
+function formatTime(value: string) {
+  return value.slice(0, 5);
+}
+
+function getSaoPauloTime() {
+  return new Intl.DateTimeFormat("pt-BR", {
+    hour: "2-digit",
+    hour12: false,
+    minute: "2-digit",
+    timeZone: "America/Sao_Paulo",
+  }).format(new Date());
+}
+
+function formatSessionDate(dateKey: string) {
+  const label = sessionDateFormatter.format(
+    new Date(`${dateKey}T12:00:00-03:00`),
+  );
+  return label.replace(".", "");
+}
+
+function getSessionCapacity(session: OperationalSession) {
+  return session.resources.reduce(
+    (total, item) => total + (item.resource?.capacity_maxima ?? 0),
+    0,
+  );
+}
+
+function getSessionState(session: OperationalSession) {
+  if (session.status === "cancelled") return "Cancelada";
+  if (session.status === "draft") return "Rascunho";
+  return "Publicada";
+}
+
 function StatCard({
+  hint,
   label,
   value,
 }: {
+  hint: string;
   label: string;
   value: number | string;
 }) {
@@ -32,25 +95,58 @@ function StatCard({
     <article className={styles.statCard}>
       <p>{label}</p>
       <strong>{value}</strong>
+      <span className={styles.statHint}>{hint}</span>
     </article>
   );
 }
 
-function getPendingInvitations(
-  invitations: Awaited<ReturnType<typeof getCompanyInvitations>>,
-) {
-  const now = Date.now();
+function SessionRow({
+  companySlug,
+  session,
+  showDate = true,
+}: {
+  companySlug: string;
+  session: OperationalSession;
+  showDate?: boolean;
+}) {
+  const training = session.training_plan_version?.training_plan?.title;
+  const resourceNames = session.resources
+    .map((item) => item.resource?.name)
+    .filter(Boolean)
+    .join(", ");
+  const capacity = getSessionCapacity(session);
 
-  return invitations.filter(
-    (invitation) =>
-      !invitation.used_at &&
-      !invitation.revoked_at &&
-      new Date(invitation.expires_at).getTime() > now,
-  ).length;
+  return (
+    <Link
+      className={styles.overviewSessionRow}
+      href={`/admin/${companySlug}/agenda/sessoes/${session.id}`}
+    >
+      <div className={styles.overviewSessionTime}>
+        {showDate ? <span>{formatSessionDate(session.session_date)}</span> : null}
+        <strong>{formatTime(session.start_time)}</strong>
+      </div>
+      <div className={styles.overviewSessionMain}>
+        <strong>{session.group_name}</strong>
+        <span>{training || "Treino ainda não definido"}</span>
+      </div>
+      <div className={styles.overviewSessionMeta}>
+        <span>{session.coach?.name || "Sem instrutor"}</span>
+        <span>{resourceNames || "Sem canoa"}</span>
+      </div>
+      <div className={styles.overviewSessionStatus}>
+        <span>{capacity > 0 ? `${capacity} vagas` : "Capacidade pendente"}</span>
+        <em data-status={session.status}>{getSessionState(session)}</em>
+      </div>
+      <span className={styles.overviewSessionArrow} aria-hidden="true">→</span>
+    </Link>
+  );
 }
 
-export default async function AdminOverviewPage({ params }: AdminPageProps) {
-  const { slug } = await params;
+export default async function AdminOverviewPage({
+  params,
+  searchParams,
+}: AdminPageProps) {
+  const [{ slug }, query] = await Promise.all([params, searchParams]);
   const context = await getAdminContext(slug);
   const { company, vocabulary } = context;
 
@@ -64,182 +160,304 @@ export default async function AdminOverviewPage({ params }: AdminPageProps) {
             Este clube ainda não tem membros. Para operar o painel, assuma o
             clube com sua conta autenticada.
           </p>
-
           <ClaimCompanyForm companyId={company.id} slug={company.slug} />
         </section>
       </main>
     );
   }
 
-  const [
-    resources,
-    services,
-    slots,
-    bookings,
-    landingPage,
-    invitations,
-    members,
-    trainingPlans,
-  ] = await Promise.all([
-      getCompanyResources(company.id),
-      getCompanyServices(company.id),
-      getCompanySlots(company.id),
-      getCompanyBookings(company.id),
-      getCompanyLandingPage(company.id),
-      getCompanyInvitations(company.id),
-      getCompanyMembers(company.id),
-      getCompanyTrainingLibrary(company.id),
-    ]);
+  const period = normalizePeriod(query?.period);
+  const now = new Date();
+  const todayKey = toDateKey(now);
+  const endKey = toDateKey(addDays(now, period - 1));
 
-  const nextSlot = slots[0] ?? null;
-  const futureCapacity = slots.reduce((total, slot) => total + slot.spots_total, 0);
-  const futureOccupied = slots.reduce(
+  const [sessions, slots, bookings, members, resources] = await Promise.all([
+    getCompanyOperationalSessions({
+      companyId: company.id,
+      endDate: endKey,
+      startDate: todayKey,
+    }),
+    getCompanySlots(company.id),
+    getCompanyBookings(company.id),
+    getCompanyMembers(company.id),
+    getCompanyResources(company.id),
+  ]);
+
+  const activeSessions = sessions.filter((session) => session.status !== "cancelled");
+  const todaySessions = activeSessions.filter(
+    (session) => session.session_date === todayKey,
+  );
+  const currentTime = getSaoPauloTime();
+  const upcomingSessions = activeSessions.filter(
+    (session) =>
+      session.session_date > todayKey ||
+      (session.session_date === todayKey && formatTime(session.start_time) >= currentTime),
+  );
+  const nextSession = upcomingSessions[0] ?? null;
+  const sessionsWithTraining = activeSessions.filter(
+    (session) => session.training_plan_version_id,
+  ).length;
+  const trainingCoverage = activeSessions.length
+    ? Math.round((sessionsWithTraining / activeSessions.length) * 100)
+    : 0;
+  const publishedSessions = activeSessions.filter(
+    (session) => session.status === "published",
+  ).length;
+  const visibleSlots = slots.filter((slot) => {
+    const key = toDateKey(new Date(slot.start_time));
+    return key >= todayKey && key <= endKey;
+  });
+  const totalCapacity = visibleSlots.reduce(
+    (total, slot) => total + slot.spots_total,
+    0,
+  );
+  const totalOccupied = visibleSlots.reduce(
     (total, slot) => total + slot.spots_occupied,
     0,
   );
-  const occupancy =
-    futureCapacity > 0 ? Math.round((futureOccupied / futureCapacity) * 100) : 0;
+  const occupancy = totalCapacity
+    ? Math.round((totalOccupied / totalCapacity) * 100)
+    : 0;
+  const visibleSlotIds = new Set(visibleSlots.map((slot) => slot.id));
   const confirmedBookings = bookings.filter(
-    (booking) => booking.status === "confirmed",
+    (booking) =>
+      visibleSlotIds.has(booking.slot_id) &&
+      (booking.status === "confirmed" || booking.status === "attended"),
   ).length;
-  const pendingInvitations = getPendingInvitations(invitations);
-  const alerts = [
-    resources.length === 0
-      ? `Cadastre pelo menos uma ${vocabulary.resource_label.toLowerCase()}.`
-      : null,
-    services.length === 0
-      ? `Crie pelo menos um ${vocabulary.service_label.toLowerCase()}.`
-      : null,
-    slots.length === 0 ? "Nenhum horário futuro publicado." : null,
-    landingPage?.is_published ? null : "Site do clube ainda não publicado.",
-  ].filter((alert): alert is string => Boolean(alert));
+
+  const operationalAlerts = activeSessions.flatMap((session) => {
+    const issues: Array<{ label: string; type: string }> = [];
+    if (!session.training_plan_version_id) {
+      issues.push({ label: "Treino não definido", type: "training" });
+    }
+    if (!session.coach) {
+      issues.push({ label: "Instrutor não definido", type: "coach" });
+    }
+    if (session.resources.length === 0) {
+      issues.push({ label: `${vocabulary.resource_label} não definida`, type: "resource" });
+    }
+    if (session.status === "draft") {
+      issues.push({ label: "Sessão em rascunho", type: "draft" });
+    }
+    return issues.map((issue) => ({ ...issue, session }));
+  });
 
   return (
     <AdminShell
       active="overview"
       context={context}
-      subtitle="Resumo operacional para administrar agenda, remadores, canoas, treinos e site do clube."
+      subtitle="Acompanhe a operação do clube e resolva o que exige atenção."
       title="Visão geral"
     >
-      <section className={styles.overviewHero}>
+      <section className={styles.overviewControlBar}>
         <div>
-          <p className={styles.eyebrow}>Próximo treino</p>
-          {nextSlot ? (
+          <p className={styles.eyebrow}>Painel operacional</p>
+          <strong>O que está acontecendo no clube</strong>
+        </div>
+        <nav className={styles.overviewPeriodNav} aria-label="Período dos indicadores">
+          {[
+            { label: "Hoje", value: 1 },
+            { label: "7 dias", value: 7 },
+            { label: "30 dias", value: 30 },
+          ].map((option) => (
+            <Link
+              aria-current={period === option.value ? "page" : undefined}
+              className={period === option.value ? styles.overviewPeriodActive : ""}
+              href={`/admin/${company.slug}?period=${option.value}`}
+              key={option.value}
+            >
+              {option.label}
+            </Link>
+          ))}
+        </nav>
+      </section>
+
+      <section className={styles.overviewHero}>
+        <div className={styles.overviewHeroMain}>
+          <p className={styles.eyebrow}>Próxima atividade</p>
+          {nextSession ? (
             <>
-              <h2>{nextSlot.services?.name || vocabulary.service_label}</h2>
-              <p className={styles.muted}>
-                {formatDateTime(nextSlot.start_time)} ·{" "}
-                {nextSlot.resources?.name || vocabulary.resource_label} ·{" "}
-                {nextSlot.spots_occupied}/{nextSlot.spots_total} confirmados
-              </p>
+              <div className={styles.overviewHeroTitle}>
+                <strong>{formatTime(nextSession.start_time)}</strong>
+                <div>
+                  <h2>{nextSession.group_name}</h2>
+                  <p>{formatSessionDate(nextSession.session_date)}</p>
+                </div>
+              </div>
+              <div className={styles.overviewHeroDetails}>
+                <span>
+                  <small>Treino</small>
+                  <strong>
+                    {nextSession.training_plan_version?.training_plan?.title || "Não definido"}
+                  </strong>
+                </span>
+                <span>
+                  <small>Instrutor</small>
+                  <strong>{nextSession.coach?.name || "Não definido"}</strong>
+                </span>
+                <span>
+                  <small>Canoa</small>
+                  <strong>
+                    {nextSession.resources
+                      .map((item) => item.resource?.name)
+                      .filter(Boolean)
+                      .join(", ") || "Não definida"}
+                  </strong>
+                </span>
+              </div>
+              <Link
+                className={styles.overviewHeroLink}
+                href={`/admin/${company.slug}/agenda/sessoes/${nextSession.id}`}
+              >
+                Abrir atividade <span aria-hidden="true">→</span>
+              </Link>
             </>
           ) : (
-            <>
-              <h2>Agenda em montagem</h2>
-              <p className={styles.muted}>
-                Publique o primeiro horário para os remadores visualizarem a
-                agenda pública.
-              </p>
-            </>
+            <div className={styles.overviewEmptyHero}>
+              <h2>Nenhuma atividade planejada</h2>
+              <p>Crie a próxima atividade para organizar treino, instrutor e canoa.</p>
+              <Link
+                className={styles.primaryButtonLink}
+                href={`/admin/${company.slug}/agenda/novo?date=${todayKey}`}
+              >
+                Criar atividade
+              </Link>
+            </div>
           )}
         </div>
 
-        <div className={styles.quickActions}>
-          <Link
-            className={styles.primaryButtonLink}
-            href={`/admin/${company.slug}/agenda#publicar-horario`}
-          >
-            Publicar horário
-          </Link>
-          <Link
-            className={styles.secondaryButton}
-            href={`/admin/${company.slug}/remadores#convidar-remador`}
-          >
-            Convidar remador
-          </Link>
-          <Link
-            className={styles.secondaryButton}
-            href={`/admin/${company.slug}/canoas#cadastrar-canoa`}
-          >
-            Cadastrar {vocabulary.resource_label.toLowerCase()}
-          </Link>
-          <Link
-            className={styles.secondaryButton}
-            href={`/admin/${company.slug}/treinos/novo`}
-          >
-            Novo treino
-          </Link>
-        </div>
+        <aside className={styles.overviewToday}>
+          <div className={styles.overviewTodayHead}>
+            <div>
+              <p className={styles.eyebrow}>Hoje</p>
+              <strong>{todaySessions.length} atividades</strong>
+            </div>
+            <Link href={`/admin/${company.slug}/agenda?date=${todayKey}&view=week`}>
+              Ver agenda
+            </Link>
+          </div>
+          <div className={styles.overviewTodayList}>
+            {todaySessions.length ? (
+              todaySessions.slice(0, 4).map((session) => (
+                <Link
+                  href={`/admin/${company.slug}/agenda/sessoes/${session.id}`}
+                  key={session.id}
+                >
+                  <strong>{formatTime(session.start_time)}</strong>
+                  <span>
+                    {session.group_name}
+                    <small>
+                      {session.training_plan_version?.training_plan?.title || "Sem treino"}
+                    </small>
+                  </span>
+                  <em data-status={session.status}>{getSessionState(session)}</em>
+                </Link>
+              ))
+            ) : (
+              <p>Nenhuma atividade para hoje.</p>
+            )}
+          </div>
+        </aside>
       </section>
 
-      <section className={styles.statGrid} aria-label="Resumo do clube">
-        <StatCard label="Horários futuros" value={slots.length} />
-        <StatCard label="Ocupação futura" value={`${occupancy}%`} />
-        <StatCard label="Reservas recentes" value={confirmedBookings} />
-        <StatCard label="Remadores vinculados" value={members.length} />
-        <StatCard label={`${vocabulary.resource_label}s ativos`} value={resources.length} />
-        <StatCard label="Treinos estruturados" value={trainingPlans.length} />
-        <StatCard label="Convites pendentes" value={pendingInvitations} />
+      <section className={styles.statGrid} aria-label="Indicadores operacionais">
         <StatCard
-          label="Site do clube"
-          value={landingPage?.is_published ? "Publicado" : "Rascunho"}
+          hint={`${publishedSessions} publicadas`}
+          label="Atividades"
+          value={activeSessions.length}
+        />
+        <StatCard
+          hint={`${sessionsWithTraining} de ${activeSessions.length} atividades`}
+          label="Treinos planejados"
+          value={`${trainingCoverage}%`}
+        />
+        <StatCard
+          hint={`${totalOccupied} de ${totalCapacity || 0} vagas`}
+          label="Ocupação"
+          value={`${occupancy}%`}
+        />
+        <StatCard
+          hint={`${members.length} remadores vinculados`}
+          label="Reservas ativas"
+          value={confirmedBookings}
         />
       </section>
 
-      <section className={styles.moduleGrid}>
-        <Link className={styles.moduleCardLink} href={`/admin/${company.slug}/agenda`}>
-          <strong>Agenda</strong>
-          <p>Horários, capacidade, reservas existentes e publicação rápida.</p>
-          <span className={styles.moduleStatusActive}>Ativo</span>
-        </Link>
-        <Link
-          className={styles.moduleCardLink}
-          href={`/admin/${company.slug}/remadores`}
-        >
-          <strong>Remadores</strong>
-          <p>Vínculos do clube e convites individuais de acesso.</p>
-          <span className={styles.moduleStatusActive}>Ativo</span>
-        </Link>
-        <Link className={styles.moduleCardLink} href={`/admin/${company.slug}/canoas`}>
-          <strong>Canoas</strong>
-          <p>Canoas disponíveis, capacidade e base da lotação.</p>
-          <span className={styles.moduleStatusReady}>Base pronta</span>
-        </Link>
-        <Link className={styles.moduleCardLink} href={`/admin/${company.slug}/site`}>
-          <strong>Site</strong>
-          <p>Landing pública, imagem principal, CTA e publicação.</p>
-          <span
-            className={
-              landingPage?.is_published
-                ? styles.moduleStatusActive
-                : styles.moduleStatusReady
-            }
-          >
-            {landingPage?.is_published ? "Publicado" : "Base pronta"}
-          </span>
-        </Link>
+      <section className={styles.overviewMainGrid}>
+        <article className={styles.panel}>
+          <div className={styles.sectionHead}>
+            <div>
+              <p className={styles.eyebrow}>Próximas atividades</p>
+              <h2>Agenda resumida</h2>
+            </div>
+            <Link className={styles.overviewTextLink} href={`/admin/${company.slug}/agenda`}>
+              Abrir agenda →
+            </Link>
+          </div>
+          <div className={styles.overviewSessionList}>
+            {upcomingSessions.length ? (
+              upcomingSessions.slice(0, 6).map((session) => (
+                <SessionRow companySlug={company.slug} key={session.id} session={session} />
+              ))
+            ) : (
+              <p className={styles.overviewEmpty}>Nenhuma próxima atividade neste período.</p>
+            )}
+          </div>
+        </article>
+
+        <article className={styles.panel}>
+          <div className={styles.sectionHead}>
+            <div>
+              <p className={styles.eyebrow}>Alertas operacionais</p>
+              <h2>Exige atenção</h2>
+            </div>
+            <span className={styles.overviewAlertCount}>{operationalAlerts.length}</span>
+          </div>
+          <div className={styles.overviewAlertList}>
+            {operationalAlerts.length ? (
+              operationalAlerts.slice(0, 7).map(({ label, session, type }, index) => (
+                <Link
+                  href={`/admin/${company.slug}/agenda/sessoes/${session.id}`}
+                  key={`${session.id}:${type}:${index}`}
+                >
+                  <span className={styles.overviewAlertIcon}>!</span>
+                  <span>
+                    <strong>{label}</strong>
+                    <small>
+                      {formatSessionDate(session.session_date)} · {formatTime(session.start_time)} · {session.group_name}
+                    </small>
+                  </span>
+                  <span aria-hidden="true">→</span>
+                </Link>
+              ))
+            ) : (
+              <div className={styles.overviewAllGood}>
+                <strong>Operação em dia</strong>
+                <p>Nenhuma atividade do período exige ajuste.</p>
+              </div>
+            )}
+          </div>
+        </article>
       </section>
 
-      <section className={styles.panel}>
-        <div className={styles.sectionHead}>
-          <div>
-            <p className={styles.eyebrow}>Alertas operacionais</p>
-            <h2>O que precisa de atenção</h2>
-          </div>
+      <section className={styles.overviewQuickSection}>
+        <div>
+          <p className={styles.eyebrow}>Ações rápidas</p>
+          <h2>Resolva sem procurar no menu</h2>
         </div>
-        <div className={styles.list}>
-          {alerts.length > 0 ? (
-            alerts.map((alert) => (
-              <p className={styles.empty} key={alert}>
-                {alert}
-              </p>
-            ))
-          ) : (
-            <p className={styles.empty}>
-              Estrutura mínima cadastrada. Acompanhe a ocupação dos próximos
-              horários.
-            </p>
-          )}
+        <div className={styles.overviewQuickGrid}>
+          <Link href={`/admin/${company.slug}/agenda/novo?date=${todayKey}`}>
+            <span>＋</span><strong>Criar atividade</strong><small>Planejar data, horário e turma</small>
+          </Link>
+          <Link href={`/admin/${company.slug}/treinos/novo`}>
+            <span>⌁</span><strong>Criar treino</strong><small>Adicionar à Biblioteca</small>
+          </Link>
+          <Link href={`/admin/${company.slug}/remadores#convidar-remador`}>
+            <span>◎</span><strong>Convidar remador</strong><small>Vincular ao clube</small>
+          </Link>
+          <Link href={`/admin/${company.slug}/canoas#cadastrar-canoa`}>
+            <span>◇</span><strong>Cadastrar {vocabulary.resource_label.toLowerCase()}</strong><small>{resources.length} ativas no clube</small>
+          </Link>
         </div>
       </section>
     </AdminShell>

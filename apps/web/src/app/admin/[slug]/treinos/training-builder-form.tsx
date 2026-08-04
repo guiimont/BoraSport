@@ -6,8 +6,8 @@ import { useFormStatus } from "react-dom";
 import type {
   BoraZone,
   TrainingBlockType,
+  TrainingMode,
   TrainingVersionLevel,
-  VesselClass,
 } from "../../../../types/saas";
 import {
   createStructuredTrainingPlan,
@@ -29,14 +29,9 @@ type TrainingBuilderFormProps = {
 
 const initialState: TrainingBuilderState = {};
 
-const vesselOptions: Array<{ label: string; value: VesselClass }> = [
-  { label: "V1", value: "v1" },
-  { label: "OC1", value: "oc1" },
-  { label: "V3", value: "v3" },
-  { label: "OC4", value: "oc4" },
-  { label: "V6", value: "v6" },
-  { label: "OC6", value: "oc6" },
-  { label: "Outro", value: "outro" },
+const trainingModeOptions: Array<{ label: string; value: TrainingMode }> = [
+  { label: "Coletivo", value: "coletivo" },
+  { label: "Individual", value: "individual" },
 ];
 
 const levelOptions: Array<{ label: string; value: TrainingVersionLevel }> = [
@@ -256,9 +251,13 @@ export function TrainingBuilderForm({ slug }: TrainingBuilderFormProps) {
                 />
               </label>
               <label className={styles.label}>
-                Classe de embarcação
-                <select className={styles.select} name="vesselClass">
-                  {vesselOptions.map((option) => (
+                Formato do treino
+                <select
+                  className={styles.select}
+                  defaultValue="coletivo"
+                  name="trainingMode"
+                >
+                  {trainingModeOptions.map((option) => (
                     <option key={option.value} value={option.value}>
                       {option.label}
                     </option>

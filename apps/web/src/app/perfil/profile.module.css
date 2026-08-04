@@ -1,3 +1,43 @@
+.sportSummary {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-bottom: var(--space-6);
+}
+
+.summaryCard {
+  background: linear-gradient(145deg, rgba(20, 28, 43, 0.96), rgba(7, 16, 29, 0.98));
+  border: 1px solid rgba(31, 216, 229, 0.16);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-night-card);
+  color: var(--text-inverse);
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+  padding: var(--space-5);
+}
+
+.summaryCard span,
+.summaryCard small {
+  color: rgba(238, 248, 247, 0.62);
+}
+
+.summaryCard span {
+  font-size: 0.8rem;
+  font-weight: 750;
+}
+
+.summaryCard strong {
+  color: #ffffff;
+  font-size: clamp(1.45rem, 3vw, 2rem);
+  line-height: 1;
+}
+
+.summaryCard small {
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
 .layout {
   align-items: start;
   display: grid;
@@ -20,13 +60,6 @@
   gap: var(--space-6);
   min-width: 0;
   padding: clamp(18px, 3vw, 28px);
-}
-
-.profileHeader {
-  align-items: center;
-  display: grid;
-  gap: var(--space-5);
-  grid-template-columns: auto minmax(0, 1fr);
 }
 
 .profileIntro {
@@ -52,13 +85,83 @@
 
 .profileIntro p,
 .cardText,
-.avatarField p {
+.accountEmail {
   color: rgba(238, 248, 247, 0.7);
   line-height: 1.6;
   margin: var(--space-3) 0 0;
 }
 
-.avatar,
+.activityList,
+.clubList {
+  display: grid;
+  gap: var(--space-3);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.activityList li {
+  border-top: 1px solid rgba(216, 231, 231, 0.1);
+  display: grid;
+  gap: var(--space-2);
+  padding-top: var(--space-3);
+}
+
+.activityList li:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.activityList div {
+  display: grid;
+  gap: 3px;
+}
+
+.activityList strong,
+.clubList strong {
+  color: #ffffff;
+}
+
+.activityList span,
+.activityList p {
+  color: rgba(238, 248, 247, 0.64);
+  font-size: 0.82rem;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.emptyJourney {
+  align-items: center;
+  background: rgba(31, 216, 229, 0.06);
+  border: 1px dashed rgba(31, 216, 229, 0.2);
+  border-radius: var(--radius-md);
+  display: grid;
+  gap: var(--space-2);
+  justify-items: center;
+  padding: var(--space-5);
+  text-align: center;
+}
+
+.emptyJourney span {
+  color: var(--color-sea-300);
+  font-size: 2rem;
+}
+
+.emptyJourney p {
+  color: rgba(238, 248, 247, 0.68);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.clubList li {
+  align-items: center;
+  border-bottom: 1px solid rgba(216, 231, 231, 0.1);
+  display: flex;
+  gap: var(--space-3);
+  justify-content: space-between;
+  padding-bottom: var(--space-3);
+}
+
 .avatarLarge {
   align-items: center;
   background:
@@ -73,12 +176,6 @@
   font-weight: 800;
   justify-content: center;
   overflow: hidden;
-}
-
-.avatar {
-  font-size: 2rem;
-  height: 96px;
-  width: 96px;
 }
 
 .avatarLarge {
@@ -104,18 +201,26 @@
 
 .avatarField {
   align-items: center;
-  background:
-    linear-gradient(135deg, rgba(31, 216, 229, 0.08), rgba(141, 77, 255, 0.12)),
-    rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(123, 243, 245, 0.12);
-  border-radius: var(--radius-md);
+  border-bottom: 1px solid rgba(216, 231, 231, 0.1);
   display: grid;
   gap: var(--space-4);
-  grid-template-columns: auto minmax(0, 1fr);
-  padding: var(--space-4);
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  padding-bottom: var(--space-5);
 }
 
-.avatarField p {
+.photoControl {
+  display: grid;
+  gap: var(--space-2);
+  justify-items: start;
+}
+
+.formHeading {
+  margin-top: var(--space-2);
+}
+
+.formHeading h3 {
+  color: #ffffff;
+  font-size: 1.25rem;
   margin: 0;
 }
 
@@ -143,10 +248,9 @@
   color: rgba(238, 248, 247, 0.44);
 }
 
-.fileGroup {
-  display: grid;
-  gap: var(--space-2);
-  min-width: 0;
+.input:disabled {
+  color: rgba(238, 248, 247, 0.62);
+  cursor: not-allowed;
 }
 
 .fieldHelp {
@@ -175,45 +279,31 @@
   margin: 0;
 }
 
-.dataList {
-  display: grid;
-  gap: var(--space-3);
-  margin: 0;
-}
-
-.dataList div {
-  border-top: 1px solid rgba(216, 231, 231, 0.1);
-  display: grid;
-  gap: var(--space-1);
-  padding-top: var(--space-3);
-}
-
-.dataList div:first-child {
-  border-top: 0;
-  padding-top: 0;
-}
-
-.dataList dt {
-  color: rgba(238, 248, 247, 0.55);
-  font-size: 0.78rem;
-  font-weight: 800;
-  text-transform: uppercase;
-}
-
-.dataList dd {
+.accountEmail {
   color: rgba(255, 255, 255, 0.92);
-  font-weight: 800;
+  font-weight: 750;
   margin: 0;
   overflow-wrap: anywhere;
 }
 
 @media (max-width: 860px) {
+  .sportSummary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .layout {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 560px) {
+  .sportSummary {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .summaryCard {
+    padding: var(--space-4);
+  }
   .profilePanel,
   .card {
     padding: var(--space-4);
@@ -221,13 +311,15 @@
 
   .profileHeader,
   .avatarField {
-    align-items: start;
-    grid-template-columns: 1fr;
+    grid-template-columns: auto minmax(0, 1fr);
   }
 
-  .avatar,
   .avatarLarge {
-    height: 92px;
-    width: 92px;
+    height: 82px;
+    width: 82px;
+  }
+
+  .photoControl {
+    grid-column: 1 / -1;
   }
 }

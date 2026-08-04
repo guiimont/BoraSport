@@ -186,6 +186,25 @@
   color: rgba(238, 248, 247, 0.66);
 }
 
+.weekSlot {
+  align-items: center;
+  border-top: 1px solid rgba(123, 243, 245, 0.11);
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  margin-top: 12px;
+  padding-top: 12px;
+}
+
+.weekSlot h3,
+.weekSlot p {
+  margin: 0;
+}
+
+.weekSlot p {
+  margin-top: 4px;
+}
+
 .nextTime,
 .slotMeta,
 .participantsText {
@@ -453,9 +472,14 @@ a.avatar {
   display: block;
   filter: drop-shadow(0 0 12px rgba(31, 216, 229, 0.045));
   height: auto;
+  min-width: 0;
+  width: 100%;
+}
+
+.v6Stage {
   margin: 0 auto;
   max-width: 210px;
-  min-width: 0;
+  position: relative;
   width: min(100%, 210px);
 }
 
@@ -477,39 +501,54 @@ a.avatar {
   stroke-width: 2;
 }
 
-.v6SeatLink {
-  cursor: pointer;
+.v6SeatCircle {
+  fill: rgba(255, 255, 255, 0.03);
+  stroke: rgba(210, 222, 229, 0.74);
+  stroke-width: 2;
+}
+
+.v6HtmlSeat {
+  align-items: center;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  position: absolute;
+  text-decoration: none;
+  transform: translate(-50%, -50%);
+  width: 13.5%;
+  z-index: 1;
+}
+
+.v6HtmlSeat:hover,
+.v6HtmlSeat:focus-visible {
+  box-shadow: 0 0 0 2px rgba(123, 243, 245, 0.92);
   outline: none;
 }
 
-.v6SeatLink:focus-visible .v6SeatRing,
-.v6SeatLink:hover .v6SeatRing {
-  stroke: rgba(123, 243, 245, 0.92);
+.v6SeatAvatar {
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
 }
 
-.v6SeatRing {
-  fill: rgba(9, 16, 27, 0.62);
-  stroke: rgba(210, 222, 229, 0.74);
-  stroke-width: 2;
-  transition: stroke var(--transition-fast);
-}
-
-.v6FallbackCircle {
-  fill: rgba(11, 22, 35, 0.96);
-}
-
-.v6FallbackInitial {
-  fill: rgba(238, 248, 247, 0.9);
-  font-family: inherit;
-  font-size: 18px;
+.v6SeatInitial {
+  align-items: center;
+  background: #101923;
+  color: rgba(238, 248, 247, 0.86);
+  display: flex;
+  font-size: 0.78rem;
   font-weight: 950;
+  height: 100%;
+  justify-content: center;
+  width: 100%;
 }
 
-.v6Vacancy circle {
-  fill: rgba(255, 255, 255, 0.03);
-  stroke: rgba(190, 202, 208, 0.36);
-  stroke-dasharray: 5 5;
-  stroke-width: 2;
+.v6HtmlVacancy {
+  pointer-events: none;
 }
 
 .canoeParticipant,
@@ -629,8 +668,8 @@ a.avatar {
 
 .tabsBar {
   backdrop-filter: blur(18px);
-  background: rgba(5, 7, 13, 0.84);
-  border-bottom: 1px solid rgba(182, 140, 255, 0.14);
+  background: rgba(7, 22, 36, 0.68);
+  border-bottom: 1px solid rgba(123, 243, 245, 0.12);
   margin: 0 calc(clamp(16px, 4vw, 34px) * -1);
   padding: 12px clamp(16px, 4vw, 34px);
   position: sticky;
@@ -647,8 +686,8 @@ a.avatar {
 }
 
 .tabButton {
-  background: rgba(255, 255, 255, 0.055);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(184, 198, 205, 0.14);
   border-radius: 12px;
   color: rgba(238, 248, 247, 0.72);
   cursor: pointer;
@@ -666,7 +705,7 @@ a.avatar {
 }
 
 .tabButtonActive {
-  background: rgba(31, 216, 229, 0.12);
+  background: rgba(31, 216, 229, 0.1);
   border-color: rgba(123, 243, 245, 0.46);
   color: #ffffff;
   box-shadow: 0 0 22px rgba(31, 216, 229, 0.1);
@@ -826,9 +865,27 @@ a.avatar {
 }
 
 .slotAction {
+  align-items: flex-end;
   display: flex;
+  flex-direction: column;
+  gap: 8px;
   justify-content: flex-end;
   padding: 0 18px 18px;
+}
+
+.reservationError {
+  color: #ffb9c2;
+  font-size: 0.82rem;
+  margin: 0;
+  max-width: 420px;
+  text-align: right;
+}
+
+.bookingStatus {
+  color: rgba(238, 248, 247, 0.72);
+  font-size: 0.86rem;
+  margin: -8px 18px 18px;
+  text-align: right;
 }
 
 .reserveButton {
@@ -1030,7 +1087,12 @@ a.avatar {
 
   .slotSummary,
   .slotAction {
+    align-items: flex-start;
     justify-content: flex-start;
+  }
+
+  .reservationError {
+    text-align: left;
   }
 }
 

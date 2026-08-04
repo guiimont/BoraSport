@@ -36,8 +36,8 @@ const vesselOptions: Array<{ label: string; value: VesselClass }> = [
 ];
 
 const vesselStatusOptions: Array<{ label: string; value: VesselStatus }> = [
-  { label: "Disponivel", value: "disponivel" },
-  { label: "Em manutencao", value: "manutencao" },
+  { label: "Disponível", value: "disponivel" },
+  { label: "Em manutenção", value: "manutencao" },
   { label: "Inativa", value: "inativa" },
 ];
 
@@ -47,17 +47,17 @@ const steererPolicyOptions: Array<{
   value: DefaultSteererPolicy;
 }> = [
   {
-    description: "O instrutor ocupa um assento e reduz uma vaga publica.",
+    description: "O instrutor ocupa um assento e reduz uma vaga pública.",
     label: "Instrutor como leme",
     value: "instrutor",
   },
   {
-    description: "Um aluno reserva normalmente e sera identificado como leme.",
+    description: "Um aluno reserva normalmente e será identificado como leme.",
     label: "Aluno como leme",
     value: "aluno",
   },
   {
-    description: "A decisao fica pendente para cada treino publicado.",
+    description: "A decisão fica pendente para cada treino publicado.",
     label: "Definir em cada treino",
     value: "definir_treino",
   },
@@ -83,9 +83,9 @@ const vesselLabels: Record<VesselClass, string> = {
 };
 
 const statusLabels: Record<VesselStatus, string> = {
-  disponivel: "Disponivel",
+  disponivel: "Disponível",
   inativa: "Inativa",
-  manutencao: "Em manutencao",
+  manutencao: "Em manutenção",
 };
 
 const steererLabels: Record<DefaultSteererPolicy, string> = {
@@ -181,7 +181,7 @@ export function CanoaOperationalForm({
 
       <div className={styles.builderMain}>
         <section className={styles.builderHero}>
-          <p className={styles.eyebrow}>Operacao</p>
+          <p className={styles.eyebrow}>Operação</p>
           <h2>{resource ? "Editar canoa" : "Nova canoa operacional"}</h2>
           <p>
             Defina classe, capacidade real e regra de leme para preparar a
@@ -193,7 +193,7 @@ export function CanoaOperationalForm({
           <div className={styles.builderSectionIntro}>
             <span>Identidade</span>
             <h2>Dados principais</h2>
-            <p>Nome publico da canoa e identificacao interna opcional.</p>
+            <p>Nome público da canoa e identificação interna opcional.</p>
           </div>
           <div className={styles.builderGrid}>
             <label className={styles.label}>
@@ -221,10 +221,10 @@ export function CanoaOperationalForm({
         <section className={styles.builderSectionCompact}>
           <div className={styles.builderSectionIntro}>
             <span>Capacidade</span>
-            <h2>Classe e operacao</h2>
+            <h2>Classe e operação</h2>
             <p>
               Classes conhecidas calculam a capacidade automaticamente. Use
-              Outro apenas para uma embarcacao fora do padrao.
+              Outro apenas para uma embarcação fora do padrão.
             </p>
           </div>
           <div className={styles.builderGridThree}>
@@ -284,10 +284,10 @@ export function CanoaOperationalForm({
           <section className={styles.builderSectionCompact}>
             <div className={styles.builderSectionIntro}>
               <span>Leme</span>
-              <h2>Regra padrao da canoa</h2>
+              <h2>Regra padrão da canoa</h2>
               <p>
-                Essa regra sera usada como padrao operacional. A agenda futura
-                podera sobrescrever por treino.
+                Essa regra será usada como padrão operacional. A agenda futura
+                poderá sobrescrevê-la por treino.
               </p>
             </div>
             <div className={styles.vesselPolicyGrid}>
@@ -314,9 +314,9 @@ export function CanoaOperationalForm({
 
         <section className={styles.builderSectionCompact}>
           <div className={styles.builderSectionIntro}>
-            <span>Observacoes</span>
+            <span>Observações</span>
             <h2>Contexto operacional</h2>
-            <p>Campo opcional para manutencao, uso recomendado ou cuidado.</p>
+            <p>Campo opcional para manutenção, uso recomendado ou cuidado.</p>
           </div>
           <label className={styles.label}>
             Observacao
@@ -347,11 +347,11 @@ export function CanoaOperationalForm({
             <strong>{vesselLabels[vesselClass]}</strong>
           </div>
           <div>
-            <span>Situacao</span>
+            <span>Situação</span>
             <strong>{statusLabels[vesselStatus]}</strong>
           </div>
           <div>
-            <span>Vagas publicas futuras</span>
+            <span>Vagas públicas futuras</span>
             <strong>{publicSpots}</strong>
           </div>
           <div>
@@ -359,12 +359,12 @@ export function CanoaOperationalForm({
             <strong>
               {effectiveSteererPolicy
                 ? steererLabels[effectiveSteererPolicy]
-                : "Nao se aplica"}
+                : "Não se aplica"}
             </strong>
           </div>
         </div>
         <p>
-          O resumo e informativo. Nenhum horario sera publicado a partir desta
+          O resumo é informativo. Nenhum horário será publicado a partir desta
           tela.
         </p>
       </aside>

@@ -10,18 +10,28 @@ import {
   createService,
   createSlot,
   createSlotsSkippingDuplicates,
+  deleteMembership,
   ensureProfile,
   revokeCompanyInvitation,
+  setBookingAttendance,
+  setOperationalSessionTraining,
+  updateBaseScheduleStatus,
   updateCompanyConfiguration,
+  updateMembershipRole,
   updateResource,
   updateResourceOperationalStatus,
+  upsertBaseSchedule,
   upsertLandingPage,
+  upsertOperationalSession,
   upsertWeeklyWorkout,
 } from "../../../lib/saas/mutations";
 import { getCurrentUser, getUserCompanyRole } from "../../../lib/saas/queries";
 import { getRequestOrigin } from "../../../lib/saas/auth-redirect";
 import type {
+  BaseScheduleStatus,
   DefaultSteererPolicy,
+  OperationalSessionStatus,
+  MembershipRole,
   VesselClass,
   VesselStatus,
   VocabularyConfig,
@@ -40,6 +50,45 @@ export type AdminFormState = {
 export type InvitationFormState = AdminFormState & {
   inviteLink?: string;
 };
+
+export type MembershipFormState = AdminFormState & {
+  membershipId?: string;
+};
+
+export async function updateAttendanceAction(
+  _previousState: AdminFormState,
+  formData: FormData,
+): Promise<AdminFormState> {
+  const companyId = readText(formData, "companyId", "");
+  const sessionId = readText(formData, "sessionId", "");
+  const bookingId = readText(formData, "bookingId", "");
+  const slug = readText(formData, "slug", "");
+  const status = readText(formData, "status", "");
+  const permissionError = await assertCanManageTenant(companyId);
+
+  if (permissionError) {
+    return { error: permissionError };
+  }
+
+  if (!bookingId || !sessionId || !slug || (status !== "attended" && status !== "missed")) {
+    return { error: "Não foi possível identificar a presença para atualizar." };
+  }
+
+  try {
+    await setBookingAttendance({ bookingId, companyId, sessionId, status });
+  } catch (error) {
+    return {
+      error: `Não foi possível registrar a presença. ${getReadableError(error)}`,
+    };
+  }
+
+  revalidatePath(`/admin/${slug}/agenda/sessoes/${sessionId}`);
+  revalidatePath("/perfil");
+
+  return {
+    success: status === "attended" ? "Presença registrada." : "Falta registrada.",
+  };
+}
 
 const defaultVocabulary: Required<VocabularyConfig> = {
   booking_label: "Reserva",
@@ -116,6 +165,33 @@ const steererPolicies = new Set<DefaultSteererPolicy>([
   "aluno",
   "definir_treino",
 ]);
+
+const baseScheduleStatuses = new Set<BaseScheduleStatus>([
+  "active",
+  "inactive",
+]);
+
+const operationalSessionStatuses = new Set<OperationalSessionStatus>([
+  "draft",
+  "published",
+  "cancelled",
+]);
+
+function readBaseScheduleStatus(formData: FormData): BaseScheduleStatus {
+  const value = readText(formData, "status", "active");
+
+  return baseScheduleStatuses.has(value as BaseScheduleStatus)
+    ? (value as BaseScheduleStatus)
+    : "active";
+}
+
+function readOperationalSessionStatus(formData: FormData): OperationalSessionStatus {
+  const value = readText(formData, "status", "draft");
+
+  return operationalSessionStatuses.has(value as OperationalSessionStatus)
+    ? (value as OperationalSessionStatus)
+    : "draft";
+}
 
 function readVesselClass(formData: FormData): VesselClass | null {
   const value = readOptionalText(formData, "vesselClass");
@@ -236,7 +312,336 @@ function getReadableError(error: unknown) {
     return "Bucket de arquivos não existe. Rode a migration de storage correspondente no Supabase.";
   }
 
+  if (message.includes("base_schedule_resource_conflict")) {
+    return "Essa canoa já está em outro horário recorrente que se sobrepõe no mesmo dia.";
+  }
+
+  if (message.includes("base_schedule_resource_unavailable")) {
+    return "Uma das canoas selecionadas está em manutenção ou inativa.";
+  }
+
+  if (message.includes("base_schedule_coach_must_belong_to_company")) {
+    return "O treinador precisa ser administrador ou treinador deste clube.";
+  }
+
+  if (message.includes("base_schedule_requires_resource")) {
+    return "Selecione ao menos uma canoa.";
+  }
+
+  if (message.includes("operational_session_resource_conflict")) {
+    return "Essa canoa já está em outra sessão que se sobrepõe nesta data.";
+  }
+
+  if (message.includes("operational_session_resource_unavailable")) {
+    return "Uma das canoas selecionadas está em manutenção ou inativa.";
+  }
+
+  if (message.includes("operational_session_coach_must_belong_to_company")) {
+    return "O treinador precisa ser administrador ou treinador deste clube.";
+  }
+
+  if (message.includes("operational_session_requires_resource")) {
+    return "Selecione ao menos uma canoa.";
+  }
+
+  if (message.includes("operational_session_training_version_invalid")) {
+    return "Selecione um treino publicado da biblioteca deste clube.";
+  }
+
+  if (message.includes("last_company_admin")) {
+    return "O clube precisa manter pelo menos um administrador.";
+  }
+
+  if (message.includes("membership_not_found")) {
+    return "Este vínculo não existe mais. Atualize a página.";
+  }
+
+  if (message.includes("membership_identity_immutable")) {
+    return "A identidade do vínculo não pode ser alterada.";
+  }
+
   return message;
+}
+
+export async function saveBaseSchedule(
+  _previousState: AdminFormState,
+  formData: FormData,
+): Promise<AdminFormState> {
+  const coachId = readText(formData, "coachId", "");
+  const companyId = readText(formData, "companyId", "");
+  const durationMinutes = Math.floor(readNumber(formData, "durationMinutes", 60));
+  const groupName = readText(formData, "groupName", "");
+  const level = readOptionalText(formData, "level");
+  const resourceIds = readTextList(formData, "resourceIds");
+  const scheduleId = readOptionalText(formData, "scheduleId");
+  const slug = readText(formData, "slug", "");
+  const startTime = readText(formData, "startTime", "");
+  const status = readBaseScheduleStatus(formData);
+  const weekday = Math.floor(readNumber(formData, "weekday", 0));
+
+  if (!companyId || !slug) {
+    return { error: "Não foi possível identificar o clube." };
+  }
+
+  const access = await assertCanAdminTenant(companyId);
+
+  if (access.error || !access.user) {
+    return { error: access.error || "Permissão negada." };
+  }
+
+  if (weekday < 1 || weekday > 7) {
+    return { error: "Escolha um dia da semana." };
+  }
+
+  if (!startTime) {
+    return { error: "Informe o horário inicial." };
+  }
+
+  if (durationMinutes < 5 || durationMinutes > 360) {
+    return { error: "Informe uma duração entre 5 e 360 minutos." };
+  }
+
+  if (!groupName) {
+    return { error: "Informe o nome da turma." };
+  }
+
+  if (!coachId) {
+    return { error: "Selecione o treinador responsável." };
+  }
+
+  if (resourceIds.length === 0) {
+    return { error: "Selecione ao menos uma canoa." };
+  }
+
+  try {
+    const savedScheduleId = await upsertBaseSchedule({
+      coachId,
+      companyId,
+      createdBy: access.user.id,
+      durationMinutes,
+      groupName,
+      level,
+      resourceIds,
+      scheduleId,
+      startTime,
+      status,
+      weekday,
+    });
+
+    revalidatePath(`/admin/${slug}`);
+    revalidatePath(`/admin/${slug}/agenda`);
+    revalidatePath(`/admin/${slug}/agenda/grade`);
+    revalidatePath(`/admin/${slug}/agenda/grade/${savedScheduleId}`);
+  } catch (error) {
+    return {
+      error: `Não foi possível salvar o horário. ${getReadableError(error)}`,
+    };
+  }
+
+  return {
+    success: scheduleId ? "Horário atualizado." : "Horário da grade criado.",
+  };
+}
+
+export async function changeBaseScheduleStatus(
+  _previousState: AdminFormState,
+  formData: FormData,
+): Promise<AdminFormState> {
+  const companyId = readText(formData, "companyId", "");
+  const scheduleId = readText(formData, "scheduleId", "");
+  const slug = readText(formData, "slug", "");
+  const status = readBaseScheduleStatus(formData);
+
+  if (!companyId || !scheduleId || !slug) {
+    return { error: "Não foi possível identificar o horário." };
+  }
+
+  const access = await assertCanAdminTenant(companyId);
+
+  if (access.error) {
+    return { error: access.error };
+  }
+
+  try {
+    await updateBaseScheduleStatus({
+      companyId,
+      scheduleId,
+      status,
+    });
+  } catch (error) {
+    return {
+      error: `Não foi possível atualizar. ${getReadableError(error)}`,
+    };
+  }
+
+  revalidatePath(`/admin/${slug}/agenda`);
+  revalidatePath(`/admin/${slug}/agenda/grade`);
+  revalidatePath(`/admin/${slug}/agenda/grade/${scheduleId}`);
+
+  return {
+    success: status === "active" ? "Horário reativado." : "Horário inativado.",
+  };
+}
+
+export async function saveOperationalSchedule(
+  _previousState: AdminFormState,
+  formData: FormData,
+): Promise<AdminFormState> {
+  const companyId = readText(formData, "companyId", "");
+  const baseScheduleId = readOptionalText(formData, "baseScheduleId");
+  const slug = readText(formData, "slug", "");
+  const recurrenceMode = readText(formData, "recurrenceMode", "single");
+  const sessionDate = readText(formData, "sessionDate", "");
+  const startTime = readText(formData, "startTime", "");
+  const durationMinutes = Math.floor(readNumber(formData, "durationMinutes", 60));
+  const groupName = readText(formData, "groupName", "");
+  const level = readOptionalText(formData, "level");
+  const sessionId = readOptionalText(formData, "sessionId");
+  const coachId = readText(formData, "coachId", "");
+  const resourceIds = readTextList(formData, "resourceIds");
+  const status = readOperationalSessionStatus(formData);
+  const trainingPlanVersionId = readOptionalText(formData, "trainingPlanVersionId");
+
+  if (!companyId || !slug) {
+    return { error: "Não foi possível identificar o clube." };
+  }
+
+  const access = await assertCanAdminTenant(companyId);
+
+  if (access.error || !access.user) {
+    return { error: access.error || "Permissão negada." };
+  }
+
+  if (!sessionDate) {
+    return { error: "Informe a data do horário." };
+  }
+
+  if (!startTime) {
+    return { error: "Informe o horário inicial." };
+  }
+
+  if (durationMinutes < 5 || durationMinutes > 360) {
+    return { error: "Informe uma duração entre 5 e 360 minutos." };
+  }
+
+  if (!groupName) {
+    return { error: "Informe o nome da turma." };
+  }
+
+  if (!coachId) {
+    return { error: "Selecione o treinador responsável." };
+  }
+
+  if (resourceIds.length === 0) {
+    return { error: "Selecione ao menos uma canoa." };
+  }
+
+  try {
+    if (recurrenceMode === "weekly") {
+      const date = new Date(`${sessionDate}T12:00:00-03:00`);
+      const weekday = date.getDay() === 0 ? 7 : date.getDay();
+      const savedScheduleId = await upsertBaseSchedule({
+        coachId,
+        companyId,
+        createdBy: access.user.id,
+        durationMinutes,
+        groupName,
+        level,
+        resourceIds,
+        startTime,
+        status: status === "cancelled" ? "inactive" : "active",
+        weekday,
+      });
+
+      if (trainingPlanVersionId) {
+        await upsertOperationalSession({
+          baseScheduleId: savedScheduleId,
+          coachId,
+          companyId,
+          durationMinutes,
+          groupName,
+          level,
+          resourceIds,
+          sessionDate,
+          startTime,
+          status,
+          trainingPlanVersionId,
+        });
+      }
+    } else {
+      await upsertOperationalSession({
+        baseScheduleId,
+        coachId,
+        companyId,
+        durationMinutes,
+        groupName,
+        level,
+        resourceIds,
+        sessionDate,
+        sessionId,
+        startTime,
+        status,
+        trainingPlanVersionId,
+      });
+    }
+
+    revalidatePath(`/admin/${slug}`);
+    revalidatePath(`/admin/${slug}/agenda`);
+    revalidatePath(`/clube/${slug}`);
+  } catch (error) {
+    return {
+      error: `Não foi possível salvar o horário. ${getReadableError(error)}`,
+    };
+  }
+
+  return {
+    success:
+      sessionId
+        ? "Sessão atualizada."
+        : recurrenceMode === "weekly"
+        ? "Horário recorrente criado na Agenda."
+        : "Sessão criada na Agenda.",
+  };
+}
+
+export async function linkOperationalSessionTraining(
+  _previousState: AdminFormState,
+  formData: FormData,
+): Promise<AdminFormState> {
+  const companyId = readText(formData, "companyId", "");
+  const sessionId = readText(formData, "sessionId", "");
+  const slug = readText(formData, "slug", "");
+  const trainingPlanVersionId = readOptionalText(formData, "trainingPlanVersionId");
+
+  if (!companyId || !sessionId || !slug) {
+    return { error: "Não foi possível identificar a sessão." };
+  }
+
+  const access = await assertCanAdminTenant(companyId);
+
+  if (access.error) {
+    return { error: access.error };
+  }
+
+  try {
+    await setOperationalSessionTraining({
+      sessionId,
+      trainingPlanVersionId,
+    });
+  } catch (error) {
+    return {
+      error: `Não foi possível atualizar o treino. ${getReadableError(error)}`,
+    };
+  }
+
+  revalidatePath(`/admin/${slug}/agenda`);
+  revalidatePath(`/admin/${slug}/agenda/sessoes/${sessionId}`);
+
+  return {
+    success: trainingPlanVersionId
+      ? "Treino vinculado à sessão."
+      : "Treino removido da sessão.",
+  };
 }
 
 export async function saveCompanyConfiguration(
@@ -387,7 +792,7 @@ export async function saveResourceOperation(
   const operationalNotes = readOptionalText(formData, "operationalNotes");
 
   if (!companyId || !resourceId || !slug) {
-    return { error: "Nao foi possivel identificar a canoa." };
+    return { error: "Não foi possível identificar a canoa." };
   }
 
   const access = await assertCanAdminTenant(companyId);
@@ -422,7 +827,7 @@ export async function saveResourceOperation(
     });
   } catch (error) {
     return {
-      error: `Nao foi possivel salvar. ${getReadableError(error)}`,
+      error: `Não foi possível salvar. ${getReadableError(error)}`,
     };
   }
 
@@ -444,7 +849,7 @@ export async function updateResourceStatusAction(
   const vesselStatus = readVesselStatus(formData);
 
   if (!companyId || !resourceId || !slug) {
-    return { error: "Nao foi possivel identificar a canoa." };
+    return { error: "Não foi possível identificar a canoa." };
   }
 
   const access = await assertCanAdminTenant(companyId);
@@ -461,7 +866,7 @@ export async function updateResourceStatusAction(
     });
   } catch (error) {
     return {
-      error: `Nao foi possivel atualizar a situacao. ${getReadableError(error)}`,
+      error: `Não foi possível atualizar a situação. ${getReadableError(error)}`,
     };
   }
 
@@ -469,7 +874,7 @@ export async function updateResourceStatusAction(
   revalidatePath(`/admin/${slug}/canoas`);
 
   return {
-    success: "Situacao da canoa atualizada.",
+    success: "Situação da canoa atualizada.",
   };
 }
 
@@ -1010,6 +1415,75 @@ export async function revokeClientInvitation(
   } catch (error) {
     return {
       error: `Não foi possível revogar. ${getReadableError(error)}`,
+    };
+  }
+}
+
+export async function updateMemberRoleAction(
+  _previousState: MembershipFormState,
+  formData: FormData,
+): Promise<MembershipFormState> {
+  const companyId = readText(formData, "companyId", "");
+  const membershipId = readText(formData, "membershipId", "");
+  const slug = readText(formData, "slug", "");
+  const role = readText(formData, "role", "") as MembershipRole;
+
+  if (!companyId || !membershipId || !slug) {
+    return { error: "Não foi possível identificar o vínculo.", membershipId };
+  }
+
+  if (role !== "admin" && role !== "professional" && role !== "client") {
+    return { error: "Selecione uma função válida.", membershipId };
+  }
+
+  const access = await assertCanAdminTenant(companyId);
+
+  if (access.error) {
+    return { error: access.error, membershipId };
+  }
+
+  try {
+    await updateMembershipRole({ companyId, membershipId, role });
+    revalidatePath(`/admin/${slug}/remadores`);
+    revalidatePath(`/admin/${slug}`);
+
+    return { membershipId, success: "Função atualizada." };
+  } catch (error) {
+    return {
+      error: `Não foi possível atualizar a função. ${getReadableError(error)}`,
+      membershipId,
+    };
+  }
+}
+
+export async function removeMemberAction(
+  _previousState: MembershipFormState,
+  formData: FormData,
+): Promise<MembershipFormState> {
+  const companyId = readText(formData, "companyId", "");
+  const membershipId = readText(formData, "membershipId", "");
+  const slug = readText(formData, "slug", "");
+
+  if (!companyId || !membershipId || !slug) {
+    return { error: "Não foi possível identificar o vínculo.", membershipId };
+  }
+
+  const access = await assertCanAdminTenant(companyId);
+
+  if (access.error) {
+    return { error: access.error, membershipId };
+  }
+
+  try {
+    await deleteMembership({ companyId, membershipId });
+    revalidatePath(`/admin/${slug}/remadores`);
+    revalidatePath(`/admin/${slug}`);
+
+    return { membershipId, success: "Vínculo removido do clube." };
+  } catch (error) {
+    return {
+      error: `Não foi possível remover o vínculo. ${getReadableError(error)}`,
+      membershipId,
     };
   }
 }

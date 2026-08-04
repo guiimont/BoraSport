@@ -4,9 +4,9 @@ import { getCompanyTrainingLibrary } from "../../../../lib/saas/queries";
 import type {
   TrainingPlanLibraryItem,
   TrainingPlanStatus,
+  TrainingMode,
   TrainingVersionLevel,
   TrainingVersionStatus,
-  VesselClass,
 } from "../../../../types/saas";
 import { getManageAdminContext } from "../admin-context";
 import { AdminShell } from "../admin-shell";
@@ -17,7 +17,7 @@ type AdminTrainingPageProps = {
     slug: string;
   }>;
   searchParams?: Promise<{
-    embarcacao?: string;
+    formato?: string;
     nivel?: string;
     q?: string;
     status?: string;
@@ -39,14 +39,9 @@ const levelLabels: Record<TrainingVersionLevel, string> = {
   personalizado: "Personalizado",
 };
 
-const vesselLabels: Record<VesselClass, string> = {
-  oc1: "OC1",
-  oc4: "OC4",
-  oc6: "OC6",
-  outro: "Outro",
-  v1: "V1",
-  v3: "V3",
-  v6: "V6",
+const trainingModeLabels: Record<TrainingMode, string> = {
+  coletivo: "Coletivo",
+  individual: "Individual",
 };
 
 function formatDate(value: string) {
@@ -74,7 +69,7 @@ function getLatestVersion(plan: TrainingPlanLibraryItem) {
 function applyFilters(
   plans: TrainingPlanLibraryItem[],
   filters: {
-    embarcacao: string;
+    formato: string;
     nivel: string;
     q: string;
     status: string;
@@ -92,10 +87,9 @@ function applyFilters(
       plan.status === filters.status ||
       latestVersion?.status === filters.status;
     const matchesLevel = !filters.nivel || latestVersion?.level === filters.nivel;
-    const matchesVessel =
-      !filters.embarcacao || plan.vessel_class === filters.embarcacao;
+    const matchesMode = !filters.formato || plan.training_mode === filters.formato;
 
-    return matchesQuery && matchesStatus && matchesLevel && matchesVessel;
+    return matchesQuery && matchesStatus && matchesLevel && matchesMode;
   });
 }
 
@@ -109,7 +103,7 @@ export default async function AdminTrainingPage({
   const { company } = context;
   const trainingPlans = await getCompanyTrainingLibrary(company.id);
   const filters = {
-    embarcacao: filtersInput.embarcacao ?? "",
+    formato: filtersInput.formato ?? "",
     nivel: filtersInput.nivel ?? "",
     q: filtersInput.q ?? "",
     status: filtersInput.status ?? "",
@@ -177,10 +171,10 @@ export default async function AdminTrainingPage({
         </label>
 
         <label>
-          <span>Embarcação</span>
-          <select defaultValue={filters.embarcacao} name="embarcacao">
-            <option value="">Todas</option>
-            {Object.entries(vesselLabels).map(([value, label]) => (
+          <span>Formato</span>
+          <select defaultValue={filters.formato} name="formato">
+            <option value="">Todos</option>
+            {Object.entries(trainingModeLabels).map(([value, label]) => (
               <option key={value} value={value}>
                 {label}
               </option>
@@ -216,7 +210,7 @@ export default async function AdminTrainingPage({
                   <div className={styles.trainingPlanMain}>
                     <div>
                       <span className={styles.trainingPlanVessel}>
-                        {vesselLabels[plan.vessel_class]}
+                        {trainingModeLabels[plan.training_mode]}
                       </span>
                       <h3>{plan.title}</h3>
                       <p>
