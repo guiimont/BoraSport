@@ -1,5 +1,7 @@
 "use client";
 
+import { useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import type { ActivityExperience } from "../../../lib/saas/activity-presets";
 import type {
   CompanySlot,
@@ -7,7 +9,11 @@ import type {
   SlotParticipant,
   VocabularyConfig,
 } from "../../../types/saas";
-import { cancelSlotReservation, reserveSlot } from "./actions";
+import {
+  type ReservationActionState,
+  cancelSlotReservation,
+  reserveSlot,
+} from "./actions";
 import styles from "./club-page.module.css";
 import { ConfirmedParticipantsComposition } from "./confirmed-participants-composition";
 
@@ -20,6 +26,99 @@ type ReservationSlotsProps = {
   slots: CompanySlot[];
   vocabulary: Required<VocabularyConfig>;
 };
+
+const initialActionState: ReservationActionState = {};
+
+function ReservationButton({
+  idleLabel,
+  pendingLabel,
+  tone = "reserve",
+}: {
+  idleLabel: string;
+  pendingLabel: string;
+  tone?: "cancel" | "reserve";
+}) {
+  const { pending } = useFormStatus();
+
+  return (
+    <button
+      aria-disabled={pending}
+      className={`${styles.reserveButton} ${
+        tone === "cancel" ? styles.cancelButton : ""
+      }`}
+      disabled={pending}
+      type="submit"
+    >
+      {pending ? pendingLabel : idleLabel}
+    </button>
+  );
+}
+
+function ReservationActionForm({
+  companyId,
+  isFull,
+  isWaitlisted,
+  mode,
+  slug,
+  slotId,
+  vocabulary,
+  waitlistPosition,
+}: {
+  companyId: string;
+  isFull: boolean;
+  isWaitlisted: boolean;
+  mode: "cancel" | "reserve";
+  slug: string;
+  slotId: string;
+  vocabulary: Required<VocabularyConfig>;
+  waitlistPosition?: number | null;
+}) {
+  const [state, action] = useActionState(
+    mode === "cancel" ? cancelSlotReservation : reserveSlot,
+    initialActionState,
+  );
+  const idleLabel =
+    mode === "cancel"
+      ? isWaitlisted
+        ? `Sair da lista · posição ${waitlistPosition ?? "--"}`
+        : "Cancelar reserva"
+      : isFull
+        ? "Entrar na lista de espera"
+        : `Reservar ${vocabulary.service_label}`;
+
+  return (
+    <form
+      action={action}
+      className={styles.slotAction}
+      onSubmit={(event) => {
+        if (
+          mode === "cancel" &&
+          !window.confirm(
+            isWaitlisted
+              ? "Sair da lista de espera deste horário?"
+              : "Cancelar sua reserva neste horário?",
+          )
+        ) {
+          event.preventDefault();
+        }
+      }}
+    >
+      <input name="company_id" type="hidden" value={companyId} />
+      <input name="slot_id" type="hidden" value={slotId} />
+      <input name="slug" type="hidden" value={slug} />
+      <ReservationButton
+        idleLabel={idleLabel}
+        pendingLabel={mode === "cancel" ? "Cancelando..." : "Reservando..."}
+        tone={mode === "cancel" ? "cancel" : "reserve"}
+      />
+      {state.error ? (
+        <p aria-live="polite" className={styles.reservationError} role="status">
+          {state.error}
+        </p>
+      ) : null}
+    </form>
+  );
+}
 
 function formatTime(value: string) {
   return new Intl.DateTimeFormat("pt-BR", {
@@ -180,38 +279,16 @@ export function ReservationSlots({
                     />
                   </div>
 
-                  {currentUserBooking ? (
-                    <form
-                      action={cancelSlotReservation}
-                      className={styles.slotAction}
-                    >
-                      <input name="company_id" type="hidden" value={companyId} />
-                      <input name="slot_id" type="hidden" value={slot.id} />
-                      <input name="slug" type="hidden" value={slug} />
-                      <button
-                        className={`${styles.reserveButton} ${styles.cancelButton}`}
-                        type="submit"
-                      >
-                        {isWaitlistedByCurrentUser
-                          ? `Sair da lista · posição ${currentUserBooking.waitlist_position ?? "--"}`
-                          : "Cancelar reserva"}
-                      </button>
-                    </form>
-                  ) : (
-                    <form action={reserveSlot} className={styles.slotAction}>
-                      <input name="company_id" type="hidden" value={companyId} />
-                      <input name="slot_id" type="hidden" value={slot.id} />
-                      <input name="slug" type="hidden" value={slug} />
-                      <button
-                        className={styles.reserveButton}
-                        type="submit"
-                      >
-                        {isFull
-                          ? "Entrar na lista de espera"
-                          : `Reservar ${vocabulary.service_label}`}
-                      </button>
-                    </form>
-                  )}
+                  <ReservationActionForm
+                    companyId={companyId}
+                    isFull={isFull}
+                    isWaitlisted={isWaitlistedByCurrentUser}
+                    mode={currentUserBooking ? "cancel" : "reserve"}
+                    slug={slug}
+                    slotId={slot.id}
+                    vocabulary={vocabulary}
+                    waitlistPosition={currentUserBooking?.waitlist_position}
+                  />
                   {isConfirmedByCurrentUser ? (
                     <p className={styles.bookingStatus}>
                       Sua vaga está confirmada.

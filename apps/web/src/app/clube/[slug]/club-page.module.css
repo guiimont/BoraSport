@@ -865,9 +865,20 @@ a.avatar {
 }
 
 .slotAction {
+  align-items: flex-end;
   display: flex;
+  flex-direction: column;
+  gap: 8px;
   justify-content: flex-end;
   padding: 0 18px 18px;
+}
+
+.reservationError {
+  color: #ffb9c2;
+  font-size: 0.82rem;
+  margin: 0;
+  max-width: 420px;
+  text-align: right;
 }
 
 .bookingStatus {
@@ -1076,7 +1087,12 @@ a.avatar {
 
   .slotSummary,
   .slotAction {
+    align-items: flex-start;
     justify-content: flex-start;
+  }
+
+  .reservationError {
+    text-align: left;
   }
 }
 
