@@ -636,6 +636,8 @@
 
 .backRow {
   display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
   justify-content: flex-start;
   min-width: 0;
 }

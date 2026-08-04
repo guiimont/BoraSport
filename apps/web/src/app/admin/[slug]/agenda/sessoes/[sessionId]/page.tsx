@@ -83,6 +83,14 @@ export default async function SessionDetailPage({
         <Link className={styles.secondaryButton} href={`/admin/${context.company.slug}/agenda`}>
           Voltar para Agenda
         </Link>
+        {context.role === "admin" ? (
+          <Link
+            className={styles.primaryButton}
+            href={`/admin/${context.company.slug}/agenda/novo?sessionId=${session.id}`}
+          >
+            Editar sessão
+          </Link>
+        ) : null}
       </div>
 
       <section className={styles.trainingDetailHero}>

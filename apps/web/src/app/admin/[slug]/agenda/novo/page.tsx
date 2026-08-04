@@ -1,6 +1,9 @@
+import { notFound, redirect } from "next/navigation";
+
 import {
   getCompanyBaseScheduleById,
   getCompanyMembers,
+  getCompanyOperationalSessionById,
   getCompanyResources,
   getCompanyTrainingLibrary,
 } from "../../../../../lib/saas/queries";
@@ -15,6 +18,7 @@ type NewAgendaSchedulePageProps = {
   searchParams?: Promise<{
     baseScheduleId?: string;
     date?: string;
+    sessionId?: string;
     trainingPlanVersionId?: string;
   }>;
 };
@@ -37,32 +41,50 @@ export default async function NewAgendaSchedulePage({
   searchParams,
 }: NewAgendaSchedulePageProps) {
   const { slug } = await params;
-  const { baseScheduleId, date, trainingPlanVersionId } =
+  const { baseScheduleId, date, sessionId, trainingPlanVersionId } =
     (await searchParams) ?? {};
   const context = await getManageAdminContext(slug);
-  const [baseSchedule, members, resources, trainingPlans] = await Promise.all([
+
+  if (context.role !== "admin") {
+    redirect(`/admin/${context.company.slug}/agenda`);
+  }
+
+  const [baseSchedule, session, members, resources, trainingPlans] = await Promise.all([
     baseScheduleId
       ? getCompanyBaseScheduleById(context.company.id, baseScheduleId)
+      : Promise.resolve(null),
+    sessionId
+      ? getCompanyOperationalSessionById({
+          companyId: context.company.id,
+          sessionId,
+        })
       : Promise.resolve(null),
     getCompanyMembers(context.company.id),
     getCompanyResources(context.company.id),
     getCompanyTrainingLibrary(context.company.id),
   ]);
 
+  if (sessionId && !session) {
+    notFound();
+  }
+
   return (
     <AdminShell
       active="agenda"
       context={context}
       subtitle={
-        baseSchedule
+        session
+          ? "Ajuste esta sessão sem alterar a grade semanal."
+          : baseSchedule
           ? "Defina o treino e ajuste esta ocorrência sem alterar as demais datas."
           : "Crie uma sessão ou um horário semanal recorrente sem sair da Agenda."
       }
-      title={baseSchedule ? "Planejar sessão" : "Novo horário"}
+      title={session ? "Editar sessão" : baseSchedule ? "Planejar sessão" : "Novo horário"}
     >
       <OperationalScheduleForm
         companyId={context.company.id}
-        initialSchedule={baseSchedule}
+        initialSchedule={session ? null : baseSchedule}
+        initialSession={session}
         initialDate={getDateKey(date)}
         initialTrainingPlanVersionId={trainingPlanVersionId}
         members={members}

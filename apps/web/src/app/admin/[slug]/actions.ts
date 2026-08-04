@@ -496,6 +496,7 @@ export async function saveOperationalSchedule(
   const durationMinutes = Math.floor(readNumber(formData, "durationMinutes", 60));
   const groupName = readText(formData, "groupName", "");
   const level = readOptionalText(formData, "level");
+  const sessionId = readOptionalText(formData, "sessionId");
   const coachId = readText(formData, "coachId", "");
   const resourceIds = readTextList(formData, "resourceIds");
   const status = readOperationalSessionStatus(formData);
@@ -577,6 +578,7 @@ export async function saveOperationalSchedule(
         level,
         resourceIds,
         sessionDate,
+        sessionId,
         startTime,
         status,
         trainingPlanVersionId,
@@ -594,7 +596,9 @@ export async function saveOperationalSchedule(
 
   return {
     success:
-      recurrenceMode === "weekly"
+      sessionId
+        ? "Sessão atualizada."
+        : recurrenceMode === "weekly"
         ? "Horário recorrente criado na Agenda."
         : "Sessão criada na Agenda.",
   };

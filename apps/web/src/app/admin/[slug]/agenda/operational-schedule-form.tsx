@@ -7,6 +7,8 @@ import { useFormStatus } from "react-dom";
 import type {
   BaseSchedule,
   CompanyMember,
+  OperationalSession,
+  OperationalSessionStatus,
   Resource,
   TrainingPlanLibraryItem,
 } from "../../../../types/saas";
@@ -22,6 +24,7 @@ type OperationalScheduleFormProps = {
   companyId: string;
   initialDate: string;
   initialSchedule?: BaseSchedule | null;
+  initialSession?: OperationalSession | null;
   initialTrainingPlanVersionId?: string;
   members: CompanyMember[];
   resources: Resource[];
@@ -46,12 +49,12 @@ function getPublishedVersions(trainingPlans: TrainingPlanLibraryItem[]) {
     .sort((a, b) => a.label.localeCompare(b.label, "pt-BR"));
 }
 
-function SubmitButton() {
+function SubmitButton({ editing }: { editing: boolean }) {
   const { pending } = useFormStatus();
 
   return (
     <button className={styles.primaryButton} disabled={pending} type="submit">
-      {pending ? "Salvando..." : "Salvar horário"}
+      {pending ? "Salvando..." : editing ? "Salvar alterações" : "Salvar horário"}
     </button>
   );
 }
@@ -60,6 +63,7 @@ export function OperationalScheduleForm({
   companyId,
   initialDate,
   initialSchedule = null,
+  initialSession = null,
   initialTrainingPlanVersionId = "",
   members,
   resources,
@@ -68,9 +72,16 @@ export function OperationalScheduleForm({
 }: OperationalScheduleFormProps) {
   const [state, action] = useActionState(saveOperationalSchedule, initialState);
   const [selectedResources, setSelectedResources] = useState(
-    new Set<string>(initialSchedule?.resources.map((item) => item.resource_id) ?? []),
+    () => new Set<string>(
+      (initialSession?.resources ?? initialSchedule?.resources ?? []).map(
+        (item) => item.resource_id,
+      ),
+    ),
   );
   const [recurrenceMode, setRecurrenceMode] = useState("single");
+  const [status, setStatus] = useState<OperationalSessionStatus>(
+    initialSession?.status ?? "draft",
+  );
   const coaches = members.filter(
     (member) => member.role === "admin" || member.role === "professional",
   );
@@ -79,7 +90,9 @@ export function OperationalScheduleForm({
     [trainingPlans],
   );
   const initialTraining = publishedVersions.find(
-    ({ version }) => version.id === initialTrainingPlanVersionId,
+    ({ version }) =>
+      version.id ===
+      (initialSession?.training_plan_version_id ?? initialTrainingPlanVersionId),
   );
   const initialDurationMinutes = initialTraining?.version.duration_seconds
     ? Math.round(initialTraining.version.duration_seconds / 60)
@@ -102,19 +115,54 @@ export function OperationalScheduleForm({
   );
 
   return (
-    <form action={action} className={styles.builderLayout}>
+    <form
+      action={action}
+      className={styles.builderLayout}
+      onSubmit={(event) => {
+        if (
+          initialSession &&
+          initialSession.status !== "cancelled" &&
+          status === "cancelled" &&
+          !window.confirm(
+            "Cancelar esta sessão? Ela deixará de aparecer para novas reservas.",
+          )
+        ) {
+          event.preventDefault();
+        }
+      }}
+    >
       <input name="companyId" type="hidden" value={companyId} />
       <input name="slug" type="hidden" value={slug} />
       {initialSchedule ? (
         <input name="baseScheduleId" type="hidden" value={initialSchedule.id} />
       ) : null}
+      {initialSession ? (
+        <>
+          <input name="sessionId" type="hidden" value={initialSession.id} />
+          {initialSession.base_schedule_id ? (
+            <input
+              name="baseScheduleId"
+              type="hidden"
+              value={initialSession.base_schedule_id}
+            />
+          ) : null}
+        </>
+      ) : null}
 
       <div className={styles.builderMain}>
         <section className={styles.builderHero}>
           <p className={styles.eyebrow}>Agenda</p>
-          <h2>{initialSchedule ? "Planejar sessão do dia" : "Novo horário"}</h2>
+          <h2>
+            {initialSession
+              ? "Editar sessão"
+              : initialSchedule
+                ? "Planejar sessão do dia"
+                : "Novo horário"}
+          </h2>
           <p>
-            {initialSchedule
+            {initialSession
+              ? "Ajuste somente esta sessão. A grade semanal permanece inalterada."
+              : initialSchedule
               ? "Revise os dados desta ocorrência e escolha o treino que será realizado."
               : "Crie uma sessão para uma data ou defina um horário semanal recorrente."}
           </p>
@@ -131,7 +179,7 @@ export function OperationalScheduleForm({
               Data
               <input
                 className={styles.input}
-                defaultValue={initialDate}
+                defaultValue={initialSession?.session_date ?? initialDate}
                 name="sessionDate"
                 required
                 type="date"
@@ -141,7 +189,11 @@ export function OperationalScheduleForm({
               Horário
               <input
                 className={styles.input}
-                defaultValue={initialSchedule?.start_time.slice(0, 5) ?? "06:00"}
+                defaultValue={
+                  initialSession?.start_time.slice(0, 5) ??
+                  initialSchedule?.start_time.slice(0, 5) ??
+                  "06:00"
+                }
                 name="startTime"
                 required
                 type="time"
@@ -152,7 +204,9 @@ export function OperationalScheduleForm({
               <input
                 className={styles.input}
                 defaultValue={
-                  initialSchedule?.duration_minutes ?? initialDurationMinutes
+                  initialSession?.duration_minutes ??
+                  initialSchedule?.duration_minutes ??
+                  initialDurationMinutes
                 }
                 max="360"
                 min="5"
@@ -168,7 +222,10 @@ export function OperationalScheduleForm({
               <input
                 className={styles.input}
                 defaultValue={
-                  initialSchedule?.group_name ?? initialTraining?.plan.title ?? ""
+                  initialSession?.group_name ??
+                  initialSchedule?.group_name ??
+                  initialTraining?.plan.title ??
+                  ""
                 }
                 name="groupName"
                 placeholder="Treino regular"
@@ -179,7 +236,9 @@ export function OperationalScheduleForm({
               Nível opcional
               <input
                 className={styles.input}
-                defaultValue={initialSchedule?.level ?? initialLevel}
+                defaultValue={
+                  initialSession?.level ?? initialSchedule?.level ?? initialLevel
+                }
                 name="level"
                 placeholder="Iniciante, misto, avançado..."
               />
@@ -191,7 +250,10 @@ export function OperationalScheduleForm({
               <select
                 className={styles.select}
                 defaultValue={
-                  initialSchedule?.coach_id ?? initialTraining?.plan.coach_id ?? ""
+                  initialSession?.coach_id ??
+                  initialSchedule?.coach_id ??
+                  initialTraining?.plan.coach_id ??
+                  ""
                 }
                 name="coachId"
                 required
@@ -205,15 +267,22 @@ export function OperationalScheduleForm({
               </select>
             </label>
             <label className={styles.label}>
-              Situação inicial
-              <select className={styles.select} defaultValue="draft" name="status">
+              Situação
+              <select
+                className={styles.select}
+                name="status"
+                onChange={(event) =>
+                  setStatus(event.target.value as OperationalSessionStatus)
+                }
+                value={status}
+              >
                 <option value="draft">Rascunho</option>
                 <option value="published">Publicada</option>
                 <option value="cancelled">Cancelada</option>
               </select>
             </label>
           </div>
-          {!initialSchedule ? <fieldset className={styles.checkPanel}>
+          {!initialSchedule && !initialSession ? <fieldset className={styles.checkPanel}>
             <legend>Recorrência</legend>
             <div className={styles.agendaModeGrid}>
               <label className={styles.baseResourceOption}>
@@ -261,7 +330,7 @@ export function OperationalScheduleForm({
             {resources.map((resource) => {
               const checked = selectedResources.has(resource.id);
               const status = getResourceStatus(resource);
-              const disabled = status !== "disponivel";
+              const disabled = status !== "disponivel" && !checked;
 
               return (
                 <label
@@ -296,7 +365,13 @@ export function OperationalScheduleForm({
                         : "Classe não definida"}{" "}
                       · capacidade {resource.capacity_maxima}
                     </small>
-                    {disabled ? <em>Canoa indisponível</em> : null}
+                    {status !== "disponivel" ? (
+                      <em>
+                        {checked
+                          ? "Já vinculada; remova para escolher outra"
+                          : "Canoa indisponível"}
+                      </em>
+                    ) : null}
                   </span>
                 </label>
               );
@@ -339,12 +414,14 @@ export function OperationalScheduleForm({
         </section>
 
         <div className={styles.builderStickyActions}>
-          <SubmitButton />
+          <SubmitButton editing={Boolean(initialSession)} />
           <Link className={styles.secondaryButton} href={`/admin/${slug}/agenda`}>
             Voltar para Agenda
           </Link>
-          {state.success ? <p className={styles.success}>{state.success}</p> : null}
-          {state.error ? <p className={styles.error}>{state.error}</p> : null}
+          <div aria-live="polite">
+            {state.success ? <p className={styles.success}>{state.success}</p> : null}
+            {state.error ? <p className={styles.error}>{state.error}</p> : null}
+          </div>
         </div>
       </div>
 
