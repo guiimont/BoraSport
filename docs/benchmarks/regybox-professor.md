@@ -119,7 +119,7 @@ frequentes acessiveis em poucos toques.
 | Historico | Historico de remadas |
 | Recordes | Melhores tempos, distancias e conquistas |
 | Ranking | Desafios e competicoes opcionais |
-| Comentarios | Comunicacao da guarnicao e do clube |
+| Comentarios | Comunicacao dos remadores e do clube |
 | Mensalidade | Plano e situacao financeira |
 | Videos tecnicos | Tecnica, seguranca, posicoes e equipamentos |
 
@@ -145,7 +145,7 @@ frequentes acessiveis em poucos toques.
 - Historico esportivo aumenta retencao.
 - Comunidade deve fortalecer o clube.
 - Financeiro e necessario, mas nao deve dominar a experiencia esportiva.
-- O diferencial central sera a operacao especifica das guarnicoes.
+- O diferencial central sera a composicao e a operacao especifica das canoas.
 
 ## 9. Limitacoes e proximas pesquisas
 

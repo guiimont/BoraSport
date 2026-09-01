@@ -7,6 +7,7 @@ import styles from "./admin.module.css";
 
 type AdminSection =
   | "agenda"
+  | "bases"
   | "canoas"
   | "configuracoes"
   | "overview"
@@ -31,6 +32,7 @@ const navItems: Array<{
 }> = [
   { hrefSuffix: "", id: "overview", label: "Visão geral" },
   { hrefSuffix: "/agenda", id: "agenda", label: "Agenda" },
+  { hrefSuffix: "/bases", id: "bases", label: "Bases" },
   { hrefSuffix: "/remadores", id: "remadores", label: "Remadores" },
   { hrefSuffix: "/canoas", id: "canoas", label: "Canoas" },
   { hrefSuffix: "/treinos", id: "treinos", label: "Treinos" },

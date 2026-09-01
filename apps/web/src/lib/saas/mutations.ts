@@ -118,6 +118,7 @@ export type CreateResourceInput = {
   companyId: string;
   defaultSteererPolicy?: DefaultSteererPolicy | null;
   internalCode?: string | null;
+  locationId?: string | null;
   name: string;
   operationalNotes?: string | null;
   vesselClass?: VesselClass | null;
@@ -129,6 +130,7 @@ export async function createResource({
   companyId,
   defaultSteererPolicy = null,
   internalCode = null,
+  locationId = null,
   name,
   operationalNotes = null,
   vesselClass = null,
@@ -143,6 +145,7 @@ export async function createResource({
       company_id: companyId,
       default_steerer_policy: defaultSteererPolicy,
       internal_code: internalCode,
+      location_id: locationId,
       is_active: vesselStatus !== "inativa",
       name,
       operational_notes: operationalNotes,
@@ -168,6 +171,7 @@ export async function updateResource({
   companyId,
   defaultSteererPolicy = null,
   internalCode = null,
+  locationId = null,
   name,
   operationalNotes = null,
   resourceId,
@@ -182,6 +186,7 @@ export async function updateResource({
       capacity_maxima: capacityMaxima,
       default_steerer_policy: defaultSteererPolicy,
       internal_code: internalCode,
+      location_id: locationId,
       is_active: vesselStatus !== "inativa",
       name,
       operational_notes: operationalNotes,
@@ -240,6 +245,7 @@ export type UpsertBaseScheduleInput = {
   durationMinutes: number;
   groupName: string;
   level?: string | null;
+  locationId?: string | null;
   resourceIds: string[];
   scheduleId?: string | null;
   startTime: string;
@@ -254,6 +260,7 @@ export async function upsertBaseSchedule({
   durationMinutes,
   groupName,
   level = null,
+  locationId = null,
   resourceIds,
   scheduleId = null,
   startTime,
@@ -268,6 +275,7 @@ export async function upsertBaseSchedule({
     p_duration_minutes: durationMinutes,
     p_group_name: groupName,
     p_level: level,
+    p_location_id: locationId,
     p_resource_ids: uniqueResourceIds,
     p_schedule_id: scheduleId,
     p_start_time: startTime,
@@ -315,6 +323,7 @@ export type UpsertOperationalSessionInput = {
   durationMinutes: number;
   groupName: string;
   level?: string | null;
+  locationId?: string | null;
   resourceIds: string[];
   sessionDate: string;
   sessionId?: string | null;
@@ -330,6 +339,7 @@ export async function upsertOperationalSession({
   durationMinutes,
   groupName,
   level = null,
+  locationId = null,
   resourceIds,
   sessionDate,
   sessionId = null,
@@ -345,6 +355,7 @@ export async function upsertOperationalSession({
     p_duration_minutes: durationMinutes,
     p_group_name: groupName,
     p_level: level,
+    p_location_id: locationId,
     p_resource_ids: [...new Set(resourceIds)],
     p_session_date: sessionDate,
     p_session_id: sessionId,
@@ -358,6 +369,67 @@ export async function upsertOperationalSession({
   }
 
   return data as string;
+}
+
+export async function createCompanyLocation({
+  address,
+  companyId,
+  name,
+  publicNotes,
+}: {
+  address?: string | null;
+  companyId: string;
+  name: string;
+  publicNotes?: string | null;
+}) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("company_locations")
+    .insert({
+      address,
+      company_id: companyId,
+      name,
+      public_notes: publicNotes,
+    })
+    .select("*")
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function updateCompanyLocation({
+  address,
+  companyId,
+  isActive,
+  locationId,
+  name,
+  publicNotes,
+}: {
+  address?: string | null;
+  companyId: string;
+  isActive: boolean;
+  locationId: string;
+  name: string;
+  publicNotes?: string | null;
+}) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("company_locations")
+    .update({
+      address,
+      is_active: isActive,
+      name,
+      public_notes: publicNotes,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("company_id", companyId)
+    .eq("id", locationId)
+    .select("*")
+    .single();
+
+  if (error) throw error;
+  return data;
 }
 
 export async function setOperationalSessionTraining({

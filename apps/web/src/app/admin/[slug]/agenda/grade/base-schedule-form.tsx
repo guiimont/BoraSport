@@ -8,6 +8,7 @@ import type {
   BaseSchedule,
   BaseScheduleStatus,
   CompanyMember,
+  CompanyLocation,
   Resource,
 } from "../../../../../types/saas";
 import { saveBaseSchedule, type AdminFormState } from "../../actions";
@@ -26,6 +27,7 @@ type BaseScheduleFormProps = {
   companyId: string;
   existingSchedules: BaseSchedule[];
   members: CompanyMember[];
+  locations: CompanyLocation[];
   resources: Resource[];
   schedule?: BaseSchedule | null;
   slug: string;
@@ -116,6 +118,7 @@ export function BaseScheduleForm({
   companyId,
   existingSchedules,
   members,
+  locations,
   resources,
   schedule = null,
   slug,
@@ -132,6 +135,9 @@ export function BaseScheduleForm({
   const [selectedResources, setSelectedResources] = useState(
     new Set(schedule?.resources.map((item) => item.resource_id) ?? []),
   );
+  const [selectedLocationId, setSelectedLocationId] = useState(
+    schedule?.location_id ?? "",
+  );
   const coaches = members.filter(
     (member) => member.role === "admin" || member.role === "professional",
   );
@@ -145,7 +151,7 @@ export function BaseScheduleForm({
 
   const resourcesWithState = useMemo(
     () =>
-      resources.map((resource) => {
+      resources.filter((resource) => resource.location_id === selectedLocationId).map((resource) => {
         const alreadyLinked = schedule?.resources.some(
           (item) => item.resource_id === resource.id,
         );
@@ -167,7 +173,7 @@ export function BaseScheduleForm({
           unavailable,
         };
       }),
-    [durationMinutes, existingSchedules, schedule, startTime, weekday, resources],
+    [durationMinutes, existingSchedules, schedule, selectedLocationId, startTime, weekday, resources],
   );
 
   return (
@@ -207,6 +213,11 @@ export function BaseScheduleForm({
                   </option>
                 ))}
               </select>
+              {locations.length === 0 ? (
+                <span className={styles.fieldHelp}>
+                  Cadastre uma <Link href={`/admin/${slug}/bases`}>base</Link> antes do horário.
+                </span>
+              ) : null}
             </label>
             <label className={styles.label}>
               Horário inicial
@@ -257,6 +268,24 @@ export function BaseScheduleForm({
             </label>
           </div>
           <div className={styles.builderGrid}>
+            <label className={styles.label}>
+              Base
+              <select
+                className={styles.select}
+                name="locationId"
+                onChange={(event) => {
+                  setSelectedLocationId(event.target.value);
+                  setSelectedResources(new Set());
+                }}
+                required
+                value={selectedLocationId}
+              >
+                <option value="">Selecione</option>
+                {locations.filter((location) => location.is_active || location.id === schedule?.location_id).map((location) => (
+                  <option key={location.id} value={location.id}>{location.name}</option>
+                ))}
+              </select>
+            </label>
             <label className={styles.label}>
               Treinador
               <select

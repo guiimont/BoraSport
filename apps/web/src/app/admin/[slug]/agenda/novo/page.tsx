@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import {
   getCompanyBaseScheduleById,
   getCompanyMembers,
+  getCompanyLocations,
   getCompanyOperationalSessionById,
   getCompanyResources,
   getCompanyTrainingLibrary,
@@ -49,7 +50,7 @@ export default async function NewAgendaSchedulePage({
     redirect(`/admin/${context.company.slug}/agenda`);
   }
 
-  const [baseSchedule, session, members, resources, trainingPlans] = await Promise.all([
+  const [baseSchedule, session, members, locations, resources, trainingPlans] = await Promise.all([
     baseScheduleId
       ? getCompanyBaseScheduleById(context.company.id, baseScheduleId)
       : Promise.resolve(null),
@@ -60,6 +61,7 @@ export default async function NewAgendaSchedulePage({
         })
       : Promise.resolve(null),
     getCompanyMembers(context.company.id),
+    getCompanyLocations(context.company.id),
     getCompanyResources(context.company.id),
     getCompanyTrainingLibrary(context.company.id),
   ]);
@@ -88,6 +90,7 @@ export default async function NewAgendaSchedulePage({
         initialDate={getDateKey(date)}
         initialTrainingPlanVersionId={trainingPlanVersionId}
         members={members}
+        locations={locations}
         resources={resources}
         slug={context.company.slug}
         trainingPlans={trainingPlans}

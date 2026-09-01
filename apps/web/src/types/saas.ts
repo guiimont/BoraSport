@@ -43,9 +43,21 @@ export type Resource = {
   vessel_status: VesselStatus | null;
   default_steerer_policy: DefaultSteererPolicy | null;
   internal_code: string | null;
+  location_id: string | null;
   operational_notes: string | null;
   color: string | null;
   created_at: string;
+  updated_at: string;
+};
+
+export type CompanyLocation = {
+  address: string | null;
+  company_id: string;
+  created_at: string;
+  id: string;
+  is_active: boolean;
+  name: string;
+  public_notes: string | null;
   updated_at: string;
 };
 
@@ -73,12 +85,14 @@ export type CompanySlot = {
   spots_occupied: number;
   operational_session_id: string | null;
   is_public: boolean;
+  location_id: string | null;
   spots_available?: number;
   services: Pick<
     Service,
     "description" | "duration_minutes" | "id" | "name" | "price"
   > | null;
   resources: Pick<Resource, "capacity_maxima" | "id" | "name"> | null;
+  company_locations: Pick<CompanyLocation, "address" | "id" | "name" | "public_notes"> | null;
 };
 
 export type WeeklyWorkout = {
@@ -240,6 +254,8 @@ export type BaseSchedule = {
   group_name: string;
   id: string;
   level: string | null;
+  location: Pick<CompanyLocation, "address" | "id" | "name"> | null;
+  location_id: string | null;
   resources: BaseScheduleResource[];
   start_time: string;
   status: BaseScheduleStatus;
@@ -283,6 +299,8 @@ export type OperationalSession = {
   group_name: string;
   id: string;
   level: string | null;
+  location: Pick<CompanyLocation, "address" | "id" | "name"> | null;
+  location_id: string | null;
   resources: OperationalSessionResource[];
   session_date: string;
   start_time: string;
