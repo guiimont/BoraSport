@@ -136,6 +136,10 @@ export default async function ClubPage({ params }: ClubPageProps) {
                     <span>{vocabulary.resource_label}</span>
                     <strong>{nextSlot.resources?.name || "A definir"}</strong>
                   </div>
+                  <div className={styles.stat}>
+                    <span>Base</span>
+                    <strong>{nextSlot.company_locations?.name || "A definir"}</strong>
+                  </div>
                 </div>
 
                 <div className={styles.crewLine}>

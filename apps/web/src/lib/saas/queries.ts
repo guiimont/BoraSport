@@ -5,6 +5,7 @@ import type {
   Booking,
   Company,
   CompanyInvitation,
+  CompanyLocation,
   CompanyMember,
   CompanySlot,
   CurrentUserBooking,
@@ -56,6 +57,7 @@ function normalizeResource(resource: Partial<Resource> & Pick<Resource, "id" | "
     default_steerer_policy: resource.default_steerer_policy ?? null,
     id: resource.id,
     internal_code: resource.internal_code ?? null,
+    location_id: resource.location_id ?? null,
     is_active: resource.is_active,
     name: resource.name,
     operational_notes: resource.operational_notes ?? null,
@@ -82,11 +84,12 @@ function normalizeBaseScheduleResource(
 }
 
 function normalizeBaseSchedule(
-  row: Omit<BaseSchedule, "coach" | "resources"> & {
+  row: Omit<BaseSchedule, "coach" | "location" | "resources"> & {
     base_schedule_resources?: Array<
       Omit<BaseScheduleResource, "resource"> & { resources?: SupabaseJoin<Resource> }
     >;
     profiles?: SupabaseJoin<Pick<Profile, "avatar_url" | "id" | "name">>;
+    company_locations?: SupabaseJoin<Pick<CompanyLocation, "address" | "id" | "name">>;
   },
 ): BaseSchedule {
   return {
@@ -99,6 +102,8 @@ function normalizeBaseSchedule(
     group_name: row.group_name,
     id: row.id,
     level: row.level,
+    location: firstJoin(row.company_locations ?? null),
+    location_id: row.location_id,
     resources: (row.base_schedule_resources ?? []).map(
       normalizeBaseScheduleResource,
     ),
@@ -126,11 +131,12 @@ function normalizeOperationalSessionResource(
 }
 
 function normalizeOperationalSession(
-  row: Omit<OperationalSession, "coach" | "resources" | "training_plan_version"> & {
+  row: Omit<OperationalSession, "coach" | "location" | "resources" | "training_plan_version"> & {
     operational_session_resources?: Array<
       Omit<OperationalSessionResource, "resource"> & { resources?: SupabaseJoin<Resource> }
     >;
     profiles?: SupabaseJoin<Pick<Profile, "avatar_url" | "id" | "name">>;
+    company_locations?: SupabaseJoin<Pick<CompanyLocation, "address" | "id" | "name">>;
     training_plan_versions?: SupabaseJoin<
       Omit<NonNullable<OperationalSession["training_plan_version"]>, "training_plan"> & {
         training_plans?: SupabaseJoin<
@@ -153,6 +159,8 @@ function normalizeOperationalSession(
     group_name: row.group_name,
     id: row.id,
     level: row.level,
+    location: firstJoin(row.company_locations ?? null),
+    location_id: row.location_id,
     resources: (row.operational_session_resources ?? []).map(
       normalizeOperationalSessionResource,
     ),
@@ -339,6 +347,7 @@ export async function getCompanySlots(
         spots_occupied,
         operational_session_id,
         is_public,
+        location_id,
         services!inner (
           id,
           name,
@@ -350,6 +359,12 @@ export async function getCompanySlots(
           id,
           name,
           capacity_maxima
+        ),
+        company_locations (
+          id,
+          name,
+          address,
+          public_notes
         )
       `,
     )
@@ -365,12 +380,13 @@ export async function getCompanySlots(
       ...slot,
       services: firstJoin(slot.services),
       resources: firstJoin(slot.resources),
+      company_locations: firstJoin(slot.company_locations),
     })) as CompanySlot[];
   }
 
   const restRows = await getRowsViaRestOrThrow<CompanySlot>("slots", {
     select:
-      "id,company_id,service_id,resource_id,professional_id,start_time,end_time,spots_total,spots_occupied,operational_session_id,is_public,services!inner(id,name,description,duration_minutes,price),resources(id,name,capacity_maxima)",
+      "id,company_id,service_id,resource_id,professional_id,start_time,end_time,spots_total,spots_occupied,operational_session_id,is_public,location_id,services!inner(id,name,description,duration_minutes,price),resources(id,name,capacity_maxima),company_locations(id,name,address,public_notes)",
     company_id: `eq.${companyId}`,
     start_time: `gte.${new Date().toISOString()}`,
     is_public: "eq.true",
@@ -383,6 +399,7 @@ export async function getCompanySlots(
     ...slot,
     services: firstJoin(slot.services),
     resources: firstJoin(slot.resources),
+    company_locations: firstJoin(slot.company_locations),
   })) as CompanySlot[];
 }
 
@@ -556,7 +573,7 @@ export async function getCompanyResources(
   const { data, error } = await supabase
     .from("resources")
     .select(
-      "id,company_id,name,capacity_maxima,is_active,vessel_class,vessel_status,default_steerer_policy,internal_code,operational_notes,color,created_at,updated_at",
+      "id,company_id,name,capacity_maxima,is_active,vessel_class,vessel_status,default_steerer_policy,internal_code,location_id,operational_notes,color,created_at,updated_at",
     )
     .eq("company_id", companyId)
     .order("name", { ascending: true });
@@ -583,6 +600,36 @@ export async function getCompanyResourceById(
   return resources.find((resource) => resource.id === resourceId) ?? null;
 }
 
+export async function getCompanyLocations(
+  companyId: string,
+): Promise<CompanyLocation[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("company_locations")
+    .select("id,company_id,name,address,public_notes,is_active,created_at,updated_at")
+    .eq("company_id", companyId)
+    .order("is_active", { ascending: false })
+    .order("name", { ascending: true });
+
+  if (error) {
+    if (error.code === "42P01" || error.code === "42703") {
+      return [];
+    }
+
+    throw error;
+  }
+
+  return (data ?? []) as CompanyLocation[];
+}
+
+export async function getCompanyLocationById(
+  companyId: string,
+  locationId: string,
+): Promise<CompanyLocation | null> {
+  const locations = await getCompanyLocations(companyId);
+  return locations.find((location) => location.id === locationId) ?? null;
+}
+
 export async function getCompanyBaseSchedules(
   companyId: string,
 ): Promise<BaseSchedule[]> {
@@ -599,6 +646,7 @@ export async function getCompanyBaseSchedules(
         duration_minutes,
         group_name,
         level,
+        location_id,
         coach_id,
         status,
         created_by,
@@ -608,6 +656,11 @@ export async function getCompanyBaseSchedules(
           id,
           name,
           avatar_url
+        ),
+        company_locations (
+          id,
+          name,
+          address
         ),
         base_schedule_resources (
           schedule_id,
@@ -624,6 +677,7 @@ export async function getCompanyBaseSchedules(
             vessel_status,
             default_steerer_policy,
             internal_code,
+            location_id,
             operational_notes,
             color,
             created_at,
@@ -678,6 +732,7 @@ export async function getCompanyOperationalSessions({
         duration_minutes,
         group_name,
         level,
+        location_id,
         base_schedule_id,
         coach_id,
         training_plan_version_id,
@@ -689,6 +744,11 @@ export async function getCompanyOperationalSessions({
           id,
           name,
           avatar_url
+        ),
+        company_locations (
+          id,
+          name,
+          address
         ),
         training_plan_versions:training_plan_versions!operational_sessions_training_version_company_fk (
           id,
@@ -721,6 +781,7 @@ export async function getCompanyOperationalSessions({
             vessel_status,
             default_steerer_policy,
             internal_code,
+            location_id,
             operational_notes,
             color,
             created_at,
@@ -770,6 +831,7 @@ export async function getCompanyOperationalSessionById({
         duration_minutes,
         group_name,
         level,
+        location_id,
         base_schedule_id,
         coach_id,
         training_plan_version_id,
@@ -781,6 +843,11 @@ export async function getCompanyOperationalSessionById({
           id,
           name,
           avatar_url
+        ),
+        company_locations (
+          id,
+          name,
+          address
         ),
         training_plan_versions:training_plan_versions!operational_sessions_training_version_company_fk (
           id,
@@ -813,6 +880,7 @@ export async function getCompanyOperationalSessionById({
             vessel_status,
             default_steerer_policy,
             internal_code,
+            location_id,
             operational_notes,
             color,
             created_at,

@@ -11,7 +11,7 @@ O problema central e que muitos clubes ainda distribuem a operacao entre
 WhatsApp, planilhas, formularios, mensagens soltas e sistemas genericos que nao
 entendem a rotina do va'a. Isso cria retrabalho na agenda, dificuldade para
 controlar vagas, pouca visibilidade sobre presenca e evolucao, e perda de
-contexto na montagem das guarnicoes.
+contexto na composicao das canoas.
 
 A proposta do BoraSport e centralizar a operacao do clube, a experiencia
 esportiva do remador, a comunidade e a presenca digital em uma plataforma
@@ -74,14 +74,14 @@ como fluxo de produto.
 
 ### Treinador
 
-O treinador precisa planejar treinos, formar guarnicoes, distribuir posicoes,
+O treinador precisa planejar treinos, compor canoas, distribuir remadores,
 controlar presenca, ajustar mudancas de ultima hora, registrar desempenho,
 acompanhar remadores, comunicar o grupo e aplicar protocolos de seguranca.
 
 Estado atual: o sistema possui biblioteca de treinos, agenda operacional,
 canoas, participantes, lista de espera, controle de presenca e papel
 `professional` nas memberships. Ainda nao ha interface especializada para
-formacao de guarnicoes, posicoes V1 a V6 ou painel esportivo com volume,
+composicao das canoas, posicoes aplicaveis ou painel esportivo com volume,
 intensidade e zonas cardiacas.
 
 ### Administrador do clube
@@ -113,7 +113,7 @@ auditoria administrativa completa ou suporte interno estruturado.
   publica simples.
 - Valor para o va'a: facilita captacao, orienta novos remadores e reduz
   dependencias de paginas improvisadas.
-- Situacao atual: pronta para piloto operacional.
+- Situacao atual: funcional, ainda em preparacao para teste real controlado.
 - Funcionalidades principais: dados do tenant, slug, logo, cores, vocabulario,
   pagina publica `/clube/[slug]`, landing page em `/site/[slug]`.
 - Dependencias relevantes: `companies`, `landing_pages`, storage
@@ -155,15 +155,14 @@ auditoria administrativa completa ou suporte interno estruturado.
 - Lacuna: nao ha modelo especializado para remos, manutencao, tipo detalhado de
   canoa, avarias ou disponibilidade por equipamento.
 
-### 5. Formacao e equilibrio das guarnicoes
+### 5. Composicao das canoas
 
-- Objetivo: apoiar o treinador na montagem de guarnicoes equilibradas.
+- Objetivo: apoiar o treinador na distribuicao dos remadores entre as canoas.
 - Valor para o va'a: melhora seguranca, desempenho, aprendizado e experiencia
   coletiva.
 - Situacao atual: futuro.
-- Funcionalidades principais desejadas: posicoes V1 a V6, preferencia por
-  posicao, experiencia, nivel tecnico, condicionamento, restricoes e sugestoes
-  de composicao.
+- Funcionalidades principais desejadas: posicoes quando aplicaveis, experiencia,
+  nivel tecnico, restricoes e sugestoes de composicao validadas com treinadores.
 - Dependencias relevantes: perfil tecnico do remador, reservas confirmadas,
   capacidade por canoa e regras definidas com treinadores.
 
@@ -212,7 +211,7 @@ auditoria administrativa completa ou suporte interno estruturado.
 - Situacao atual: futuro.
 - Funcionalidades principais desejadas: calendario, inscricoes, equipes,
   baterias, resultados e comunicacao.
-- Dependencias relevantes: modelagem de eventos, perfis, guarnicoes e pagamentos.
+- Dependencias relevantes: modelagem de eventos, perfis, canoas e pagamentos.
 
 ### 10. Comunicacao e comunidade
 
@@ -265,7 +264,7 @@ tratados como diferenciais centrais do BoraSport:
 
 - posicoes V1 a V6;
 - preferencia e experiencia por posicao;
-- montagem e equilibrio das guarnicoes;
+- composicao das canoas;
 - capacidade por tipo de canoa;
 - gestao de OC1, OC2, V6 e outros tipos relevantes;
 - controle de canoas, remos e equipamentos;
@@ -325,7 +324,7 @@ houver codigo, migration ou fluxo de interface comprovando a entrega.
 - Lista de espera estruturada.
 - Posicoes V1 a V6 no modelo de dados.
 - Perfil tecnico do remador.
-- Formacao inteligente de guarnicoes.
+- Composicao assistida das canoas.
 - Controle especifico de remos, manutencao e inventario detalhado.
 - Presenca operacional completa.
 - Competicoes, eventos, baterias e equipes.
@@ -377,14 +376,14 @@ Criterios de conclusao:
 
 ### Fase 2 - Nucleo especializado em va'a
 
-Priorizar canoas e equipamentos, posicoes, guarnicoes, niveis, formacao
+Priorizar canoas e equipamentos, posicoes aplicaveis, composicao, niveis,
 inteligente, planejamento do treino, seguranca e condicoes ambientais.
 
 Criterios de conclusao:
 
 - Modelo de posicoes V1 a V6 definido.
 - Perfil tecnico do remador estruturado.
-- Guarnicoes montadas manualmente com suporte do sistema.
+- Canoas compostas manualmente com suporte do sistema.
 - Sugestoes inteligentes testadas com treinadores.
 - Equipamentos e canoas modelados com atributos relevantes.
 - Condicoes ambientais e protocolos de seguranca integrados ao fluxo.
@@ -418,7 +417,7 @@ Criterios de conclusao:
 ### Fase 5 - Referencia global
 
 Considerar internacionalizacao, multiplos idiomas, moedas e fusos, integracoes,
-aplicativo instalavel ou nativo, inteligencia para guarnicoes, benchmarks globais
+aplicativo instalavel ou nativo, apoio a composicao das canoas, benchmarks globais
 e expansao internacional.
 
 Criterios de conclusao:
@@ -486,7 +485,7 @@ produtos antes da analise.
 - clubes ativos recorrentes;
 - remadores ativos por periodo;
 - taxa de presenca;
-- tempo economizado na formacao das guarnicoes;
+- tempo economizado na composicao das canoas;
 - evolucao tecnica individual;
 - engajamento dos remadores;
 - retencao dos clubes;
@@ -500,7 +499,7 @@ Decisoes que ainda precisam ser tomadas explicitamente:
 
 - fluxo definitivo de cadastro de clube, administrador e remador;
 - criterios de nivel tecnico e experiencia;
-- regras de formacao das guarnicoes;
+- regras de composicao das canoas;
 - modelagem de canoas, remos e demais equipamentos;
 - fontes oficiais de condicoes ambientais;
 - estrategia de pagamentos;
