@@ -5,6 +5,7 @@ import {
   getCompanyBaseScheduleById,
   getCompanyBaseSchedules,
   getCompanyMembers,
+  getCompanyLocations,
   getCompanyResources,
 } from "../../../../../../lib/saas/queries";
 import { getManageAdminContext } from "../../../admin-context";
@@ -36,10 +37,11 @@ export default async function BaseScheduleDetailPage({
 }: BaseScheduleDetailPageProps) {
   const { scheduleId, slug } = await params;
   const context = await getManageAdminContext(slug);
-  const [schedule, resources, members, existingSchedules] = await Promise.all([
+  const [schedule, resources, members, locations, existingSchedules] = await Promise.all([
     getCompanyBaseScheduleById(context.company.id, scheduleId),
     getCompanyResources(context.company.id),
     getCompanyMembers(context.company.id),
+    getCompanyLocations(context.company.id),
     getCompanyBaseSchedules(context.company.id),
   ]);
 
@@ -77,7 +79,7 @@ export default async function BaseScheduleDetailPage({
           </h2>
           <p>
             {schedule.coach?.name || "Treinador"} · {schedule.duration_minutes}{" "}
-            min · {schedule.resources.length} canoa
+            min · {schedule.location?.name || "Base não definida"} · {schedule.resources.length} canoa
             {schedule.resources.length === 1 ? "" : "s"} · {publicSpots} vagas
             públicas.
           </p>
@@ -161,6 +163,7 @@ export default async function BaseScheduleDetailPage({
         companyId={context.company.id}
         existingSchedules={existingSchedules}
         members={members}
+        locations={locations}
         resources={resources}
         schedule={schedule}
         slug={context.company.slug}

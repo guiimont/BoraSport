@@ -7,6 +7,7 @@ import { useFormStatus } from "react-dom";
 import type {
   BaseSchedule,
   CompanyMember,
+  CompanyLocation,
   OperationalSession,
   OperationalSessionStatus,
   Resource,
@@ -27,6 +28,7 @@ type OperationalScheduleFormProps = {
   initialSession?: OperationalSession | null;
   initialTrainingPlanVersionId?: string;
   members: CompanyMember[];
+  locations: CompanyLocation[];
   resources: Resource[];
   slug: string;
   trainingPlans: TrainingPlanLibraryItem[];
@@ -66,6 +68,7 @@ export function OperationalScheduleForm({
   initialSession = null,
   initialTrainingPlanVersionId = "",
   members,
+  locations,
   resources,
   slug,
   trainingPlans,
@@ -81,6 +84,9 @@ export function OperationalScheduleForm({
   const [recurrenceMode, setRecurrenceMode] = useState("single");
   const [status, setStatus] = useState<OperationalSessionStatus>(
     initialSession?.status ?? "draft",
+  );
+  const [selectedLocationId, setSelectedLocationId] = useState(
+    initialSession?.location_id ?? initialSchedule?.location_id ?? "",
   );
   const coaches = members.filter(
     (member) => member.role === "admin" || member.role === "professional",
@@ -246,6 +252,29 @@ export function OperationalScheduleForm({
           </div>
           <div className={styles.builderGrid}>
             <label className={styles.label}>
+              Base
+              <select
+                className={styles.select}
+                name="locationId"
+                onChange={(event) => {
+                  setSelectedLocationId(event.target.value);
+                  setSelectedResources(new Set());
+                }}
+                required
+                value={selectedLocationId}
+              >
+                <option value="">Selecione</option>
+                {locations.filter((location) => location.is_active || location.id === initialSession?.location_id || location.id === initialSchedule?.location_id).map((location) => (
+                  <option key={location.id} value={location.id}>{location.name}</option>
+                ))}
+              </select>
+              {locations.length === 0 ? (
+                <span className={styles.fieldHelp}>
+                  Cadastre uma <Link href={`/admin/${slug}/bases`}>base</Link> antes da sessão.
+                </span>
+              ) : null}
+            </label>
+            <label className={styles.label}>
               Treinador
               <select
                 className={styles.select}
@@ -327,7 +356,7 @@ export function OperationalScheduleForm({
             <p>Use apenas canoas disponíveis. A capacidade vem da frota cadastrada.</p>
           </div>
           <div className={styles.baseResourceGrid}>
-            {resources.map((resource) => {
+            {resources.filter((resource) => resource.location_id === selectedLocationId).map((resource) => {
               const checked = selectedResources.has(resource.id);
               const status = getResourceStatus(resource);
               const disabled = status !== "disponivel" && !checked;
@@ -376,6 +405,12 @@ export function OperationalScheduleForm({
                 </label>
               );
             })}
+            {selectedLocationId && resources.every((resource) => resource.location_id !== selectedLocationId) ? (
+              <p className={styles.fieldHelp}>Nenhuma canoa disponível nesta base.</p>
+            ) : null}
+            {!selectedLocationId ? (
+              <p className={styles.fieldHelp}>Selecione a base para ver as canoas disponíveis.</p>
+            ) : null}
           </div>
         </section>
 

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { getCompanyResourceById } from "../../../../../lib/saas/queries";
+import { getCompanyLocations, getCompanyResourceById } from "../../../../../lib/saas/queries";
 import { getManageAdminContext } from "../../admin-context";
 import { AdminShell } from "../../admin-shell";
 import styles from "../../admin.module.css";
@@ -18,7 +18,10 @@ type EditCanoaPageProps = {
 export default async function EditCanoaPage({ params }: EditCanoaPageProps) {
   const { resourceId, slug } = await params;
   const context = await getManageAdminContext(slug);
-  const resource = await getCompanyResourceById(context.company.id, resourceId);
+  const [resource, locations] = await Promise.all([
+    getCompanyResourceById(context.company.id, resourceId),
+    getCompanyLocations(context.company.id),
+  ]);
 
   if (!resource) {
     notFound();
@@ -73,6 +76,7 @@ export default async function EditCanoaPage({ params }: EditCanoaPageProps) {
       </section>
       <CanoaOperationalForm
         companyId={context.company.id}
+        locations={locations}
         resource={resource}
         resourceLabel={context.vocabulary.resource_label}
         slug={context.company.slug}
