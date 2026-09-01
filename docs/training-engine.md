@@ -88,6 +88,19 @@ Campos opcionais foram adicionados:
 Ambos podem ficar nulos. Isso preserva todos os horarios e treinos semanais
 antigos.
 
+## Regra de publicacao aprovada
+
+O professor cria ou reutiliza um treino e o vincula a uma sessao da agenda. A
+publicacao torna o treino consultavel no perfil do clube.
+
+Publicar o treino nao dispara notificacao automatica para os alunos. O remador
+consulta a agenda do clube por iniciativa propria.
+
+Treino prescrito, sessao agendada e atividade realizada sao entidades
+conceitualmente distintas. A presenca pode ser confirmada por inscricao,
+check-in, atividade importada ou confirmacao operacional, mas uma reserva nao e
+prova definitiva de comparecimento.
+
 ## Seguranca
 
 RLS foi habilitada nas novas tabelas.

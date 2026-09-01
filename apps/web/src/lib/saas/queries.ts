@@ -266,7 +266,7 @@ export async function getCompanyBySlug(slug: string): Promise<Company | null> {
   const { data, error } = await supabase
     .from("companies")
     .select(
-      "id, name, slug, logo_url, theme_colors, vocabulary_config, type_de_negocio, created_at, updated_at",
+      "id, name, slug, logo_url, theme_colors, vocabulary_config, type_de_negocio, organization_kind, created_at, updated_at",
     )
     .eq("slug", slug)
     .maybeSingle();
@@ -292,7 +292,7 @@ export async function getCompanyBySlug(slug: string): Promise<Company | null> {
   }
 
   return fallback.data
-    ? ({ ...fallback.data, type_de_negocio: null } as Company)
+    ? ({ ...fallback.data, organization_kind: "club", type_de_negocio: null } as Company)
     : null;
 }
 
@@ -307,7 +307,7 @@ async function getCompanyBySlugViaRest(slug: string): Promise<Company | null> {
   const url = new URL("/rest/v1/companies", supabaseUrl);
   url.searchParams.set(
     "select",
-    "id,name,slug,logo_url,theme_colors,vocabulary_config,type_de_negocio,created_at,updated_at",
+    "id,name,slug,logo_url,theme_colors,vocabulary_config,type_de_negocio,organization_kind,created_at,updated_at",
   );
   url.searchParams.set("slug", `eq.${slug}`);
   url.searchParams.set("limit", "1");

@@ -26,6 +26,7 @@ export type Company = {
   name: string;
   slug: string;
   logo_url: string | null;
+  organization_kind: "club" | "group";
   theme_colors: ThemeColors;
   vocabulary_config: VocabularyConfig;
   type_de_negocio: string | null;
@@ -219,14 +220,14 @@ export type UserNotification = {
 export type ActivityRecord = {
   activity_type: string;
   average_heart_rate: number | null;
-  company_id: string;
+  company_id: string | null;
   distance_meters: number | null;
   duration_seconds: number | null;
   id: string;
   provider: string;
   started_at: string;
   title: string | null;
-  visibility: "private" | "team" | "company";
+  visibility: "private" | "organization" | "connections" | "public";
 };
 
 export type Booking = {

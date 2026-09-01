@@ -15,6 +15,8 @@ type AdminSection =
   | "site"
   | "treinos";
 
+type AdminModule = "gestao" | "hoje" | "operacao" | "pessoas";
+
 type AdminShellProps = {
   active: AdminSection;
   children: ReactNode;
@@ -25,18 +27,40 @@ type AdminShellProps = {
   title: string;
 };
 
-const navItems: Array<{
-  id: AdminSection;
+const moduleItems: Array<{
+  id: AdminModule;
   label: string;
-  hrefSuffix: string;
+  sections: Array<{ id: AdminSection; label: string; hrefSuffix: string }>;
 }> = [
-  { hrefSuffix: "", id: "overview", label: "Visão geral" },
-  { hrefSuffix: "/agenda", id: "agenda", label: "Agenda" },
-  { hrefSuffix: "/bases", id: "bases", label: "Bases" },
-  { hrefSuffix: "/remadores", id: "remadores", label: "Remadores" },
-  { hrefSuffix: "/canoas", id: "canoas", label: "Canoas" },
-  { hrefSuffix: "/treinos", id: "treinos", label: "Treinos" },
-  { hrefSuffix: "/configuracoes", id: "configuracoes", label: "Configurações" },
+  {
+    id: "hoje",
+    label: "Hoje",
+    sections: [{ hrefSuffix: "", id: "overview", label: "Visão geral" }],
+  },
+  {
+    id: "operacao",
+    label: "Operação",
+    sections: [
+      { hrefSuffix: "/agenda", id: "agenda", label: "Agenda" },
+      { hrefSuffix: "/treinos", id: "treinos", label: "Treinos" },
+      { hrefSuffix: "/bases", id: "bases", label: "Bases" },
+      { hrefSuffix: "/canoas", id: "canoas", label: "Canoas" },
+    ],
+  },
+  {
+    id: "pessoas",
+    label: "Pessoas",
+    sections: [
+      { hrefSuffix: "/remadores", id: "remadores", label: "Remadores" },
+    ],
+  },
+  {
+    id: "gestao",
+    label: "Gestão",
+    sections: [
+      { hrefSuffix: "/configuracoes", id: "configuracoes", label: "Configurações" },
+    ],
+  },
 ];
 
 export function AdminShell({
@@ -50,8 +74,10 @@ export function AdminShell({
 }: AdminShellProps) {
   const { company, profileAvatarUrl, role, userLabel } = context;
   const baseHref = `/admin/${company.slug}`;
-  const activeLabel =
-    navItems.find((item) => item.id === active)?.label ?? "Navegação";
+  const activeModule =
+    moduleItems.find((module) => module.sections.some((section) => section.id === active)) ??
+    moduleItems[0];
+  const activeLabel = activeModule.label;
   const profileInitial =
     userLabel.trim().charAt(0).toLocaleUpperCase("pt-BR") || "P";
 
@@ -70,13 +96,13 @@ export function AdminShell({
           </div>
 
           <nav className={styles.sidebarNav} aria-label="Módulos do gestor">
-            {navItems.map((item) => (
+            {moduleItems.map((item) => (
               <Link
-                aria-current={active === item.id ? "page" : undefined}
+                aria-current={activeModule.id === item.id ? "page" : undefined}
                 className={`${styles.navLink} ${
-                  active === item.id ? styles.navLinkActive : ""
+                  activeModule.id === item.id ? styles.navLinkActive : ""
                 }`}
-                href={`${baseHref}${item.hrefSuffix}`}
+                href={`${baseHref}${item.sections[0].hrefSuffix}`}
                 key={item.id}
               >
                 {item.label}
@@ -167,13 +193,13 @@ export function AdminShell({
               className={styles.mobileNavLinks}
               aria-label="Módulos do gestor"
             >
-              {navItems.map((item) => (
+              {moduleItems.map((item) => (
                 <Link
-                  aria-current={active === item.id ? "page" : undefined}
+                  aria-current={activeModule.id === item.id ? "page" : undefined}
                   className={`${styles.navPill} ${
-                    active === item.id ? styles.navPillActive : ""
+                    activeModule.id === item.id ? styles.navPillActive : ""
                   }`}
-                  href={`${baseHref}${item.hrefSuffix}`}
+                  href={`${baseHref}${item.sections[0].hrefSuffix}`}
                   key={item.id}
                 >
                   {item.label}
@@ -181,6 +207,23 @@ export function AdminShell({
               ))}
             </nav>
           </details>
+
+          {activeModule.sections.length > 1 ? (
+            <nav className={styles.sectionNav} aria-label={`Áreas de ${activeModule.label}`}>
+              {activeModule.sections.map((section) => (
+                <Link
+                  aria-current={active === section.id ? "page" : undefined}
+                  className={`${styles.navPill} ${
+                    active === section.id ? styles.navPillActive : ""
+                  }`}
+                  href={`${baseHref}${section.hrefSuffix}`}
+                  key={section.id}
+                >
+                  {section.label}
+                </Link>
+              ))}
+            </nav>
+          ) : null}
 
           <div className={styles.content}>{children}</div>
         </section>
