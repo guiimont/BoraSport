@@ -1,7 +1,6 @@
 import Link from "next/link";
 
 import { getManageAdminContext } from "../../admin-context";
-import { getCompanyLocations } from "../../../../../lib/saas/queries";
 import { AdminShell } from "../../admin-shell";
 import styles from "../../admin.module.css";
 import { CanoaOperationalForm } from "../canoa-operational-form";
@@ -15,7 +14,6 @@ type NewCanoaPageProps = {
 export default async function NewCanoaPage({ params }: NewCanoaPageProps) {
   const { slug } = await params;
   const context = await getManageAdminContext(slug);
-  const locations = await getCompanyLocations(context.company.id);
 
   return (
     <AdminShell
@@ -36,7 +34,6 @@ export default async function NewCanoaPage({ params }: NewCanoaPageProps) {
       </div>
       <CanoaOperationalForm
         companyId={context.company.id}
-        locations={locations}
         resourceLabel={context.vocabulary.resource_label}
         slug={context.company.slug}
       />

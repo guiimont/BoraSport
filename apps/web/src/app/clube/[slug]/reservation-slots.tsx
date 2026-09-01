@@ -250,12 +250,6 @@ export function ReservationSlots({
                           {vocabulary.resource_label}:{" "}
                           <strong>{slot.resources?.name || "A definir"}</strong>
                         </p>
-                        <p className={styles.slotMeta}>
-                          Base: <strong>{slot.company_locations?.name || "A definir"}</strong>
-                        </p>
-                        {slot.company_locations?.address ? (
-                          <p className={styles.slotMeta}>{slot.company_locations.address}</p>
-                        ) : null}
                       </div>
                     </div>
 

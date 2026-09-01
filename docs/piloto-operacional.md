@@ -18,16 +18,16 @@ resposta de clube:
   rendimento, mas esse painel nao bloqueia a agenda do clube;
 - a operacao do clube exige capacidade real por canoa, reservas, cancelamentos,
   lista de espera, presenca e historico;
-- a composicao das canoas considera a proposta da remada e caracteristicas dos
-  remadores e continua sendo decisao do treinador;
-- clubes podem operar em mais de uma base e o sistema precisa representar o
-  local corretamente antes do teste real.
+- a formacao da guarnicao considera proposta da remada, peso e caracteristicas
+  dos remadores e continua sendo decisao do treinador;
+- clubes podem operar em mais de uma base. A modelagem definitiva de bases foi
+  registrada como evolucao posterior e nao deve ser improvisada no piloto.
 
 ## Fluxo que precisa funcionar
 
 1. O administrador configura o clube.
 2. Cadastra treinador e remadores.
-3. Cadastra as bases e vincula cada canoa ao local correto.
+3. Cadastra as canoas com capacidade e situacao operacional.
 4. Cria uma sessao avulsa ou um horario semanal.
 5. Seleciona treinador, canoas e treino do dia.
 6. Publica a sessao.
@@ -36,24 +36,26 @@ resposta de clube:
 9. Um cancelamento promove automaticamente a primeira pessoa da fila.
 10. O treinador consulta participantes e registra presenca ou falta.
 
-## Configuracao minima do ambiente de teste
+## Configuracao minima do clube-piloto
 
 - nome e slug do clube;
 - pelo menos um administrador;
 - pelo menos um treinador;
 - remadores convidados e com perfil concluido;
 - canoas disponiveis com classe e capacidade;
-- bases ativas e canoas vinculadas a elas;
 - pelo menos uma sessao futura publicada;
 - link publico da agenda compartilhado com o grupo.
 
+Enquanto nao houver cadastro estruturado de bases, o local deve ser informado
+no nome da turma ou atividade de forma explicita, por exemplo:
+`Treino tecnico - Base Sao Francisco`.
+
 ## Criterios de aceite
 
-O produto pode iniciar um teste real controlado quando:
+O piloto pode receber remadores reais quando:
 
 - a pagina publica abre sem erro;
 - a sessao publicada mostra data, horario, canoa e vagas corretas;
-- a sessao mostra a base e nao permite selecionar canoas de outra base;
 - um remador autenticado consegue reservar;
 - a capacidade nao permite overbooking;
 - uma pessoa excedente entra na lista de espera;
@@ -62,11 +64,12 @@ O produto pode iniciar um teste real controlado quando:
 - o treinador consegue registrar presenca e falta;
 - o fluxo funciona no celular.
 
-## Evolucoes posteriores ao primeiro teste controlado
+## Fora do bloqueio do piloto
 
 Estes itens sao importantes, mas nao impedem a primeira agenda real:
 
-- apoio a composicao das canoas, depois de validar as regras com treinadores;
+- cadastro estruturado de multiplas bases;
+- montagem automatica de guarnicoes;
 - integracao direta com Garmin ou Strava;
 - painel esportivo de volume, intensidade e zonas cardiacas;
 - planos, cobrancas e integracao com Wellhub ou TotalPass;

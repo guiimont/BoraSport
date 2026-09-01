@@ -28,7 +28,7 @@ Priorizar necessidades especificas de:
 - remadores, treinadores, steerers e administradores;
 - agenda de treinos;
 - reservas, cancelamentos e lista de espera;
-- composicao das canoas e distribuicao dos remadores;
+- montagem e equilibrio das guarnicoes;
 - posicoes dos remadores na canoa;
 - nivel tecnico, experiencia e historico do remador;
 - gestao de canoas, remos e equipamentos;

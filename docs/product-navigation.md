@@ -66,7 +66,7 @@ A tela inicial do treinador deve responder imediatamente:
 - quem esta na lista de espera;
 - quantas canoas serao utilizadas;
 - quais posicoes ainda estao vazias;
-- como os remadores estao distribuidos nas canoas;
+- se a guarnicao esta equilibrada;
 - quem faltou;
 - quais sao as condicoes ambientais;
 - qual e o plano do treino;
@@ -76,7 +76,7 @@ Areas principais:
 
 - Hoje;
 - Agenda;
-- Canoas;
+- Guarnicoes;
 - Treinos;
 - Remadores;
 - Comunicacao.
@@ -98,9 +98,9 @@ Areas principais:
 Nao colocar todas as opcoes no primeiro nivel. A administracao deve usar
 agrupamentos, contexto e acoes relacionadas a tarefa atual.
 
-## 5. Nucleo de composicao das canoas
+## 5. Nucleo de formacao das guarnicoes
 
-Conceitualmente, a tela de composicao deve apresentar:
+Conceitualmente, a tela de guarnicoes deve apresentar:
 
 - canoa vista de cima;
 - posicoes V1 a V6;
@@ -108,17 +108,18 @@ Conceitualmente, a tela de composicao deve apresentar:
 - possibilidade futura de arrastar e soltar;
 - nome;
 - nivel;
+- posicao preferencial;
+- lado de remada;
 - experiencia;
 - presenca;
 - restricoes;
-- alertas operacionais definidos e validados com treinadores;
+- alertas de equilibrio;
 - vagas;
 - substituicoes;
 - lista de espera.
 
 Esta e uma direcao de produto. Nao existe ainda algoritmo definido nem
-funcionalidade implementada de composicao automatica das canoas. O BoraSport nao
-deve criar campos de lado preferencial ou outras regras esportivas sem validacao.
+funcionalidade implementada de formacao automatica de guarnicoes.
 
 ## 6. Fluxos prioritarios
 
@@ -129,7 +130,7 @@ Confirmacao
 
 ### Treinador prepara uma remada
 
-Hoje -> Abrir sessao -> Conferir participantes -> Distribuir remadores nas
+Hoje -> Abrir sessao -> Conferir participantes -> Montar guarnicoes -> Definir
 canoas -> Publicar
 
 ### Treinador registra a sessao
@@ -233,7 +234,7 @@ Estas hipoteses precisam de validacao e nao devem ser decididas silenciosamente:
 
 - confirmacao de presenca pelo treinador versus QR Code;
 - momento de publicacao das posicoes;
-- visibilidade da composicao das canoas;
+- visibilidade das guarnicoes;
 - criterios de equilibrio;
 - troca de posicoes;
 - tratamento de convidados;

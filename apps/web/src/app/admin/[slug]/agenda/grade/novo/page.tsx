@@ -4,7 +4,6 @@ import {
   getCompanyBaseScheduleById,
   getCompanyBaseSchedules,
   getCompanyMembers,
-  getCompanyLocations,
   getCompanyResources,
 } from "../../../../../../lib/saas/queries";
 import { getManageAdminContext } from "../../../admin-context";
@@ -28,10 +27,9 @@ export default async function NewBaseSchedulePage({
   const { slug } = await params;
   const duplicateId = (await searchParams)?.duplicar ?? null;
   const context = await getManageAdminContext(slug);
-  const [resources, members, locations, existingSchedules, duplicateSchedule] = await Promise.all([
+  const [resources, members, existingSchedules, duplicateSchedule] = await Promise.all([
     getCompanyResources(context.company.id),
     getCompanyMembers(context.company.id),
-    getCompanyLocations(context.company.id),
     getCompanyBaseSchedules(context.company.id),
     duplicateId
       ? getCompanyBaseScheduleById(context.company.id, duplicateId)
@@ -59,7 +57,6 @@ export default async function NewBaseSchedulePage({
         companyId={context.company.id}
         existingSchedules={existingSchedules}
         members={members}
-        locations={locations}
         resources={resources}
         schedule={duplicateSchedule ? { ...duplicateSchedule, id: "" } : null}
         slug={context.company.slug}

@@ -99,7 +99,7 @@ export default async function SessionDetailPage({
           <h2>{session.group_name}</h2>
           <p>
             {formatSessionDate(session.session_date)} · {session.start_time.slice(0, 5)} ·{" "}
-            {session.duration_minutes} min · {session.location?.name || "Base não definida"}
+            {session.duration_minutes} min
           </p>
         </div>
         <span className={styles.statusBadge}>{publicSpots} vagas públicas</span>
@@ -125,10 +125,6 @@ export default async function SessionDetailPage({
         <aside className={styles.trainingSidePanel}>
           <p className={styles.eyebrow}>Operação</p>
           <div className={styles.vesselSummaryList}>
-            <div>
-              <span>Base</span>
-              <strong>{session.location?.name || "Não definida"}</strong>
-            </div>
             <div>
               <span>Treinador</span>
               <strong>{session.coach?.name || "Treinador"}</strong>

@@ -5,7 +5,6 @@ import { headers } from "next/headers";
 
 import {
   createCompanyInvitation,
-  createCompanyLocation,
   createMembership,
   createResource,
   createService,
@@ -18,7 +17,6 @@ import {
   setOperationalSessionTraining,
   updateBaseScheduleStatus,
   updateCompanyConfiguration,
-  updateCompanyLocation,
   updateMembershipRole,
   updateResource,
   updateResourceOperationalStatus,
@@ -374,7 +372,6 @@ export async function saveBaseSchedule(
   const durationMinutes = Math.floor(readNumber(formData, "durationMinutes", 60));
   const groupName = readText(formData, "groupName", "");
   const level = readOptionalText(formData, "level");
-  const locationId = readOptionalText(formData, "locationId");
   const resourceIds = readTextList(formData, "resourceIds");
   const scheduleId = readOptionalText(formData, "scheduleId");
   const slug = readText(formData, "slug", "");
@@ -412,10 +409,6 @@ export async function saveBaseSchedule(
     return { error: "Selecione o treinador responsável." };
   }
 
-  if (!locationId) {
-    return { error: "Selecione a base do horário." };
-  }
-
   if (resourceIds.length === 0) {
     return { error: "Selecione ao menos uma canoa." };
   }
@@ -428,7 +421,6 @@ export async function saveBaseSchedule(
       durationMinutes,
       groupName,
       level,
-      locationId,
       resourceIds,
       scheduleId,
       startTime,
@@ -504,7 +496,6 @@ export async function saveOperationalSchedule(
   const durationMinutes = Math.floor(readNumber(formData, "durationMinutes", 60));
   const groupName = readText(formData, "groupName", "");
   const level = readOptionalText(formData, "level");
-  const locationId = readOptionalText(formData, "locationId");
   const sessionId = readOptionalText(formData, "sessionId");
   const coachId = readText(formData, "coachId", "");
   const resourceIds = readTextList(formData, "resourceIds");
@@ -541,10 +532,6 @@ export async function saveOperationalSchedule(
     return { error: "Selecione o treinador responsável." };
   }
 
-  if (!locationId) {
-    return { error: "Selecione a base da sessão." };
-  }
-
   if (resourceIds.length === 0) {
     return { error: "Selecione ao menos uma canoa." };
   }
@@ -560,7 +547,6 @@ export async function saveOperationalSchedule(
         durationMinutes,
         groupName,
         level,
-        locationId,
         resourceIds,
         startTime,
         status: status === "cancelled" ? "inactive" : "active",
@@ -575,7 +561,6 @@ export async function saveOperationalSchedule(
           durationMinutes,
           groupName,
           level,
-          locationId,
           resourceIds,
           sessionDate,
           startTime,
@@ -591,7 +576,6 @@ export async function saveOperationalSchedule(
         durationMinutes,
         groupName,
         level,
-        locationId,
         resourceIds,
         sessionDate,
         sessionId,
@@ -739,7 +723,6 @@ export async function saveResource(
     ? readSteererPolicy(formData, vesselClass, capacityMaxima)
     : null;
   const internalCode = readOptionalText(formData, "internalCode");
-  const locationId = readOptionalText(formData, "locationId");
   const operationalNotes = readOptionalText(formData, "operationalNotes");
 
   if (!companyId || !slug) {
@@ -760,10 +743,6 @@ export async function saveResource(
     return { error: "Escolha a classe da canoa." };
   }
 
-  if (!locationId) {
-    return { error: "Selecione a base da canoa." };
-  }
-
   if (capacityMaxima < 1) {
     return { error: "Informe uma capacidade valida para a canoa." };
   }
@@ -774,7 +753,6 @@ export async function saveResource(
       companyId,
       defaultSteererPolicy,
       internalCode,
-      locationId,
       name,
       operationalNotes,
       vesselClass,
@@ -811,7 +789,6 @@ export async function saveResourceOperation(
     ? readSteererPolicy(formData, vesselClass, capacityMaxima)
     : null;
   const internalCode = readOptionalText(formData, "internalCode");
-  const locationId = readOptionalText(formData, "locationId");
   const operationalNotes = readOptionalText(formData, "operationalNotes");
 
   if (!companyId || !resourceId || !slug) {
@@ -842,7 +819,6 @@ export async function saveResourceOperation(
       companyId,
       defaultSteererPolicy,
       internalCode,
-      locationId,
       name,
       operationalNotes,
       resourceId,
@@ -861,49 +837,6 @@ export async function saveResourceOperation(
   return {
     success: `${resourceLabel} atualizado.`,
   };
-}
-
-export async function saveCompanyLocation(
-  _previousState: AdminFormState,
-  formData: FormData,
-): Promise<AdminFormState> {
-  const companyId = readText(formData, "companyId", "");
-  const slug = readText(formData, "slug", "");
-  const locationId = readOptionalText(formData, "locationId");
-  const name = readText(formData, "name", "");
-  const address = readOptionalText(formData, "address");
-  const publicNotes = readOptionalText(formData, "publicNotes");
-  const isActive = formData.get("isActive") === "on";
-
-  if (!companyId || !slug) return { error: "Não foi possível identificar o clube." };
-  if (name.length < 2) return { error: "Informe o nome da base." };
-  if (name.length > 100) return { error: "O nome da base deve ter até 100 caracteres." };
-
-  const access = await assertCanAdminTenant(companyId);
-  if (access.error) return { error: access.error };
-
-  try {
-    if (locationId) {
-      await updateCompanyLocation({
-        address,
-        companyId,
-        isActive,
-        locationId,
-        name,
-        publicNotes,
-      });
-    } else {
-      await createCompanyLocation({ address, companyId, name, publicNotes });
-    }
-  } catch (error) {
-    return { error: `Não foi possível salvar a base. ${getReadableError(error)}` };
-  }
-
-  revalidatePath(`/admin/${slug}/bases`);
-  revalidatePath(`/admin/${slug}/canoas`);
-  revalidatePath(`/admin/${slug}/agenda`);
-  revalidatePath(`/clube/${slug}`);
-  return { success: locationId ? "Base atualizada." : "Base cadastrada." };
 }
 
 export async function updateResourceStatusAction(

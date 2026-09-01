@@ -1,12 +1,10 @@
 "use client";
 
 import { useActionState, useMemo, useState } from "react";
-import Link from "next/link";
 import { useFormStatus } from "react-dom";
 
 import type {
   DefaultSteererPolicy,
-  CompanyLocation,
   Resource,
   VesselClass,
   VesselStatus,
@@ -20,7 +18,6 @@ import styles from "../admin.module.css";
 
 type CanoaOperationalFormProps = {
   companyId: string;
-  locations: CompanyLocation[];
   resource?: Resource;
   resourceLabel: string;
   slug: string;
@@ -140,7 +137,6 @@ function getPublicSpots(
 
 export function CanoaOperationalForm({
   companyId,
-  locations,
   resource,
   resourceLabel,
   slug,
@@ -218,20 +214,6 @@ export function CanoaOperationalForm({
                 name="internalCode"
                 placeholder="Frota 01, casco azul..."
               />
-            </label>
-            <label className={styles.label}>
-              Base da canoa
-              <select className={styles.select} defaultValue={resource?.location_id ?? ""} name="locationId" required>
-                <option value="">Selecione</option>
-                {locations.filter((location) => location.is_active || location.id === resource?.location_id).map((location) => (
-                  <option key={location.id} value={location.id}>{location.name}</option>
-                ))}
-              </select>
-              {locations.length === 0 ? (
-                <span className={styles.fieldHelp}>
-                  Cadastre uma <Link href={`/admin/${slug}/bases`}>base</Link> antes da canoa.
-                </span>
-              ) : null}
             </label>
           </div>
         </section>
