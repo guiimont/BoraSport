@@ -39,14 +39,14 @@ export function MemberShell({
             <ActionLink href="/" variant="ghost">
               Início
             </ActionLink>
+            <ActionLink href="/remadas" variant="ghost">
+              Remadas
+            </ActionLink>
             {company ? (
               <ActionLink href={`/clube/${company.slug}`} variant="secondary">
                 Meu clube
               </ActionLink>
             ) : null}
-            <ActionLink href="/notificacoes" variant="ghost">
-              Avisos
-            </ActionLink>
             <ActionLink href="/perfil" variant="ghost">
               Perfil
             </ActionLink>

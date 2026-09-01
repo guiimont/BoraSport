@@ -74,6 +74,18 @@
   gap: 8px;
 }
 
+.sectionNav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 clamp(16px, 3vw, 34px) var(--space-4);
+}
+
+.sectionNav .navPill {
+  min-height: 38px;
+  padding: 8px 14px;
+}
+
 .navLink,
 .navPill,
 .moduleCardLink {

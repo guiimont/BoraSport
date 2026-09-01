@@ -6,10 +6,13 @@ Definir uma navegacao simples, mobile-first e va'a-first para remadores,
 treinadores e administradores.
 
 A navegacao deve reduzir o numero de opcoes visiveis e priorizar contexto,
-frequencia de uso e tarefa principal de cada perfil. O produto deve combinar
-profundidade funcional, clareza de onboarding e identidade propria baseada no
-mar, nas estrelas, na navegacao polinesia e na cultura do va'a, sem copiar codigo,
-textos, imagens, marca ou interface de referencias externas.
+frequencia de uso e tarefa principal de cada perfil. O primeiro nivel deve
+seguir `docs/platform-architecture.md`: uma conta unica, o ambiente pessoal
+**Meu Va'a** e ambientes de organizacao que diferenciam grupos de clubes. O
+produto deve combinar profundidade funcional, clareza de onboarding e
+identidade propria baseada no mar, nas estrelas, na navegacao polinesia e na
+cultura do va'a, sem copiar codigo, textos, imagens, marca ou interface de
+referencias externas.
 
 ## 2. Estrutura principal do remador
 
@@ -85,18 +88,22 @@ Areas principais:
 
 Areas principais:
 
-- Visao geral;
-- Agenda;
-- Pessoas;
-- Canoas e equipamentos;
-- Planos e financeiro;
-- Comunicacao;
-- Site do clube;
-- Relatorios;
-- Configuracoes.
+- Hoje;
+- Operacao: agenda, treinos, bases, canoas e equipamentos;
+- Pessoas: remadores, profissionais, equipe, turmas e convites;
+- Gestao: planos, financeiro, relatorios e configuracoes.
 
 Nao colocar todas as opcoes no primeiro nivel. A administracao deve usar
 agrupamentos, contexto e acoes relacionadas a tarefa atual.
+
+### Regra de publicacao do treino
+
+O professor publica o treino na agenda do clube e o aluno o consulta no perfil
+do clube quando quiser. A publicacao nao envia notificacao automatica.
+
+A presenca pode ser confirmada por inscricao, check-in, atividade importada ou
+confirmacao operacional. Inscricao ou reserva representa intencao e nao deve ser
+convertida silenciosamente em presenca definitiva.
 
 ## 5. Nucleo de composicao das canoas
 
@@ -231,7 +238,7 @@ Nao definir codigos hexadecimais definitivos nesta etapa.
 
 Estas hipoteses precisam de validacao e nao devem ser decididas silenciosamente:
 
-- confirmacao de presenca pelo treinador versus QR Code;
+- criterios de vinculacao entre atividade importada e sessao;
 - momento de publicacao das posicoes;
 - visibilidade da composicao das canoas;
 - criterios de equilibrio;

@@ -13,9 +13,9 @@ entendem a rotina do va'a. Isso cria retrabalho na agenda, dificuldade para
 controlar vagas, pouca visibilidade sobre presenca e evolucao, e perda de
 contexto na composicao das canoas.
 
-A proposta do BoraSport e centralizar a operacao do clube, a experiencia
-esportiva do remador, a comunidade e a presenca digital em uma plataforma
-simples, moderna e orientada a modalidade.
+A proposta do BoraSport e ser a casa digital do remador e a plataforma de
+gestao das organizacoes de va'a. A mesma conta conecta a experiencia pessoal e
+comunitaria do remador a grupos informais e clubes operacionais.
 
 A ambicao e construir a plataforma mais completa e relevante do mundo para
 clubes, treinadores e praticantes de va'a. A base tecnica permanece
@@ -25,6 +25,11 @@ usuarios, recursos, treinos, reservas e conteudos.
 A arquitetura pode continuar extensivel. Outras modalidades sao apenas uma
 possibilidade futura e nao fazem parte do escopo prioritario atual. O BoraSport
 nao deve ser posicionado como sistema generico para academias, boxes ou studios.
+
+Grupos e clubes sao tipos distintos de organizacao. Grupos, como o Kardume Nui,
+nao devem ser obrigados a manter base, frota, professor, mensalidade ou
+composicao de canoa coletiva. A decisao completa esta registrada em
+`docs/platform-architecture.md`.
 
 ## 2. Principios estrategicos
 
