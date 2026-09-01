@@ -19,3 +19,8 @@ Variaveis necessarias na Vercel:
 
 O `apps/edge` preserva temporariamente o Worker legado de borda e nao faz parte
 do deploy principal do `apps/web` na Vercel.
+
+## Operacao piloto
+
+O recorte validado para colocar um clube real em operacao esta documentado em
+[`docs/piloto-operacional.md`](docs/piloto-operacional.md).

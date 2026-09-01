@@ -67,9 +67,10 @@ ela existir, informar posicao habitual, nivel e experiencia, consultar historico
 e evolucao, participar de eventos e se comunicar com a comunidade.
 
 Estado atual: existem rotas publicas de clube em `/clube/[slug]`, login, perfil,
-avatar, visualizacao de agenda, reservas, treinos da semana e participantes
-confirmados. Lista de espera, posicoes, nivel tecnico estruturado, historico
-completo e eventos ainda nao estao prontos como fluxo de produto.
+avatar, visualizacao de agenda, reservas, cancelamentos, lista de espera com
+promocao automatica, treinos da semana e participantes confirmados. Posicoes,
+nivel tecnico estruturado, historico completo e eventos ainda nao estao prontos
+como fluxo de produto.
 
 ### Treinador
 
@@ -77,10 +78,11 @@ O treinador precisa planejar treinos, formar guarnicoes, distribuir posicoes,
 controlar presenca, ajustar mudancas de ultima hora, registrar desempenho,
 acompanhar remadores, comunicar o grupo e aplicar protocolos de seguranca.
 
-Estado atual: o sistema ja possui cadastro de servicos/treinos, slots, recursos,
-treinos semanais e papel `professional` nas memberships. Ainda nao ha interface
-especializada para formacao de guarnicoes, posicoes V1 a V6, presenca operacional
-ou registro tecnico por treinador.
+Estado atual: o sistema possui biblioteca de treinos, agenda operacional,
+canoas, participantes, lista de espera, controle de presenca e papel
+`professional` nas memberships. Ainda nao ha interface especializada para
+formacao de guarnicoes, posicoes V1 a V6 ou painel esportivo com volume,
+intensidade e zonas cardiacas.
 
 ### Administrador do clube
 
@@ -111,7 +113,7 @@ auditoria administrativa completa ou suporte interno estruturado.
   publica simples.
 - Valor para o va'a: facilita captacao, orienta novos remadores e reduz
   dependencias de paginas improvisadas.
-- Situacao atual: parcial.
+- Situacao atual: pronta para piloto operacional.
 - Funcionalidades principais: dados do tenant, slug, logo, cores, vocabulario,
   pagina publica `/clube/[slug]`, landing page em `/site/[slug]`.
 - Dependencias relevantes: `companies`, `landing_pages`, storage
@@ -139,7 +141,8 @@ auditoria administrativa completa ou suporte interno estruturado.
   vagas ocupadas, criacao de horarios avulsos e semanais, reserva pelo aluno.
 - Dependencias relevantes: `resources`, `services`, `slots`, `bookings`,
   triggers de ocupacao/capacidade e RLS.
-- Lacuna: lista de espera ainda nao aparece modelada como fluxo pronto.
+- Lacuna: notificacoes de promocao da fila e regras por plano ainda nao estao
+  prontas.
 
 ### 4. Canoas, remos e equipamentos
 
