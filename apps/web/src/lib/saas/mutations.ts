@@ -867,6 +867,75 @@ export async function updateProfile({
   return profile;
 }
 
+export async function recordOwnBodyWeight({
+  userId,
+  weightKg,
+}: {
+  userId: string;
+  weightKg: number;
+}) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user || user.id !== userId) {
+    throw new Error("Sessão inválida. Entre novamente para salvar seu peso.");
+  }
+
+  const { data: latest, error: latestError } = await supabase
+    .from("athlete_body_measurements")
+    .select("weight_kg")
+    .eq("user_id", userId)
+    .order("recorded_at", { ascending: false })
+    .order("id", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (latestError) {
+    throw latestError;
+  }
+
+  if (latest && Number(latest.weight_kg) === weightKg) {
+    return latest;
+  }
+
+  const { data, error } = await supabase
+    .from("athlete_body_measurements")
+    .insert({ user_id: userId, weight_kg: weightKg })
+    .select("id,user_id,weight_kg,recorded_at,created_at")
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+export async function markOwnNotificationsAsRead(userId: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user || user.id !== userId) {
+    throw new Error("Sessão inválida.");
+  }
+
+  const { error } = await supabase
+    .from("user_notifications")
+    .update({ read_at: new Date().toISOString() })
+    .eq("user_id", userId)
+    .is("read_at", null);
+
+  if (error) {
+    throw error;
+  }
+}
+
 export type CreateMembershipInput = {
   companyId: string;
   role: MembershipRole;

@@ -13,6 +13,7 @@ import {
   getCompanyWeeklyWorkouts,
   getCurrentUserActiveBookings,
   getCurrentUserMemberships,
+  getCurrentUserNotifications,
 } from "../../../lib/saas/queries";
 
 import { ClubTabs } from "./club-tabs";
@@ -58,6 +59,7 @@ export default async function ClubPage({ params }: ClubPageProps) {
     weeklyWorkouts,
     currentUserBookings,
     memberships,
+    notifications,
   ] =
     await Promise.all([
     getCompanySlots(company.id),
@@ -65,6 +67,7 @@ export default async function ClubPage({ params }: ClubPageProps) {
     getCompanyWeeklyWorkouts(company.id),
     getCurrentUserActiveBookings(company.id),
     getCurrentUserMemberships(),
+    getCurrentUserNotifications(),
   ]);
   const companyMembership = memberships.find(
     (membership) => membership.company_id === company.id,
@@ -77,6 +80,7 @@ export default async function ClubPage({ params }: ClubPageProps) {
   const vocabulary = normalizeVocabulary(company.vocabulary_config);
   const experience = getActivityExperience(company.type_de_negocio, vocabulary);
   const theme = company.theme_colors || {};
+  const unreadNotifications = notifications.filter((item) => !item.read_at).length;
 
   const pageStyle: ClubPageStyle = {
     "--club-primary": theme.primary || "#063b5b",
@@ -96,6 +100,9 @@ export default async function ClubPage({ params }: ClubPageProps) {
             <nav className={styles.contextNav} aria-label="Áreas do Bora">
               <Link className={styles.contextLinkPrimary} href="/perfil">
                 Área do aluno
+              </Link>
+              <Link className={styles.contextLink} href="/notificacoes">
+                Avisos{unreadNotifications ? ` (${unreadNotifications})` : ""}
               </Link>
               {canManage ? (
                 <Link

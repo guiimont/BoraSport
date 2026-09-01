@@ -11,6 +11,7 @@ import styles from "./profile.module.css";
 type ProfileFormProps = {
   companyName?: string;
   email: string;
+  latestWeightKg: number | null;
   profile: Profile | null;
 };
 
@@ -26,7 +27,12 @@ function SubmitButton() {
   );
 }
 
-export function ProfileForm({ companyName, email, profile }: ProfileFormProps) {
+export function ProfileForm({
+  companyName,
+  email,
+  latestWeightKg,
+  profile,
+}: ProfileFormProps) {
   const [state, formAction] = useActionState(saveProfile, initialState);
   const [localPreview, setLocalPreview] = useState("");
   const hasValidName =
@@ -94,6 +100,24 @@ export function ProfileForm({ companyName, email, profile }: ProfileFormProps) {
           defaultValue={profile?.phone || ""}
           name="phone"
           placeholder="(00) 00000-0000"
+        />
+      </Field>
+
+      <Field
+        help="Dado estritamente privado. Somente você pode consultar o valor; clube, treinador e outros remadores não têm acesso."
+        label="Peso atual (kg)"
+      >
+        <input
+          className={styles.input}
+          defaultValue={latestWeightKg ?? ""}
+          inputMode="decimal"
+          max="350"
+          min="20"
+          name="weightKg"
+          placeholder="Ex.: 78,5"
+          required
+          step="0.1"
+          type="number"
         />
       </Field>
 

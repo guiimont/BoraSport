@@ -12,6 +12,7 @@ import {
   getInviteNameCookieMaxAge,
   readInviteTokenCookie,
   writeInviteNameCookie,
+  writeInviteWeightCookie,
   writeInviteTokenCookie,
   type InviteContext,
   type InviteConsumptionResult,
@@ -30,6 +31,12 @@ function readText(formData: FormData, key: string) {
   const value = formData.get(key);
 
   return typeof value === "string" ? value.trim() : "";
+}
+
+function readWeight(formData: FormData) {
+  const value = Number(readText(formData, "weightKg").replace(",", "."));
+
+  return Number.isFinite(value) ? value : null;
 }
 
 export async function storeInviteToken(tokenValue: string): Promise<InviteContext> {
@@ -90,6 +97,7 @@ export async function signUpWithInvite(
   const email = readText(formData, "email").toLowerCase();
   const password = readText(formData, "password");
   const passwordConfirmation = readText(formData, "passwordConfirmation");
+  const weightKg = readWeight(formData);
 
   if (!token) {
     return {
@@ -97,8 +105,12 @@ export async function signUpWithInvite(
     };
   }
 
-  if (!name || !email || !password || !passwordConfirmation) {
-    return { error: "Preencha nome, e-mail, senha e confirmação." };
+  if (!name || !email || !password || !passwordConfirmation || weightKg === null) {
+    return { error: "Preencha nome, e-mail, peso, senha e confirmação." };
+  }
+
+  if (weightKg < 20 || weightKg > 350) {
+    return { error: "Informe um peso válido entre 20 e 350 kg." };
   }
 
   if (password.length < 8) {
@@ -120,6 +132,10 @@ export async function signUpWithInvite(
   }
 
   await writeInviteNameCookie(name, getInviteNameCookieMaxAge(context.expiresAt));
+  await writeInviteWeightCookie(
+    weightKg,
+    getInviteNameCookieMaxAge(context.expiresAt),
+  );
 
   const headerStore = await headers();
   const emailRedirectTo = new URL(

@@ -4,6 +4,7 @@ import {
   getCurrentProfile,
   getCurrentUser,
   getCurrentUserActivityRecords,
+  getCurrentUserBodyMeasurements,
   getCurrentUserMemberships,
 } from "../../lib/saas/queries";
 import { ActionLink, Alert, MemberShell } from "../../components/ui";
@@ -42,11 +43,18 @@ export default async function ProfilePage() {
     redirect("/login?next=/perfil");
   }
 
-  const [profile, memberships, activities] = await Promise.all([
+  const [
+    profile,
+    memberships,
+    activities,
+    bodyMeasurements,
+  ] = await Promise.all([
     getCurrentProfile(),
     getCurrentUserMemberships(),
     getCurrentUserActivityRecords(),
+    getCurrentUserBodyMeasurements(),
   ]);
+  const latestBodyMeasurement = bodyMeasurements[0] ?? null;
   const primaryCompany = memberships[0]?.companies ?? null;
   const companiesById = new Map(
     memberships.flatMap((membership) =>
@@ -66,7 +74,10 @@ export default async function ProfilePage() {
   const hasValidName =
     Boolean(profile?.name?.trim()) && !profile?.name?.includes("@");
   const isProfileIncomplete =
-    !hasValidName || !profile?.phone || !profile?.avatar_url;
+    !hasValidName ||
+    !profile?.phone ||
+    !profile?.avatar_url ||
+    !latestBodyMeasurement;
 
   return (
     <MemberShell
@@ -114,6 +125,7 @@ export default async function ProfilePage() {
           <ProfileForm
             companyName={primaryCompany?.name}
             email={user.email || ""}
+            latestWeightKg={latestBodyMeasurement?.weight_kg ?? null}
             profile={profile}
           />
         </section>
@@ -186,6 +198,33 @@ export default async function ProfilePage() {
                 Quando houver vínculo, o acesso ao clube aparecerá aqui.
               </p>
             )}
+          </section>
+
+          <section className={styles.card}>
+            <p className={styles.eyebrow}>Somente você</p>
+            <h3>Evolução do peso</h3>
+            {bodyMeasurements.length ? (
+              <ol className={styles.activityList}>
+                {bodyMeasurements.slice(0, 5).map((measurement) => (
+                  <li key={measurement.id}>
+                    <div>
+                      <strong>{numberFormatter.format(measurement.weight_kg)} kg</strong>
+                      <span>
+                        {dateFormatter.format(new Date(measurement.recorded_at))}
+                      </span>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            ) : (
+              <p className={styles.cardText}>
+                Seu primeiro registro será criado ao salvar o perfil.
+              </p>
+            )}
+            <p className={styles.cardText}>
+              Este histórico é privado. Clube, treinador e outros remadores não
+              recebem acesso aos valores.
+            </p>
           </section>
 
           <section className={styles.card}>

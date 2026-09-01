@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { getCurrentUser } from "../../lib/saas/queries";
-import { updateProfile } from "../../lib/saas/mutations";
+import { recordOwnBodyWeight, updateProfile } from "../../lib/saas/mutations";
 
 export type ProfileState = {
   error?: string;
@@ -21,6 +21,13 @@ function readFile(formData: FormData, key: string) {
   }
 
   return value;
+}
+
+function readWeight(formData: FormData) {
+  const raw = readText(formData, "weightKg").replace(",", ".");
+  const value = Number(raw);
+
+  return Number.isFinite(value) ? value : null;
 }
 
 function getReadableProfileError(error: unknown) {
@@ -51,9 +58,15 @@ export async function saveProfile(
   const phone = readText(formData, "phone");
   const avatarUrl = readText(formData, "avatarUrl");
   const avatarFile = readFile(formData, "avatarFile");
+  const weightKg = readWeight(formData);
 
   if (!name) {
     return { error: "Informe seu nome para salvar o perfil." };
+  }
+
+
+  if (weightKg === null || weightKg < 20 || weightKg > 350) {
+    return { error: "Informe um peso válido entre 20 e 350 kg." };
   }
 
   try {
@@ -64,6 +77,7 @@ export async function saveProfile(
       phone: phone || null,
       userId: user.id,
     });
+    await recordOwnBodyWeight({ userId: user.id, weightKg });
 
     revalidatePath("/perfil");
     revalidatePath("/clube/[slug]", "page");

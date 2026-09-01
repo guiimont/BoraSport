@@ -1,5 +1,6 @@
 import type {
   ActivityRecord,
+  AthleteBodyMeasurement,
   BaseSchedule,
   BaseScheduleResource,
   Booking,
@@ -24,6 +25,7 @@ import type {
   TrainingPlanLibraryItem,
   TrainingPlanVersion,
   TrainingPlanWithVersion,
+  UserNotification,
   WeeklyWorkout,
 } from "../../types/saas";
 import { createClient } from "./supabase-server";
@@ -1067,6 +1069,75 @@ export async function getCurrentProfile(): Promise<Profile | null> {
   }
 
   return (data as Profile | null) ?? null;
+}
+
+export async function getCurrentUserLatestBodyMeasurement(): Promise<AthleteBodyMeasurement | null> {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return null;
+  }
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("athlete_body_measurements")
+    .select("id,user_id,weight_kg,recorded_at,created_at")
+    .eq("user_id", user.id)
+    .order("recorded_at", { ascending: false })
+    .order("id", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error) {
+    return null;
+  }
+
+  return (data as AthleteBodyMeasurement | null) ?? null;
+}
+
+export async function getCurrentUserBodyMeasurements(): Promise<AthleteBodyMeasurement[]> {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return [];
+  }
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("athlete_body_measurements")
+    .select("id,user_id,weight_kg,recorded_at,created_at")
+    .eq("user_id", user.id)
+    .order("recorded_at", { ascending: false })
+    .order("id", { ascending: false })
+    .limit(24);
+
+  if (error) {
+    return [];
+  }
+
+  return (data as AthleteBodyMeasurement[] | null) ?? [];
+}
+
+export async function getCurrentUserNotifications(): Promise<UserNotification[]> {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return [];
+  }
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("user_notifications")
+    .select("id,user_id,company_id,slot_id,kind,title,message,read_at,created_at")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false })
+    .limit(50);
+
+  if (error) {
+    return [];
+  }
+
+  return (data as UserNotification[] | null) ?? [];
 }
 
 export async function getCurrentUserActivityRecords(): Promise<ActivityRecord[]> {

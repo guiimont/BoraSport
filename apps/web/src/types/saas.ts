@@ -196,6 +196,26 @@ export type Profile = {
   updated_at: string;
 };
 
+export type AthleteBodyMeasurement = {
+  created_at: string;
+  id: string;
+  recorded_at: string;
+  user_id: string;
+  weight_kg: number;
+};
+
+export type UserNotification = {
+  company_id: string | null;
+  created_at: string;
+  id: string;
+  kind: "session_cancelled" | "waitlist_joined" | "waitlist_promoted";
+  message: string;
+  read_at: string | null;
+  slot_id: string | null;
+  title: string;
+  user_id: string;
+};
+
 export type ActivityRecord = {
   activity_type: string;
   average_heart_rate: number | null;

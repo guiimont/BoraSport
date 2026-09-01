@@ -155,6 +155,23 @@ export function InviteFlow({
               />
             </Field>
 
+            <Field
+              help="Dado privado: somente você poderá consultar o valor. O clube e os treinadores não terão acesso."
+              label="Peso atual (kg)"
+            >
+              <input
+                className={styles.input}
+                inputMode="decimal"
+                max="350"
+                min="20"
+                name="weightKg"
+                placeholder="Ex.: 78,5"
+                required
+                step="0.1"
+                type="number"
+              />
+            </Field>
+
             <Field help="Mínimo de 8 caracteres." label="Senha">
               <input
                 autoComplete="new-password"

@@ -44,6 +44,12 @@ export function MemberShell({
                 Meu clube
               </ActionLink>
             ) : null}
+            <ActionLink href="/notificacoes" variant="ghost">
+              Avisos
+            </ActionLink>
+            <ActionLink href="/perfil" variant="ghost">
+              Perfil
+            </ActionLink>
           </nav>
         </div>
 

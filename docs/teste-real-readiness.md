@@ -10,6 +10,13 @@ criterio suficiente.
 - nao usar `guarnicoes` como nome de area ou funcionalidade;
 - nao cadastrar lado preferencial do remador;
 - nao automatizar a composicao antes de validar criterios com treinadores.
+- peso e historico corporal sao estritamente privados: somente o proprio
+  remador pode consultar os valores;
+- clube, administrador, treinador e outros remadores nunca recebem o peso
+  individual;
+- futuros calculos podem consumir o peso internamente, mas devem entregar
+  somente o resultado operacional aprovado, sem revelar ou permitir deduzir
+  medidas individuais.
 
 ## Portas de qualidade
 
@@ -18,9 +25,9 @@ criterio suficiente.
 | Modelo operacional | Bases, canoas, sessoes e vagas vinculadas ao mesmo clube | Implementado, migration pendente |
 | Seguranca | RLS e permissoes administrativas verificadas no Supabase alvo | Pendente |
 | Integridade | Canoa de outra base rejeitada no front e no banco | Implementado |
-| Reserva | Reserva, lotacao, espera, cancelamento e promocao testados de ponta a ponta | Pendente |
+| Reserva | Reserva, lotacao, espera, cancelamento e promocao testados de ponta a ponta | Mecanica e avisos verificados em transacao; E2E autenticado pendente |
 | Operacao | Gestor publica e treinador registra presenca pelo celular | Pendente |
-| Experiencia | Estados vazios, erros, carregamento e responsividade revisados | Em revisao |
+| Experiencia | Estados vazios, erros, carregamento e responsividade revisados | Build aprovado; teste em aparelhos pendente |
 | Observabilidade | Erros do teste identificaveis sem depender do relato do usuario | Pendente |
 
 ## Cenarios obrigatorios

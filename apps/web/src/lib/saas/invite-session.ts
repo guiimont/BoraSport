@@ -6,6 +6,7 @@ import { createClient } from "./supabase-server";
 
 const inviteTokenCookie = "bora_invite_token";
 const inviteNameCookie = "bora_invite_name";
+const inviteWeightCookie = "bora_invite_weight";
 const maxTokenLength = 256;
 const maxCookieAgeSeconds = 60 * 60 * 24 * 14;
 
@@ -56,6 +57,7 @@ export async function clearInviteCookies() {
 
   cookieStore.delete(inviteTokenCookie);
   cookieStore.delete(inviteNameCookie);
+  cookieStore.delete(inviteWeightCookie);
 }
 
 export async function readInviteTokenCookie() {
@@ -70,6 +72,13 @@ export async function readInviteNameCookie() {
   return cookieStore.get(inviteNameCookie)?.value?.trim() || "";
 }
 
+export async function readInviteWeightCookie() {
+  const cookieStore = await cookies();
+  const value = Number(cookieStore.get(inviteWeightCookie)?.value || "");
+
+  return Number.isFinite(value) && value >= 20 && value <= 350 ? value : null;
+}
+
 export async function writeInviteTokenCookie(token: string, maxAge: number) {
   const cookieStore = await cookies();
 
@@ -80,6 +89,12 @@ export async function writeInviteNameCookie(name: string, maxAge: number) {
   const cookieStore = await cookies();
 
   cookieStore.set(inviteNameCookie, name, getCookieOptions(maxAge));
+}
+
+export async function writeInviteWeightCookie(weightKg: number, maxAge: number) {
+  const cookieStore = await cookies();
+
+  cookieStore.set(inviteWeightCookie, String(weightKg), getCookieOptions(maxAge));
 }
 
 export function getInviteCookieMaxAge(expiresAt: string) {
@@ -146,6 +161,7 @@ export async function getInviteContextFromToken(
 export async function consumeStoredInvite(): Promise<InviteConsumptionResult> {
   const token = await readInviteTokenCookie();
   const storedName = await readInviteNameCookie();
+  const storedWeight = await readInviteWeightCookie();
 
   if (!token) {
     return {
@@ -196,9 +212,33 @@ export async function consumeStoredInvite(): Promise<InviteConsumptionResult> {
 
   const result = Array.isArray(data) ? data[0] : data;
   const companySlug = result?.company_slug;
+  let hasPrivateWeight = false;
+
+  if (storedWeight !== null) {
+    const { error: measurementError } = await supabase
+      .from("athlete_body_measurements")
+      .insert({ user_id: user.id, weight_kg: storedWeight });
+
+    if (!measurementError) {
+      hasPrivateWeight = true;
+    }
+  } else {
+    const { data: measurement } = await supabase
+      .from("athlete_body_measurements")
+      .select("id")
+      .eq("user_id", user.id)
+      .limit(1)
+      .maybeSingle();
+
+    hasPrivateWeight = Boolean(measurement);
+  }
+
+  const clubPath = companySlug ? `/clube/${companySlug}` : "/perfil";
 
   return {
-    redirectTo: companySlug ? `/clube/${companySlug}` : "/perfil",
+    redirectTo: hasPrivateWeight
+      ? clubPath
+      : `/perfil?onboarding=weight&next=${encodeURIComponent(clubPath)}`,
     success: "Convite aceito. Seu acesso ao clube foi ativado.",
   };
 }
