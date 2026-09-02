@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
-import { BrandMark } from "../../../components/ui";
+import { BrandIcon, BrandMark, type BrandIconName } from "../../../components/ui";
 import type { AdminContext } from "./admin-context";
 import styles from "./admin.module.css";
 
@@ -31,6 +31,7 @@ type AdminShellProps = {
 
 type AdminModuleItem = {
   id: AdminModule;
+  icon: BrandIconName;
   label: string;
   subtitle: string;
   sections: Array<{ id: AdminSection; label: string; hrefSuffix: string }>;
@@ -39,6 +40,7 @@ type AdminModuleItem = {
 const clubModuleItems: AdminModuleItem[] = [
   {
     id: "mahana",
+    icon: "mahana",
     label: "Mahana",
     subtitle: "Agenda Imediata",
     sections: [
@@ -48,6 +50,7 @@ const clubModuleItems: AdminModuleItem[] = [
   },
   {
     id: "faatere",
+    icon: "faatere",
     label: "Fa‘atere",
     subtitle: "Canoas & Treinos",
     sections: [
@@ -58,6 +61,7 @@ const clubModuleItems: AdminModuleItem[] = [
   },
   {
     id: "taata",
+    icon: "taata",
     label: "Ta‘ata",
     subtitle: "Remadores & Equipe",
     sections: [
@@ -67,6 +71,7 @@ const clubModuleItems: AdminModuleItem[] = [
   },
   {
     id: "pu",
+    icon: "pu",
     label: "Pū",
     subtitle: "Financeiro & Planos",
     sections: [
@@ -78,10 +83,10 @@ const clubModuleItems: AdminModuleItem[] = [
 ];
 
 const groupModuleItems: AdminModuleItem[] = [
-  { id: "inicio", label: "Início", subtitle: "Visão do Grupo", sections: [{ hrefSuffix: "", id: "overview", label: "Início" }] },
-  { id: "agenda", label: "Agenda", subtitle: "Sessões Publicadas", sections: [{ hrefSuffix: "/agenda", id: "agenda", label: "Agenda" }] },
-  { id: "pessoas", label: "Pessoas", subtitle: "Membros do Grupo", sections: [{ hrefSuffix: "/remadores", id: "remadores", label: "Pessoas" }] },
-  { id: "atividades", label: "Atividades", subtitle: "Remadas do Grupo", sections: [{ hrefSuffix: "/atividades", id: "atividades", label: "Atividades" }] },
+  { id: "inicio", icon: "amuiraa", label: "Início", subtitle: "Visão do Grupo", sections: [{ hrefSuffix: "", id: "overview", label: "Início" }] },
+  { id: "agenda", icon: "mahana", label: "Agenda", subtitle: "Sessões Publicadas", sections: [{ hrefSuffix: "/agenda", id: "agenda", label: "Agenda" }] },
+  { id: "pessoas", icon: "taata", label: "Pessoas", subtitle: "Membros do Grupo", sections: [{ hrefSuffix: "/remadores", id: "remadores", label: "Pessoas" }] },
+  { id: "atividades", icon: "hoe", label: "Atividades", subtitle: "Remadas do Grupo", sections: [{ hrefSuffix: "/atividades", id: "atividades", label: "Atividades" }] },
 ];
 
 export function AdminShell({
@@ -127,7 +132,7 @@ export function AdminShell({
                 href={`${baseHref}${item.sections[0].hrefSuffix}`}
                 key={item.id}
               >
-                <span className={styles.navGlyph} aria-hidden>{item.label.slice(0, 1)}</span>
+                <span className={styles.navGlyph} aria-hidden><BrandIcon name={item.icon} /></span>
                 <span className={styles.navText}><strong>{item.label}</strong><small>{item.subtitle}</small></span>
               </Link>
             ))}

@@ -112,7 +112,8 @@
 }
 
 .navLink { align-items: center; display: grid; gap: 10px; grid-template-columns: 30px minmax(0,1fr); }
-.navGlyph { align-items: center; background: rgba(31,216,229,.08); border: 1px solid rgba(116,238,240,.14); border-radius: 9px; color: var(--color-sea-300); display: flex; font-size: .76rem; height: 30px; justify-content: center; width: 30px; }
+.navGlyph { align-items: center; background: rgba(0,168,150,.08); border: 1px solid rgba(224,221,207,.14); border-radius: 9px; color: var(--sand-muted); display: flex; height: 34px; justify-content: center; width: 34px; }
+.navGlyph svg { --brand-icon-size: 23px; }
 .navText { display: grid; gap: 3px; }
 .navText strong { font-size: .84rem; }
 .navText small, .mobileNavLinks small { color: rgba(238,248,247,.48); font-size: .67rem; font-weight: 700; }

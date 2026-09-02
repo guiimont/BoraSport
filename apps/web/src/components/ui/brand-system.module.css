@@ -1,0 +1,79 @@
+.icon {
+  color: currentColor;
+  display: block;
+  fill: none;
+  flex: 0 0 auto;
+  height: var(--brand-icon-size, 28px);
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.55;
+  width: var(--brand-icon-size, 28px);
+}
+
+.divider {
+  align-items: center;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1fr auto 1fr;
+  margin: var(--space-5) 0;
+  opacity: .42;
+}
+
+.divider::before, .divider::after {
+  background:
+    linear-gradient(135deg, transparent 45%, var(--gold-muted) 46% 54%, transparent 55%) 0 0 / 14px 8px repeat-x;
+  content: "";
+  height: 8px;
+}
+
+.dividerMark {
+  border: 1px solid var(--accent-lagoon);
+  height: 7px;
+  transform: rotate(45deg);
+  width: 7px;
+}
+
+.rahui {
+  align-items: center;
+  background: color-mix(in srgb, var(--status-tahoe) 22%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-lagoon) 35%, transparent);
+  border-radius: 12px;
+  color: #bffcf1;
+  display: inline-flex;
+  gap: 9px;
+  padding: 8px 11px;
+}
+
+.rahui svg { --brand-icon-size: 22px; }
+.rahui span { display: grid; gap: 1px; }
+.rahui strong { font-size: .76rem; }
+.rahui small { color: color-mix(in srgb, #bffcf1 65%, transparent); font-size: .62rem; }
+
+.panui, .goldFrame {
+  background: linear-gradient(145deg, color-mix(in srgb, var(--bg-surface-navy) 94%, black), var(--bg-deep-navy));
+  color: var(--bone-white);
+  position: relative;
+}
+
+.panui {
+  border: 1px solid color-mix(in srgb, var(--sand-muted) 32%, transparent);
+  clip-path: polygon(12px 0, calc(100% - 12px) 0, 100% 12px, 100% calc(100% - 12px), calc(100% - 12px) 100%, 12px 100%, 0 calc(100% - 12px), 0 12px);
+  padding: var(--space-5);
+}
+
+.panui::before, .goldFrame::before {
+  border: 1px solid color-mix(in srgb, var(--accent-lagoon) 42%, transparent);
+  content: "";
+  inset: 5px;
+  pointer-events: none;
+  position: absolute;
+}
+
+.goldFrame {
+  border: 1px solid var(--gold-muted);
+  clip-path: polygon(18px 0, calc(100% - 18px) 0, 100% 18px, 100% calc(100% - 18px), calc(100% - 18px) 100%, 18px 100%, 0 calc(100% - 18px), 0 18px);
+  padding: clamp(20px, 3vw, 32px);
+}
+
+.goldFrame::before { border-color: color-mix(in srgb, var(--gold-bronze) 52%, transparent); }
