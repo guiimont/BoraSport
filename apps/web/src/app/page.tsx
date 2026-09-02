@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { BrandMark } from "../components/ui";
+import { BrandIcon, BrandMark, DividerNihoMano, MasteryShowcase } from "../components/ui";
 import { CommercialLeadForm } from "./commercial-lead-form";
 import styles from "./home.module.css";
 
@@ -220,6 +220,23 @@ export default function HomePage() {
             </div>
           ))}
         </div>
+      </section>
+
+      <section className={styles.platformSection}>
+        <div className={styles.sectionHeader}>
+          <p className={styles.eyebrow}>Uma conta. Uma história.</p>
+          <h2>O remador e o clube navegam na mesma plataforma.</h2>
+          <p>A atividade pertence ao atleta para sempre. O clube organiza sessões, treinos e presença sem sequestrar a história de quem rema.</p>
+        </div>
+        <DividerNihoMano />
+        <div className={styles.worldGrid}>
+          <article><BrandIcon name="amuiraa" /><span>‘Āmuira‘a</span><h3>Comunidade & Atleta</h3><p>Feed, diário de atividades, descoberta, conexões e privacidade em uma identidade esportiva contínua.</p></article>
+          <article><BrandIcon name="taata" /><span>Pupu</span><h3>Organizações</h3><p>Agenda, pessoas, canoas, treinos e operação apresentados conforme o tipo real de grupo ou clube.</p></article>
+        </div>
+      </section>
+
+      <section className={styles.masterySection}>
+        <MasteryShowcase />
       </section>
 
       <section className={styles.resourcesSection} id="recursos">

@@ -8,7 +8,7 @@ import {
   getCurrentUserBodyMeasurements,
   getCurrentUserMemberships,
 } from "../../lib/saas/queries";
-import { ActionLink, Alert, MemberShell } from "../../components/ui";
+import { ActionLink, Alert, MasteryShowcase, MemberShell } from "../../components/ui";
 import { ProfileForm } from "./profile-form";
 import { PrivacySettingsForm } from "./privacy-settings-form";
 import styles from "./profile.module.css";
@@ -114,6 +114,10 @@ export default async function ProfilePage() {
           <small>Vínculos ativos no BoraSport</small>
         </article>
       </section>
+
+      <div className={styles.masteryJourney}>
+        <MasteryShowcase compact />
+      </div>
 
       <div className={styles.layout}>
         <section className={styles.profilePanel} aria-labelledby="profile-heading">
