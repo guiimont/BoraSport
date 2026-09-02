@@ -6,8 +6,10 @@ import {
   getCurrentUserActivityRecords,
   getCurrentUserMemberships,
   getCurrentUserSessionCandidates,
+  getCurrentUserWeekSessions,
 } from "../../lib/saas/queries";
 import { ActivityForm } from "./activity-form";
+import { ActivityFeedbackForm } from "./activity-feedback-form";
 import { ActivityMatchForm } from "./activity-match-form";
 import styles from "./remadas.module.css";
 
@@ -24,10 +26,11 @@ export default async function RemadasPage() {
   const user = await getCurrentUser();
   if (!user) redirect("/login?next=/remadas");
 
-  const [activities, memberships, sessionCandidates] = await Promise.all([
+  const [activities, memberships, sessionCandidates, weekSessions] = await Promise.all([
     getCurrentUserActivityRecords(),
     getCurrentUserMemberships(),
     getCurrentUserSessionCandidates(),
+    getCurrentUserWeekSessions(),
   ]);
   const companies = new Map(
     memberships.flatMap((membership) => membership.companies ? [[membership.company_id, membership.companies.name] as const] : []),
@@ -42,6 +45,54 @@ export default async function RemadasPage() {
       title="Diário de remadas"
     >
       <div className={styles.layout}>
+        <section className={`${styles.panel} ${styles.weekPanel}`}>
+          <div className={styles.sectionHeading}>
+            <div><p className={styles.eyebrow}>Minha semana</p><h2>Treinos publicados</h2></div>
+            <span className={styles.weekCount}>{weekSessions.length}</span>
+          </div>
+          {weekSessions.length ? (
+            <ol className={styles.weekList}>
+              {weekSessions.map((session) => {
+                const plan = session.training_plan_version?.training_plan;
+                return (
+                  <li key={session.id}>
+                    <div className={styles.weekDate}>
+                      <strong>{new Intl.DateTimeFormat("pt-BR", { weekday: "short", day: "2-digit", timeZone: "UTC" }).format(new Date(`${session.session_date}T12:00:00Z`))}</strong>
+                      <span>{session.start_time.slice(0, 5)}</span>
+                    </div>
+                    <div className={styles.weekMain}>
+                      <span>{session.company_name} · {session.group_name}</span>
+                      <h3>{plan?.title ?? "Sessão sem treino definido"}</h3>
+                      <p>{plan?.objective ?? `${session.duration_minutes} min de sessão publicada.`}</p>
+                      {session.training_blocks.length ? (
+                        <details>
+                          <summary>Ver prescrição</summary>
+                          <ol>
+                            {session.training_blocks
+                              .filter((block) => !block.parent_block_id)
+                              .sort((a, b) => a.sort_order - b.sort_order)
+                              .map((block) => (
+                                <li key={block.id}>
+                                  <strong>{block.name}</strong>
+                                  {block.instruction ? <span>{block.instruction}</span> : null}
+                                </li>
+                              ))}
+                          </ol>
+                        </details>
+                      ) : null}
+                    </div>
+                  </li>
+                );
+              })}
+            </ol>
+          ) : (
+            <div className={styles.weekEmpty}>
+              <strong>Semana livre por enquanto.</strong>
+              <span>Os treinos aparecem aqui assim que o clube publicar a sessão.</span>
+            </div>
+          )}
+        </section>
+
         <section className={styles.panel} id="registrar-remada">
           <ActivityForm memberships={memberships} />
         </section>
@@ -81,6 +132,7 @@ export default async function RemadasPage() {
                   {activity.attendance_validation_status !== "validated" && sessionCandidates.length ? (
                     <ActivityMatchForm activityId={activity.id} candidates={sessionCandidates} />
                   ) : null}
+                  <ActivityFeedbackForm activity={activity} />
                 </li>
               ))}
             </ol>

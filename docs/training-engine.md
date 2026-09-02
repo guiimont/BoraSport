@@ -135,8 +135,6 @@ role no frontend.
 Nao implementado nesta fase:
 
 - construtor visual complexo;
-- feedback pos-treino;
-- RPE, fadiga, dor e alertas;
 - montagem de canoas;
 - leme;
 - integracao com Garmin, Strava, Apple Watch ou outros dispositivos;
@@ -144,10 +142,27 @@ Nao implementado nesta fase:
 
 ## Proximas fases sugeridas
 
-1. Criar tela simples de biblioteca de treinos no admin.
-2. Criar editor guiado de versao e blocos.
-3. Permitir vincular versao publicada ao treino da semana.
-4. Permitir vincular versao publicada ao slot.
-5. Criar zonas individuais do remador.
-6. Criar feedback pos-treino com duracao real, RPE, fadiga, disposicao e dor.
-7. Criar alertas de saude/performance para treinador e gestor.
+1. Criar zonas individuais do remador e graficos de tempo por zona.
+2. Consolidar painel planejado versus realizado por atleta.
+3. Permitir resposta e acompanhamento individual do treinador.
+4. Integrar entrada automatica de atividades por provedores autorizados.
+5. Criar alertas de saude/performance para treinador e gestor.
+
+## Ciclo atleta-treinador implementado
+
+O ambiente Hoe apresenta a semana corrente com as sessoes publicadas dos
+clubes aos quais o remador esta vinculado. Quando a sessao possui uma versao
+publicada, o remador pode consultar titulo, objetivo e blocos da prescricao sem
+receber notificacao automatica.
+
+Cada atividade aceita um retorno curto do proprio atleta:
+
+- RPE de 1 a 10;
+- estado ao terminar;
+- sinalizacao de dor ou desconforto;
+- observacao opcional.
+
+O retorno continua pertencendo ao atleta. Profissionais e administradores so
+podem consulta-lo quando a atividade esta vinculada a uma sessao da propria
+organizacao. Essa entrega nao inclui diagnostico, alerta medico automatico nem
+resposta textual do treinador.

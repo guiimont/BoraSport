@@ -8,6 +8,7 @@ import { createClient } from "../../lib/saas/supabase-server";
 
 export type ActivityFormState = { error?: string; success?: string };
 export type ActivityMatchState = { error?: string; success?: string };
+export type ActivityFeedbackState = { error?: string; success?: string };
 
 function text(formData: FormData, key: string) {
   const value = formData.get(key);
@@ -129,4 +130,41 @@ export async function linkActivityToSession(
     success:
       "Taho‘e! Remando como um só. Sua atividade foi vinculada à sessão do clube com presença validada.",
   };
+}
+
+export async function saveActivityFeedback(
+  _state: ActivityFeedbackState,
+  formData: FormData,
+): Promise<ActivityFeedbackState> {
+  const user = await getCurrentUser();
+  if (!user) return { error: "Entre na sua conta para enviar o retorno." };
+
+  const activityId = text(formData, "activityId");
+  const rpe = Number(text(formData, "rpe"));
+  const feeling = text(formData, "feeling");
+  const notes = text(formData, "notes");
+  const allowedFeelings = ["great", "good", "neutral", "tired", "exhausted"];
+
+  if (!activityId || !Number.isInteger(rpe) || rpe < 1 || rpe > 10 || !allowedFeelings.includes(feeling)) {
+    return { error: "Informe o esforço e como você terminou a remada." };
+  }
+  if (notes.length > 600) return { error: "A observação pode ter até 600 caracteres." };
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("activity_records")
+    .update({
+      athlete_feedback_at: new Date().toISOString(),
+      athlete_feeling: feeling,
+      athlete_notes: notes || null,
+      athlete_pain: formData.get("pain") === "on",
+      athlete_rpe: rpe,
+    })
+    .eq("id", activityId)
+    .eq("user_id", user.id);
+
+  if (error) return { error: `Não foi possível salvar o retorno. ${error.message}` };
+
+  revalidatePath("/remadas");
+  return { success: "Retorno salvo. O treinador poderá acompanhar esta remada quando ela estiver vinculada ao clube." };
 }

@@ -1,6 +1,7 @@
 import type {
   ActivityRecord,
   ActivitySessionCandidate,
+  AthleteWeekSession,
   AthletePrivacySettings,
   AthleteBodyMeasurement,
   BaseSchedule,
@@ -1166,7 +1167,7 @@ export async function getCurrentUserActivityRecords(): Promise<ActivityRecord[]>
   const { data, error } = await supabase
     .from("activity_records")
     .select(
-      "id,company_id,operational_session_id,provider,activity_type,title,started_at,duration_seconds,distance_meters,average_heart_rate,visibility,attendance_validation_status,attendance_validation_source,attendance_validated_at,route_privacy_mode",
+      "id,company_id,operational_session_id,provider,activity_type,title,started_at,duration_seconds,distance_meters,average_heart_rate,visibility,attendance_validation_status,attendance_validation_source,attendance_validated_at,route_privacy_mode,athlete_rpe,athlete_feeling,athlete_pain,athlete_notes,athlete_feedback_at",
     )
     .eq("user_id", user.id)
     .order("started_at", { ascending: false });
@@ -1182,7 +1183,7 @@ export async function getCompanyActivityRecords(companyId: string): Promise<Comp
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("activity_records")
-    .select("id,company_id,operational_session_id,provider,activity_type,title,started_at,duration_seconds,distance_meters,average_heart_rate,visibility,attendance_validation_status,attendance_validation_source,attendance_validated_at,route_privacy_mode,athlete:user_id(id,name,avatar_url)")
+    .select("id,company_id,operational_session_id,provider,activity_type,title,started_at,duration_seconds,distance_meters,average_heart_rate,visibility,attendance_validation_status,attendance_validation_source,attendance_validated_at,route_privacy_mode,athlete_rpe,athlete_feeling,athlete_pain,athlete_notes,athlete_feedback_at,athlete:user_id(id,name,avatar_url)")
     .eq("company_id", companyId)
     .order("started_at", { ascending: false })
     .limit(100);
@@ -1192,6 +1193,71 @@ export async function getCompanyActivityRecords(companyId: string): Promise<Comp
     ...activity,
     athlete: firstJoin(activity.athlete),
   })) as CompanyActivityRecord[];
+}
+
+export async function getCurrentUserWeekSessions(): Promise<AthleteWeekSession[]> {
+  const memberships = await getCurrentUserMemberships();
+  if (!memberships.length) return [];
+
+  const companyNames = new Map(
+    memberships.flatMap((membership) => membership.companies
+      ? [[membership.company_id, membership.companies.name] as const]
+      : []),
+  );
+  const now = new Date();
+  const day = (now.getUTCDay() + 6) % 7;
+  const start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - day));
+  const end = new Date(start);
+  end.setUTCDate(end.getUTCDate() + 6);
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("operational_sessions")
+    .select(`
+      id,company_id,session_date,start_time,duration_minutes,group_name,
+      training_plan_versions:training_plan_versions!operational_sessions_training_version_company_fk (
+        id,company_id,training_plan_id,version_number,level,status,duration_seconds,published_at,
+        training_plans:training_plans!training_plan_versions_plan_company_fk (
+          id,title,objective,training_mode
+        ),
+        training_blocks (
+          id,company_id,training_plan_version_id,parent_block_id,block_kind,block_type,name,instruction,sort_order,duration_seconds,bora_zone,heart_rate_min,heart_rate_max,repeat_count,target_type,target_value,created_at,updated_at
+        )
+      )
+    `)
+    .in("company_id", memberships.map((membership) => membership.company_id))
+    .eq("status", "published")
+    .gte("session_date", start.toISOString().slice(0, 10))
+    .lte("session_date", end.toISOString().slice(0, 10))
+    .order("session_date", { ascending: true })
+    .order("start_time", { ascending: true });
+
+  if (error) return [];
+
+  return (data ?? []).map((row) => {
+    const version = firstJoin(row.training_plan_versions);
+    return {
+      company_id: row.company_id,
+      company_name: companyNames.get(row.company_id) ?? "Organização",
+      duration_minutes: row.duration_minutes,
+      group_name: row.group_name,
+      id: row.id,
+      session_date: row.session_date,
+      start_time: row.start_time,
+      training_blocks: version?.training_blocks ?? [],
+      training_plan_version: version ? {
+        company_id: version.company_id,
+        duration_seconds: version.duration_seconds,
+        id: version.id,
+        level: version.level,
+        published_at: version.published_at,
+        status: version.status,
+        training_plan: firstJoin(version.training_plans),
+        training_plan_id: version.training_plan_id,
+        version_number: version.version_number,
+      } : null,
+    };
+  }) as AthleteWeekSession[];
 }
 
 export async function getCurrentAthletePrivacySettings(): Promise<AthletePrivacySettings | null> {
