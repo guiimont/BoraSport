@@ -1,5 +1,23 @@
 .layout { align-items: start; display: grid; gap: var(--space-6); grid-template-columns: minmax(300px, .85fr) minmax(0, 1.15fr); }
 .panel { background: linear-gradient(180deg, rgba(20,19,31,.94), rgba(10,17,30,.97)); border: 1px solid rgba(182,140,255,.2); border-radius: var(--radius-lg); box-shadow: var(--shadow-night-card); color: var(--text-inverse); padding: clamp(18px,3vw,28px); }
+.weekPanel { grid-column: 1 / -1; }
+.weekCount { align-items: center; background: rgba(31,216,229,.12); border: 1px solid rgba(31,216,229,.2); border-radius: 999px; color: var(--color-sea-300); display: inline-flex; font-weight: 850; height: 36px; justify-content: center; width: 36px; }
+.weekList { display: grid; gap: var(--space-3); list-style: none; margin: 0; padding: 0; }
+.weekList > li { align-items: start; background: rgba(5,12,23,.55); border: 1px solid rgba(31,216,229,.12); border-radius: var(--radius-md); display: grid; gap: var(--space-4); grid-template-columns: 72px 1fr; padding: var(--space-4); }
+.weekDate { align-items: center; background: rgba(31,216,229,.08); border-radius: 14px; display: grid; gap: 4px; justify-items: center; padding: 10px 6px; text-transform: capitalize; }
+.weekDate strong { color: #fff; font-size: .86rem; }
+.weekDate span { color: var(--color-sea-300); font-size: .78rem; font-weight: 850; }
+.weekMain > span { color: rgba(238,248,247,.58); font-size: .76rem; }
+.weekMain h3 { color: #fff; margin: 4px 0; }
+.weekMain > p { color: rgba(238,248,247,.7); margin: 0; }
+.weekMain details { margin-top: var(--space-3); }
+.weekMain summary { color: var(--color-sea-300); cursor: pointer; font-size: .8rem; font-weight: 850; }
+.weekMain details ol { display: grid; gap: 8px; margin: 10px 0 0; padding-left: 20px; }
+.weekMain details li { color: rgba(238,248,247,.68); font-size: .82rem; }
+.weekMain details li strong, .weekMain details li span { display: block; }
+.weekEmpty { border: 1px dashed rgba(31,216,229,.2); border-radius: var(--radius-md); display: grid; gap: 5px; padding: var(--space-5); }
+.weekEmpty strong { color: #fff; }
+.weekEmpty span { color: rgba(238,248,247,.62); }
 .form { display: grid; gap: var(--space-4); }
 .formIntro h2, .sectionHeading h2 { color: #fff; margin: 0; }
 .formIntro p:last-child, .help { color: rgba(238,248,247,.66); line-height: 1.55; margin: var(--space-2) 0 0; }
@@ -31,8 +49,30 @@
 .matchForm { align-items: end; background: rgba(31,216,229,.055); border: 1px solid rgba(31,216,229,.12); border-radius: var(--radius-md); display: grid; gap: var(--space-3); grid-template-columns: minmax(0,1fr) auto; padding: var(--space-3); }
 .matchForm label { color: rgba(238,248,247,.72); display: grid; font-size: .78rem; font-weight: 800; gap: var(--space-2); }
 .matchForm [role="alert"], .matchForm [role="status"] { grid-column: 1 / -1; }
+.feedback { border-top: 1px solid rgba(255,255,255,.08); padding-top: var(--space-3); }
+.feedback summary { align-items: center; cursor: pointer; display: flex; justify-content: space-between; list-style: none; }
+.feedback summary::-webkit-details-marker { display: none; }
+.feedback summary > span:first-child { display: grid; gap: 2px; }
+.feedback summary strong { color: #fff; font-size: .86rem; }
+.feedback summary small { color: rgba(238,248,247,.55); }
+.feedback summary > span:last-child { color: var(--color-sea-300); font-size: 1.3rem; }
+.feedbackForm { display: grid; gap: var(--space-3); margin-top: var(--space-4); }
+.feedbackForm fieldset { border: 0; margin: 0; padding: 0; }
+.feedbackForm legend, .feedbackForm > label { color: rgba(238,248,247,.72); display: grid; font-size: .78rem; font-weight: 800; gap: 7px; }
+.feedbackForm fieldset > small { color: rgba(238,248,247,.5); }
+.feedbackForm select, .feedbackForm textarea { background: rgba(5,12,23,.78); border: 1px solid rgba(182,140,255,.22); border-radius: 12px; color: #fff; font: inherit; padding: 11px 12px; }
+.feedbackForm select option { background: #0a111e; }
+.rpeScale { display: grid; gap: 5px; grid-template-columns: repeat(10,1fr); margin: 8px 0 5px; }
+.rpeScale label { cursor: pointer; }
+.rpeScale input { height: 1px; opacity: 0; position: absolute; width: 1px; }
+.rpeScale span { align-items: center; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); border-radius: 9px; color: rgba(238,248,247,.7); display: flex; font-size: .75rem; font-weight: 850; height: 34px; justify-content: center; }
+.rpeScale input:checked + span, .rpeScale input:focus-visible + span { background: rgba(31,216,229,.18); border-color: var(--color-sea-400); color: #fff; }
+.feedbackForm .painCheck { align-items: center; display: flex; }
+.feedbackSubmit { background: linear-gradient(135deg,var(--color-sea-500),var(--color-violet-500)); border: 0; border-radius: 12px; color: #04121f; cursor: pointer; font: inherit; font-weight: 850; min-height: 42px; padding: 0 16px; }
+.feedbackForm [role="alert"] { color: #ffb4b4; margin: 0; }
+.feedbackForm [role="status"] { color: #bffcf1; margin: 0; }
 .fab { align-items: center; background: linear-gradient(135deg,var(--color-sea-500),var(--color-violet-500)); border: 1px solid rgba(123,243,245,.5); border-radius: 18px; bottom: 22px; box-shadow: 0 20px 48px rgba(0,0,0,.34),0 0 34px rgba(31,216,229,.24); color: #04121f; display: flex; gap: var(--space-2); padding: 13px 18px; position: fixed; right: 22px; text-decoration: none; z-index: 20; }
 .fab strong { font-size: 1.05rem; }
 .fab span { font-size: .75rem; font-weight: 800; }
 @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
-@media (max-width: 560px) { .twoColumns { grid-template-columns: 1fr; } .metrics { grid-template-columns: repeat(3,minmax(0,1fr)); } .activityHeading { align-items: start; flex-direction: column; } .matchForm { grid-template-columns: 1fr; } .fab { bottom: 14px; right: 14px; } }
+@media (max-width: 560px) { .twoColumns { grid-template-columns: 1fr; } .metrics { grid-template-columns: repeat(3,minmax(0,1fr)); } .activityHeading { align-items: start; flex-direction: column; } .matchForm { grid-template-columns: 1fr; } .fab { bottom: 14px; right: 14px; } .weekList > li { grid-template-columns: 62px 1fr; } .rpeScale { grid-template-columns: repeat(5,1fr); } }

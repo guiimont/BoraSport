@@ -226,6 +226,11 @@ export type ActivityRecord = {
   company_id: string | null;
   distance_meters: number | null;
   duration_seconds: number | null;
+  athlete_feeling: "great" | "good" | "neutral" | "tired" | "exhausted" | null;
+  athlete_notes: string | null;
+  athlete_pain: boolean | null;
+  athlete_rpe: number | null;
+  athlete_feedback_at: string | null;
   id: string;
   operational_session_id: string | null;
   provider: string;
@@ -251,6 +256,20 @@ export type ActivitySessionCandidate = Pick<
   "company_id" | "group_name" | "id" | "session_date" | "start_time"
 > & {
   company_name: string;
+};
+
+export type AthleteWeekSession = Pick<
+  OperationalSession,
+  | "company_id"
+  | "duration_minutes"
+  | "group_name"
+  | "id"
+  | "session_date"
+  | "start_time"
+> & {
+  company_name: string;
+  training_blocks: TrainingBlock[];
+  training_plan_version: OperationalSessionTrainingVersion | null;
 };
 
 export type Booking = {
