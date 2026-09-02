@@ -12,6 +12,7 @@ import { createClient } from "../../../lib/saas/supabase-server";
 
 export type ReservationActionState = {
   error?: string;
+  success?: string;
 };
 
 export async function reserveSlot(
@@ -55,7 +56,7 @@ export async function reserveSlot(
   }
 
   revalidatePath(slug ? `/clube/${slug}` : "/clube/[slug]");
-  return {};
+  return { success: "Māuruuru! Seu assento na canoa está confirmado." };
 }
 
 export async function cancelSlotReservation(

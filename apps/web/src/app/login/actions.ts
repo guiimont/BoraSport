@@ -22,7 +22,7 @@ export async function signInWithPassword(
 ): Promise<LoginState> {
   const email = readText(formData, "email");
   const password = readText(formData, "password");
-  const next = sanitizeInternalPath(readText(formData, "next"), "/perfil");
+  const next = sanitizeInternalPath(readText(formData, "next"), "/comunidade");
 
   if (!email || !password) {
     return { error: "Informe e-mail e senha." };

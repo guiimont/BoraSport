@@ -165,7 +165,7 @@ export type Membership = {
 };
 
 export type MembershipWithCompany = Membership & {
-  companies: Pick<Company, "id" | "logo_url" | "name" | "slug"> | null;
+  companies: Pick<Company, "id" | "logo_url" | "name" | "organization_kind" | "slug"> | null;
 };
 
 export type CompanyMember = Membership & {
@@ -219,15 +219,38 @@ export type UserNotification = {
 
 export type ActivityRecord = {
   activity_type: string;
+  attendance_validation_source: "activity_match" | "coach_manual" | null;
+  attendance_validation_status: "unlinked" | "suggested" | "validated" | "rejected";
+  attendance_validated_at: string | null;
   average_heart_rate: number | null;
   company_id: string | null;
   distance_meters: number | null;
   duration_seconds: number | null;
   id: string;
+  operational_session_id: string | null;
   provider: string;
+  route_privacy_mode: "hide_start_end" | "private_route";
   started_at: string;
   title: string | null;
   visibility: "private" | "organization" | "connections" | "public";
+};
+
+export type CompanyActivityRecord = ActivityRecord & {
+  athlete: Pick<Profile, "avatar_url" | "id" | "name"> | null;
+};
+
+export type AthletePrivacySettings = {
+  challenges_opt_in: boolean;
+  hide_route_start_end: boolean;
+  rankings_opt_in: boolean;
+  user_id: string;
+};
+
+export type ActivitySessionCandidate = Pick<
+  OperationalSession,
+  "company_id" | "group_name" | "id" | "session_date" | "start_time"
+> & {
+  company_name: string;
 };
 
 export type Booking = {

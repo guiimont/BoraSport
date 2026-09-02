@@ -7,6 +7,7 @@ import { getCurrentUser } from "../../lib/saas/queries";
 import { createClient } from "../../lib/saas/supabase-server";
 
 export type ActivityFormState = { error?: string; success?: string };
+export type ActivityMatchState = { error?: string; success?: string };
 
 function text(formData: FormData, key: string) {
   const value = formData.get(key);
@@ -99,4 +100,33 @@ export async function saveActivity(
     }
     return { error: `Não foi possível registrar a remada. ${message}` };
   }
+}
+
+export async function linkActivityToSession(
+  _state: ActivityMatchState,
+  formData: FormData,
+): Promise<ActivityMatchState> {
+  const user = await getCurrentUser();
+  if (!user) return { error: "Entre na sua conta para vincular a atividade." };
+
+  const activityId = text(formData, "activityId");
+  const sessionId = text(formData, "sessionId");
+  if (!activityId || !sessionId) {
+    return { error: "Escolha uma sessão publicada para validar a presença." };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("link_activity_to_session", {
+    p_activity_id: activityId,
+    p_session_id: sessionId,
+  });
+
+  if (error) return { error: `Não foi possível vincular. ${error.message}` };
+
+  revalidatePath("/remadas");
+  revalidatePath("/perfil");
+  return {
+    success:
+      "Taho‘e! Remando como um só. Sua atividade foi vinculada à sessão do clube com presença validada.",
+  };
 }

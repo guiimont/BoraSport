@@ -6,16 +6,18 @@ import type { AdminContext } from "./admin-context";
 import styles from "./admin.module.css";
 
 type AdminSection =
+  | "atividades"
   | "agenda"
   | "bases"
   | "canoas"
   | "configuracoes"
+  | "financeiro"
   | "overview"
   | "remadores"
   | "site"
   | "treinos";
 
-type AdminModule = "gestao" | "hoje" | "operacao" | "pessoas";
+type AdminModule = "agenda" | "atividades" | "faatere" | "inicio" | "mahana" | "pessoas" | "pu" | "taata";
 
 type AdminShellProps = {
   active: AdminSection;
@@ -27,40 +29,59 @@ type AdminShellProps = {
   title: string;
 };
 
-const moduleItems: Array<{
+type AdminModuleItem = {
   id: AdminModule;
   label: string;
+  subtitle: string;
   sections: Array<{ id: AdminSection; label: string; hrefSuffix: string }>;
-}> = [
+};
+
+const clubModuleItems: AdminModuleItem[] = [
   {
-    id: "hoje",
-    label: "Hoje",
-    sections: [{ hrefSuffix: "", id: "overview", label: "Visão geral" }],
-  },
-  {
-    id: "operacao",
-    label: "Operação",
+    id: "mahana",
+    label: "Mahana",
+    subtitle: "Agenda Imediata",
     sections: [
+      { hrefSuffix: "", id: "overview", label: "Visão do dia" },
       { hrefSuffix: "/agenda", id: "agenda", label: "Agenda" },
-      { hrefSuffix: "/treinos", id: "treinos", label: "Treinos" },
-      { hrefSuffix: "/bases", id: "bases", label: "Bases" },
-      { hrefSuffix: "/canoas", id: "canoas", label: "Canoas" },
     ],
   },
   {
-    id: "pessoas",
-    label: "Pessoas",
+    id: "faatere",
+    label: "Fa‘atere",
+    subtitle: "Canoas & Treinos",
+    sections: [
+      { hrefSuffix: "/treinos", id: "treinos", label: "Treinos" },
+      { hrefSuffix: "/canoas", id: "canoas", label: "Canoas" },
+      { hrefSuffix: "/bases", id: "bases", label: "Bases" },
+    ],
+  },
+  {
+    id: "taata",
+    label: "Ta‘ata",
+    subtitle: "Remadores & Equipe",
     sections: [
       { hrefSuffix: "/remadores", id: "remadores", label: "Remadores" },
+      { hrefSuffix: "/atividades", id: "atividades", label: "Presenças" },
     ],
   },
   {
-    id: "gestao",
-    label: "Gestão",
+    id: "pu",
+    label: "Pū",
+    subtitle: "Financeiro & Planos",
     sections: [
+      { hrefSuffix: "/financeiro", id: "financeiro", label: "Financeiro" },
       { hrefSuffix: "/configuracoes", id: "configuracoes", label: "Configurações" },
+      { hrefSuffix: "/site", id: "site", label: "Site público" },
     ],
   },
+];
+
+const groupModuleItems: AdminModuleItem[] = [
+  { id: "inicio", label: "Início", subtitle: "Visão do Grupo", sections: [{ hrefSuffix: "", id: "overview", label: "Início" }] },
+  { id: "agenda", label: "Agenda", subtitle: "Sessões Publicadas", sections: [{ hrefSuffix: "/agenda", id: "agenda", label: "Agenda" }] },
+  { id: "pessoas", label: "Pessoas", subtitle: "Membros do Grupo", sections: [{ hrefSuffix: "/remadores", id: "remadores", label: "Pessoas" }] },
+  { id: "atividades", label: "Atividades", subtitle: "Remadas do Grupo", sections: [{ hrefSuffix: "/atividades", id: "atividades", label: "Atividades" }] },
 ];
 
 export function AdminShell({
@@ -74,6 +95,7 @@ export function AdminShell({
 }: AdminShellProps) {
   const { company, profileAvatarUrl, role, userLabel } = context;
   const baseHref = `/admin/${company.slug}`;
+  const moduleItems = company.organization_kind === "group" ? groupModuleItems : clubModuleItems;
   const activeModule =
     moduleItems.find((module) => module.sections.some((section) => section.id === active)) ??
     moduleItems[0];
@@ -90,7 +112,7 @@ export function AdminShell({
               <BrandMark tone="light" variant="monochromeLight" />
             </Link>
             <div className={styles.clubIdentity}>
-              <span>Clube</span>
+              <span>Pupu {company.organization_kind === "group" ? "Grupo" : "Clube"}</span>
               <strong>{company.name}</strong>
             </div>
           </div>
@@ -105,7 +127,8 @@ export function AdminShell({
                 href={`${baseHref}${item.sections[0].hrefSuffix}`}
                 key={item.id}
               >
-                {item.label}
+                <span className={styles.navGlyph} aria-hidden>{item.label.slice(0, 1)}</span>
+                <span className={styles.navText}><strong>{item.label}</strong><small>{item.subtitle}</small></span>
               </Link>
             ))}
           </nav>
@@ -127,7 +150,7 @@ export function AdminShell({
                 />
               </Link>
               <div className={styles.mobileClubIdentity}>
-                <span>Gestão do clube</span>
+                <span>Pupu {company.organization_kind === "group" ? "Grupo" : "Clube"}</span>
                 <strong>{company.name}</strong>
               </div>
               <div className={styles.mobileTopbarActions}>
@@ -202,7 +225,7 @@ export function AdminShell({
                   href={`${baseHref}${item.sections[0].hrefSuffix}`}
                   key={item.id}
                 >
-                  {item.label}
+                <span><strong>{item.label}</strong><small>{item.subtitle}</small></span>
                 </Link>
               ))}
             </nav>

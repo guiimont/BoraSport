@@ -160,3 +160,24 @@ Esta arquitetura nao aprova silenciosamente criterios de ranking, algoritmo de
 composicao de canoas, correspondencia automatica definitiva entre arquivo e
 sessao, regras de cobranca, moderacao ou compartilhamento publico por padrao.
 Esses comportamentos exigem validacao propria.
+
+# Arquitetura single-platform e camada semântica taitiana
+
+## Contratos imutáveis de domínio
+
+- Existe uma única conta. O remador não cria outro perfil para participar de um grupo ou administrar um clube.
+- A atividade pertence ao remador. `company_id` e `operational_session_id` são contextos opcionais e nunca transferem a propriedade do histórico.
+- Treino é prescrição técnica; sessão é o horário publicado; atividade é o registro executado.
+- Reserva representa intenção. Presença exige `attendance_validation_status = validated`, originada por `activity_match` ou `coach_manual`.
+- Publicar uma sessão não dispara notificação de treino. A agenda é consultada livremente no perfil público da organização.
+- Peso e medidas corporais permanecem em estruturas owner-only e não entram em consultas de clube, treinador ou comunidade.
+- Rankings e desafios são opt-in e nascem desativados.
+- Arquivos FIT, GPX e TCX são processados sem publicar coordenadas brutas; toda atividade compartilhável usa proteção de início e chegada.
+
+## Linguagem de interface
+
+Termos taitianos nunca aparecem sozinhos em navegação primária ou ações. O contrato visual é ícone + termo nativo + função em português. A camada cultural deve permanecer técnica e respeitosa: sem grafismos sagrados, fantasias ou decoração folclórica.
+
+## Limites de integração
+
+A importação FIT, GPX e TCX está ativa. Garmin e Strava só podem aparecer como conectados depois da implementação OAuth oficial e da autorização real do usuário. A interface não simula integrações.
