@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-import { MemberShell } from "../../components/ui";
+import { MemberShell, RahuiSeal } from "../../components/ui";
 import {
   getCurrentUser,
   getCurrentUserActivityRecords,
@@ -127,7 +127,7 @@ export default async function RemadasPage() {
                         ? "Presença auditada"
                         : "Atividade ainda não vinculada"}
                     </span>
-                    <span>Modo Rāhui Ativo 🛡️ · início e chegada protegidos</span>
+                    <RahuiSeal />
                   </div>
                   {activity.attendance_validation_status !== "validated" && sessionCandidates.length ? (
                     <ActivityMatchForm activityId={activity.id} candidates={sessionCandidates} />

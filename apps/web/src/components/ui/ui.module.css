@@ -439,9 +439,9 @@
 
 .memberPage {
   background:
-    radial-gradient(circle at 16% 42%, rgba(141, 77, 255, 0.16), transparent 28rem),
-    radial-gradient(circle at 84% 54%, rgba(31, 216, 229, 0.1), transparent 30rem),
-    linear-gradient(180deg, #060812 0, var(--color-ocean-950) 42%, #07111e 100%);
+    radial-gradient(circle at 16% 42%, rgba(0, 168, 150, 0.12), transparent 28rem),
+    radial-gradient(circle at 84% 54%, rgba(212, 175, 55, 0.07), transparent 30rem),
+    linear-gradient(180deg, #061326 0, var(--bg-deep-navy) 42%, #071423 100%);
   color: var(--text-inverse);
   min-height: 100vh;
   width: 100%;
@@ -449,9 +449,9 @@
 
 .memberHero {
   background:
-    radial-gradient(circle at 12% 0, rgba(141, 77, 255, 0.26), transparent 26rem),
-    radial-gradient(circle at 82% 12%, rgba(31, 216, 229, 0.18), transparent 28rem),
-    linear-gradient(135deg, #060812, var(--color-ocean-950) 52%, var(--color-ocean-800));
+    radial-gradient(circle at 12% 0, rgba(0, 168, 150, 0.2), transparent 26rem),
+    radial-gradient(circle at 82% 12%, rgba(212, 175, 55, 0.1), transparent 28rem),
+    linear-gradient(135deg, #061326, var(--bg-deep-navy) 52%, var(--bg-card-elevated));
   color: var(--text-inverse);
   overflow: hidden;
   padding: clamp(18px, 4vw, 34px);
@@ -527,8 +527,8 @@
 
 .memberNavLink {
   align-items: center;
-  background: rgba(255,255,255,.035);
-  border: 1px solid rgba(255,255,255,.09);
+  background: rgba(244,241,234,.035);
+  border: 1px solid rgba(224,221,207,.11);
   border-radius: 13px;
   color: rgba(255,255,255,.72);
   display: grid;
@@ -541,18 +541,19 @@
 }
 
 .memberNavLink:hover, .memberNavLink[data-active="true"] {
-  background: rgba(31,216,229,.09);
-  border-color: rgba(116,238,240,.34);
+  background: rgba(0,168,150,.11);
+  border-color: rgba(95,224,209,.38);
   color: #fff;
   transform: translateY(-1px);
 }
 
-.memberNavLink svg { fill: none; height: 22px; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.7; width: 22px; }
+.memberNavLink > svg { --brand-icon-size: 25px; color: var(--sand-muted); }
+.memberNavLink[data-active="true"] > svg { color: var(--accent-lagoon); filter: drop-shadow(0 0 8px rgba(0,168,150,.42)); }
 .memberNavLink span { display: grid; min-width: 0; }
 .memberNavLink strong { font-size: .82rem; line-height: 1.15; }
 .memberNavLink small { color: rgba(255,255,255,.5); font-size: .62rem; line-height: 1.2; margin-top: 3px; }
 
-.organizationSwitch { background: rgba(141,77,255,.12); border: 1px solid rgba(182,140,255,.24); border-radius: 13px; color: #fff; display: grid; max-width: 170px; padding: 9px 12px; text-decoration: none; }
+.organizationSwitch { background: rgba(212,175,55,.08); border: 1px solid rgba(212,175,55,.26); border-radius: 13px; color: var(--bone-white); display: grid; max-width: 170px; padding: 9px 12px; text-decoration: none; }
 .organizationSwitch span { color: var(--color-sea-300); font-size: .62rem; font-weight: 800; text-transform: uppercase; }
 .organizationSwitch strong { font-size: .78rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .memberGreeting { color: var(--color-sea-300) !important; font-size: .86rem !important; font-weight: 750; margin: 0 0 var(--space-3) !important; max-width: none !important;
@@ -594,6 +595,8 @@
   position: relative;
   z-index: 1;
 }
+
+.memberContent > div:first-child { margin-top: -4px; }
 
 @media (max-width: 820px) {
   .memberTopbar {

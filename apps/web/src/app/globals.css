@@ -1,18 +1,32 @@
 :root {
   color-scheme: light;
+  /* BoraSport Polynesian athletic system */
+  --bg-deep-navy: #0a192f;
+  --bg-surface-navy: #0f2038;
+  --bg-card-elevated: #152b4a;
+  --accent-lagoon: #00a896;
+  --accent-lagoon-hover: #028090;
+  --bone-white: #f4f1ea;
+  --sand-muted: #e0ddcf;
+  --text-dim: #8892b0;
+  --gold-bronze: #d4af37;
+  --gold-muted: #c5a059;
+  --status-tahoe: #2d6a4f;
+  --status-alert: #e76f51;
+
   --color-ocean-950: #041827;
-  --color-ocean-900: #07111e;
-  --color-ocean-850: #0a1d31;
-  --color-ocean-800: #0b2d45;
+  --color-ocean-900: var(--bg-deep-navy);
+  --color-ocean-850: var(--bg-surface-navy);
+  --color-ocean-800: var(--bg-card-elevated);
   --color-violet-700: #6f39ff;
   --color-violet-500: #8d4dff;
   --color-violet-300: #b68cff;
-  --color-sea-500: #1fd8e5;
-  --color-sea-300: #7bf3f5;
+  --color-sea-500: var(--accent-lagoon);
+  --color-sea-300: #5fe0d1;
   --color-sky-50: #edf8f8;
-  --color-sand-100: #f7efd9;
-  --color-star-400: #f8d985;
-  --color-coral-500: #ff7a45;
+  --color-sand-100: var(--sand-muted);
+  --color-star-400: var(--gold-bronze);
+  --color-coral-500: var(--status-alert);
   --color-ink: #0d2030;
   --color-muted: #6b7e88;
   --color-line: #d8e7e7;
@@ -20,7 +34,7 @@
 
   --surface-page: var(--color-sky-50);
   --surface-card: var(--color-white);
-  --surface-ocean: var(--color-ocean-950);
+  --surface-ocean: var(--bg-deep-navy);
   --surface-ocean-raised: rgba(12, 24, 41, 0.82);
   --surface-night: #070a12;
   --surface-night-raised: #11111b;
@@ -28,8 +42,8 @@
 
   --text-primary: var(--color-ink);
   --text-secondary: var(--color-muted);
-  --text-inverse: var(--color-white);
-  --text-inverse-muted: rgba(238, 248, 247, 0.72);
+  --text-inverse: var(--bone-white);
+  --text-inverse-muted: color-mix(in srgb, var(--sand-muted) 74%, transparent);
   --border-subtle: var(--color-line);
   --border-night: rgba(255, 255, 255, 0.12);
   --border-violet: rgba(141, 77, 255, 0.34);
