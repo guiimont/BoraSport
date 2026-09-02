@@ -11,6 +11,24 @@
   width: var(--brand-icon-size, 28px);
 }
 
+.emblem {
+  align-items: center;
+  background: color-mix(in srgb, var(--bg-deep-navy) 88%, transparent);
+  border: 1px solid color-mix(in srgb, var(--gold-bronze) 58%, transparent);
+  border-radius: 50%;
+  color: var(--accent-lagoon);
+  display: inline-flex;
+  flex: 0 0 auto;
+  height: 42px;
+  justify-content: center;
+  position: relative;
+  width: 42px;
+}
+.emblem::before { border: 1px solid color-mix(in srgb, var(--sand-muted) 24%, transparent); border-radius: inherit; content: ""; inset: 4px; position: absolute; }
+.emblem .icon { --brand-icon-size: 23px; position: relative; z-index: 1; }
+.emblem i, .emblem b { background: var(--gold-muted); height: 4px; position: absolute; transform: rotate(45deg); width: 4px; }
+.emblem i { left: -3px; }.emblem b { right: -3px; }
+
 .divider {
   align-items: center;
   display: grid;
@@ -34,12 +52,19 @@
   width: 7px;
 }
 
+.ancestralDivider { align-items: center; display: grid; gap: 9px; grid-template-columns: 7px 1fr 7px; margin: var(--space-5) 0; opacity: .52; }
+.ancestralDivider i { border: 1px solid var(--accent-lagoon); height: 7px; transform: rotate(45deg); width: 7px; }
+.ancestralDivider span { height: 9px; }
+.ancestralDivider[data-variant="niho"] span { background: linear-gradient(135deg, transparent 44%, var(--sand-muted) 45% 70%, transparent 71%) 0 0 / 14px 9px repeat-x; }
+.ancestralDivider[data-variant="swells"] span { background: radial-gradient(9px 8px at 50% 100%, transparent 55%, var(--gold-muted) 57% 67%, transparent 69%) 0 0 / 18px 9px repeat-x; }
+.ancestralDivider[data-variant="lashings"] span { background: linear-gradient(45deg, transparent 40%, var(--accent-lagoon) 41% 50%, transparent 51% 58%, var(--gold-muted) 59% 68%, transparent 69%) 0 0 / 24px 9px repeat-x; }
+
 .rahui {
   align-items: center;
   background: color-mix(in srgb, var(--status-tahoe) 22%, transparent);
   border: 1px solid color-mix(in srgb, var(--accent-lagoon) 35%, transparent);
   border-radius: 12px;
-  color: #bffcf1;
+  color: #e0ddcf;
   display: inline-flex;
   gap: 9px;
   padding: 8px 11px;
@@ -48,7 +73,7 @@
 .rahui svg { --brand-icon-size: 22px; }
 .rahui span { display: grid; gap: 1px; }
 .rahui strong { font-size: .76rem; }
-.rahui small { color: color-mix(in srgb, #bffcf1 65%, transparent); font-size: .62rem; }
+.rahui small { color: color-mix(in srgb, #e0ddcf 65%, transparent); font-size: .62rem; }
 
 .panui, .goldFrame {
   background: linear-gradient(145deg, color-mix(in srgb, var(--bg-surface-navy) 94%, black), var(--bg-deep-navy));

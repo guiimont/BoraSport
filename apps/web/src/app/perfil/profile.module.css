@@ -7,7 +7,7 @@
 
 .summaryCard {
   background: linear-gradient(145deg, rgba(20, 28, 43, 0.96), rgba(7, 16, 29, 0.98));
-  border: 1px solid rgba(31, 216, 229, 0.16);
+  border: 1px solid rgba(0, 168, 150, 0.16);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-night-card);
   color: var(--text-inverse);
@@ -49,10 +49,10 @@
 .profilePanel,
 .card {
   background:
-    linear-gradient(180deg, rgba(20, 19, 31, 0.94), rgba(10, 17, 30, 0.96));
-  border: 1px solid rgba(182, 140, 255, 0.2);
+    linear-gradient(180deg, rgba(15, 32, 56, 0.94), rgba(10, 25, 47, 0.96));
+  border: 1px solid rgba(212, 175, 55, 0.2);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-night-card), 0 0 34px rgba(141, 77, 255, 0.08);
+  box-shadow: var(--shadow-night-card), 0 0 34px rgba(0, 168, 150, 0.08);
   color: var(--text-inverse);
 }
 
@@ -133,8 +133,8 @@
 
 .emptyJourney {
   align-items: center;
-  background: rgba(31, 216, 229, 0.06);
-  border: 1px dashed rgba(31, 216, 229, 0.2);
+  background: rgba(0, 168, 150, 0.06);
+  border: 1px dashed rgba(0, 168, 150, 0.2);
   border-radius: var(--radius-md);
   display: grid;
   gap: var(--space-2);
@@ -167,10 +167,10 @@
   align-items: center;
   background:
     linear-gradient(#091a2b, #101827) padding-box,
-    linear-gradient(135deg, var(--color-sea-500), var(--color-violet-500), var(--color-star-400)) border-box;
+    linear-gradient(135deg, var(--accent-lagoon), var(--gold-muted), var(--gold-bronze)) border-box;
   border: 2px solid transparent;
   border-radius: 50%;
-  box-shadow: 0 0 28px rgba(31, 216, 229, 0.14);
+  box-shadow: 0 0 28px rgba(0, 168, 150, 0.14);
   color: var(--color-sea-300);
   display: flex;
   flex: 0 0 auto;
@@ -227,7 +227,7 @@
 
 .input {
   background: rgba(5, 12, 23, 0.78);
-  border: 1px solid rgba(182, 140, 255, 0.22);
+  border: 1px solid rgba(212, 175, 55, 0.22);
   border-radius: var(--radius-md);
   color: #ffffff;
   font: inherit;
@@ -241,7 +241,7 @@
 
 .input:focus-visible {
   border-color: var(--color-sea-500);
-  box-shadow: var(--shadow-focus), 0 0 20px rgba(31, 216, 229, 0.16);
+  box-shadow: var(--shadow-focus), 0 0 20px rgba(0, 168, 150, 0.16);
   outline: none;
 }
 
@@ -330,7 +330,7 @@
 .preferenceRow strong { color: #fff; font-size: .86rem; }
 .preferenceRow small { color: rgba(238,248,247,.55); font-size: .72rem; line-height: 1.4; }
 .preferenceRow input { accent-color: var(--color-sea-500); height: 20px; width: 20px; }
-.rahuiSeal { background: rgba(22,163,136,.12); border: 1px solid rgba(116,238,240,.18); border-radius: var(--radius-md); color: #bffcf1; display: grid; gap: 4px; padding: var(--space-3); }
+.rahuiSeal { background: rgba(22,163,136,.12); border: 1px solid rgba(116,238,240,.18); border-radius: var(--radius-md); color: #e0ddcf; display: grid; gap: 4px; padding: var(--space-3); }
 .rahuiSeal span { font-size: .74rem; line-height: 1.45; }
 .connectionList { display: grid; gap: var(--space-2); list-style: none; margin: var(--space-4) 0; padding: 0; }
 .connectionList li { align-items: center; border-bottom: 1px solid rgba(255,255,255,.07); display: flex; gap: var(--space-3); justify-content: space-between; padding: var(--space-3) 0; }

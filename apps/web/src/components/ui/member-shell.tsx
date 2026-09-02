@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { BrandMark } from "./brand-mark";
-import { BrandIcon, DividerNihoMano, type BrandIconName } from "./brand-system";
+import { AncestralDivider, BrandEmblem, type BrandIconName } from "./brand-system";
 import styles from "./ui.module.css";
 
 type MemberDestination = "aito" | "amuiraa" | "hoe" | "moana";
@@ -65,7 +65,7 @@ export function MemberShell({
                 href={destination.href}
                 key={destination.id}
               >
-                <BrandIcon name={destination.icon} />
+                <BrandEmblem name={destination.icon} />
                 <span><strong>{destination.label}</strong><small>{destination.subtitle}</small></span>
               </Link>
             ))}
@@ -87,7 +87,7 @@ export function MemberShell({
       </header>
 
       <div className={styles.memberContent}>
-        <DividerNihoMano />
+        <AncestralDivider variant={active === "hoe" ? "lashings" : active === "moana" ? "swells" : "niho"} />
         {children}
       </div>
     </main>

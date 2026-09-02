@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
-import { BrandIcon, BrandMark, type BrandIconName } from "../../../components/ui";
+import { BrandEmblem, BrandMark, type BrandIconName } from "../../../components/ui";
 import type { AdminContext } from "./admin-context";
 import styles from "./admin.module.css";
 
@@ -132,7 +132,7 @@ export function AdminShell({
                 href={`${baseHref}${item.sections[0].hrefSuffix}`}
                 key={item.id}
               >
-                <span className={styles.navGlyph} aria-hidden><BrandIcon name={item.icon} /></span>
+                <span className={styles.navGlyph} aria-hidden><BrandEmblem name={item.icon} /></span>
                 <span className={styles.navText}><strong>{item.label}</strong><small>{item.subtitle}</small></span>
               </Link>
             ))}
