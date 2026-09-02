@@ -1,8 +1,8 @@
 .page {
   align-items: center;
   background:
-    radial-gradient(circle at 16% 12%, rgba(141, 77, 255, 0.2), transparent 26rem),
-    radial-gradient(circle at 82% 10%, rgba(31, 216, 229, 0.16), transparent 25rem),
+    radial-gradient(circle at 16% 12%, rgba(0, 168, 150, 0.2), transparent 26rem),
+    radial-gradient(circle at 82% 10%, rgba(0, 168, 150, 0.16), transparent 25rem),
     linear-gradient(180deg, #060812 0%, var(--color-ocean-950) 54%, #07111e 100%);
   color: var(--text-inverse);
   display: grid;
@@ -12,10 +12,10 @@
 }
 
 .card {
-  background: linear-gradient(180deg, rgba(20, 19, 31, 0.94), rgba(10, 17, 30, 0.97));
-  border: 1px solid rgba(182, 140, 255, 0.22);
+  background: linear-gradient(180deg, rgba(15, 32, 56, 0.94), rgba(10, 25, 47, 0.97));
+  border: 1px solid rgba(212, 175, 55, 0.22);
   border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-night-card), 0 0 44px rgba(31, 216, 229, 0.08);
+  box-shadow: var(--shadow-night-card), 0 0 44px rgba(0, 168, 150, 0.08);
   display: grid;
   gap: var(--space-5);
   justify-items: center;
@@ -30,7 +30,7 @@
   align-items: center;
   background:
     linear-gradient(#091a2b, #101827) padding-box,
-    linear-gradient(135deg, var(--color-sea-500), var(--color-violet-500), var(--color-star-400)) border-box;
+    linear-gradient(135deg, var(--accent-lagoon), var(--gold-muted), var(--gold-bronze)) border-box;
   border: 3px solid transparent;
   border-radius: 50%;
   color: var(--color-sea-300);
@@ -81,7 +81,7 @@
 .backLink {
   align-items: center;
   background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(182, 140, 255, 0.34);
+  border: 1px solid rgba(212, 175, 55, 0.34);
   border-radius: 12px;
   color: #ffffff;
   display: inline-flex;

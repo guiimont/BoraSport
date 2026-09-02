@@ -1,7 +1,7 @@
 .page {
   background:
-    radial-gradient(circle at 12% 4%, rgba(141, 77, 255, 0.2), transparent 28rem),
-    radial-gradient(circle at 88% 18%, rgba(31, 216, 229, 0.12), transparent 30rem),
+    radial-gradient(circle at 12% 4%, rgba(0, 168, 150, 0.2), transparent 28rem),
+    radial-gradient(circle at 88% 18%, rgba(0, 168, 150, 0.12), transparent 30rem),
     linear-gradient(180deg, #060812 0%, var(--color-ocean-950) 46%, #07111e 100%);
   color: var(--text-inverse);
   font-family: var(--font-sans);
@@ -25,9 +25,9 @@
 
 .sidebar {
   background:
-    radial-gradient(circle at 30% 8%, rgba(141, 77, 255, 0.2), transparent 16rem),
+    radial-gradient(circle at 30% 8%, rgba(0, 168, 150, 0.2), transparent 16rem),
     linear-gradient(180deg, rgba(8, 11, 23, 0.96), rgba(4, 18, 31, 0.98));
-  border-right: 1px solid rgba(182, 140, 255, 0.16);
+  border-right: 1px solid rgba(212, 175, 55, 0.16);
   display: flex;
   flex-direction: column;
   gap: 22px;
@@ -48,7 +48,7 @@
 
 .clubIdentity {
   background: rgba(255, 255, 255, 0.055);
-  border: 1px solid rgba(123, 243, 245, 0.14);
+  border: 1px solid rgba(0, 168, 150, 0.14);
   border-radius: var(--radius-lg);
   display: grid;
   gap: 6px;
@@ -113,7 +113,8 @@
 
 .navLink { align-items: center; display: grid; gap: 10px; grid-template-columns: 30px minmax(0,1fr); }
 .navGlyph { align-items: center; background: rgba(0,168,150,.08); border: 1px solid rgba(224,221,207,.14); border-radius: 9px; color: var(--sand-muted); display: flex; height: 34px; justify-content: center; width: 34px; }
-.navGlyph svg { --brand-icon-size: 23px; }
+.navGlyph > span { height: 30px; width: 30px; }
+.navGlyph svg { --brand-icon-size: 17px; }
 .navText { display: grid; gap: 3px; }
 .navText strong { font-size: .84rem; }
 .navText small, .mobileNavLinks small { color: rgba(238,248,247,.48); font-size: .67rem; font-weight: 700; }
@@ -122,7 +123,7 @@
 .navLink:hover,
 .navPill:hover {
   background: rgba(255, 255, 255, 0.055);
-  border-color: rgba(123, 243, 245, 0.2);
+  border-color: rgba(0, 168, 150, 0.2);
   color: #ffffff;
   transform: translateY(-1px);
 }
@@ -137,8 +138,8 @@
 
 .navLinkActive,
 .navPillActive {
-  background: linear-gradient(135deg, rgba(31, 216, 229, 0.15), rgba(141, 77, 255, 0.18));
-  border-color: rgba(123, 243, 245, 0.28);
+  background: linear-gradient(135deg, rgba(0, 168, 150, 0.15), rgba(0, 168, 150, 0.18));
+  border-color: rgba(0, 168, 150, 0.28);
   color: #ffffff;
 }
 
@@ -151,7 +152,7 @@
   background:
     linear-gradient(180deg, rgba(4, 24, 39, 0.12), rgba(4, 24, 39, 0.82)),
     repeating-linear-gradient(168deg, transparent 0 44px, rgba(255, 255, 255, 0.03) 45px 46px);
-  border-bottom: 1px solid rgba(182, 140, 255, 0.14);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.14);
   display: flex;
   gap: clamp(18px, 4vw, 44px);
   justify-content: space-between;
@@ -194,7 +195,7 @@
   background:
     linear-gradient(180deg, rgba(4, 24, 39, 0.12), rgba(4, 24, 39, 0.8)),
     repeating-linear-gradient(168deg, transparent 0 44px, rgba(255, 255, 255, 0.03) 45px 46px);
-  border-bottom: 1px solid rgba(182, 140, 255, 0.14);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.14);
 }
 
 .headerInner,
@@ -261,7 +262,7 @@
 .pill,
 .statusBadge {
   background: rgba(255, 255, 255, 0.055);
-  border: 1px solid rgba(182, 140, 255, 0.2);
+  border: 1px solid rgba(212, 175, 55, 0.2);
   color: rgba(238, 248, 247, 0.82);
 }
 
@@ -332,9 +333,9 @@
 .primaryButton,
 .primaryButtonLink,
 .presetButtonActive {
-  background: linear-gradient(135deg, var(--color-sea-500), var(--color-violet-500));
-  border: 1px solid rgba(123, 243, 245, 0.36);
-  box-shadow: 0 16px 34px rgba(31, 216, 229, 0.14), 0 0 24px rgba(141, 77, 255, 0.16);
+  background: var(--accent-lagoon);
+  border: 1px solid rgba(0, 168, 150, 0.36);
+  box-shadow: 0 16px 34px rgba(0, 168, 150, 0.14), 0 0 24px rgba(0, 168, 150, 0.16);
   color: #04121f;
   cursor: pointer;
 }
@@ -351,7 +352,7 @@
 .secondaryButton,
 .presetButton {
   background: rgba(255, 255, 255, 0.055);
-  border: 1px solid rgba(182, 140, 255, 0.28);
+  border: 1px solid rgba(212, 175, 55, 0.28);
   color: #ffffff;
 }
 
@@ -388,11 +389,11 @@
 .trainingPrimaryPanel,
 .trainingSidePanel {
   background:
-    radial-gradient(circle at 92% 8%, rgba(31, 216, 229, 0.09), transparent 14rem),
-    linear-gradient(180deg, rgba(20, 19, 31, 0.94), rgba(10, 17, 30, 0.96));
-  border: 1px solid rgba(182, 140, 255, 0.2);
+    radial-gradient(circle at 92% 8%, rgba(0, 168, 150, 0.09), transparent 14rem),
+    linear-gradient(180deg, rgba(15, 32, 56, 0.94), rgba(10, 25, 47, 0.96));
+  border: 1px solid rgba(212, 175, 55, 0.2);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-night-card), 0 0 34px rgba(141, 77, 255, 0.08);
+  box-shadow: var(--shadow-night-card), 0 0 34px rgba(0, 168, 150, 0.08);
   color: var(--text-inverse);
   min-width: 0;
 }
@@ -434,7 +435,7 @@
 }
 
 .trainingPrimaryPanel {
-  border-color: rgba(123, 243, 245, 0.22);
+  border-color: rgba(0, 168, 150, 0.22);
 }
 
 .trainingSidePanel {
@@ -467,11 +468,11 @@
 .trainingPlanCard,
 .trainingEmptyState {
   background:
-    radial-gradient(circle at 92% 8%, rgba(31, 216, 229, 0.09), transparent 14rem),
-    linear-gradient(180deg, rgba(20, 19, 31, 0.94), rgba(10, 17, 30, 0.96));
-  border: 1px solid rgba(182, 140, 255, 0.2);
+    radial-gradient(circle at 92% 8%, rgba(0, 168, 150, 0.09), transparent 14rem),
+    linear-gradient(180deg, rgba(15, 32, 56, 0.94), rgba(10, 25, 47, 0.96));
+  border: 1px solid rgba(212, 175, 55, 0.2);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-night-card), 0 0 34px rgba(141, 77, 255, 0.08);
+  box-shadow: var(--shadow-night-card), 0 0 34px rgba(0, 168, 150, 0.08);
   color: var(--text-inverse);
   min-width: 0;
 }
@@ -518,7 +519,7 @@
 .trainingToolbar input,
 .trainingToolbar select {
   background: rgba(5, 12, 23, 0.78);
-  border: 1px solid rgba(182, 140, 255, 0.22);
+  border: 1px solid rgba(212, 175, 55, 0.22);
   border-radius: 12px;
   color: #ffffff;
   font: inherit;
@@ -584,9 +585,9 @@
 }
 
 .trainingPlanVessel {
-  background: rgba(31, 216, 229, 0.1);
-  border: 1px solid rgba(123, 243, 245, 0.2);
-  color: #c8fbfb;
+  background: rgba(0, 168, 150, 0.1);
+  border: 1px solid rgba(0, 168, 150, 0.2);
+  color: #e0ddcf;
 }
 
 .trainingPlanBadges {
@@ -600,7 +601,7 @@
 
 .trainingPlanBadges span {
   background: rgba(255, 255, 255, 0.055);
-  border: 1px solid rgba(182, 140, 255, 0.2);
+  border: 1px solid rgba(212, 175, 55, 0.2);
   color: rgba(238, 248, 247, 0.82);
 }
 
@@ -613,7 +614,7 @@
 
 .trainingPlanMeta div {
   background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(123, 243, 245, 0.11);
+  border: 1px solid rgba(0, 168, 150, 0.11);
   border-radius: 14px;
   min-width: 0;
   padding: 12px;
@@ -678,11 +679,11 @@
 .trainingDetailHero,
 .archivePanel {
   background:
-    radial-gradient(circle at 92% 8%, rgba(31, 216, 229, 0.08), transparent 14rem),
-    linear-gradient(180deg, rgba(20, 19, 31, 0.94), rgba(10, 17, 30, 0.96));
-  border: 1px solid rgba(182, 140, 255, 0.2);
+    radial-gradient(circle at 92% 8%, rgba(0, 168, 150, 0.08), transparent 14rem),
+    linear-gradient(180deg, rgba(15, 32, 56, 0.94), rgba(10, 25, 47, 0.96));
+  border: 1px solid rgba(212, 175, 55, 0.2);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-night-card), 0 0 34px rgba(141, 77, 255, 0.08);
+  box-shadow: var(--shadow-night-card), 0 0 34px rgba(0, 168, 150, 0.08);
   color: var(--text-inverse);
   padding: clamp(16px, 2.4vw, 24px);
 }
@@ -748,7 +749,7 @@
 
 .trainingTimeline::before,
 .trainingTimelineReadOnly::before {
-  background: linear-gradient(180deg, rgba(31, 216, 229, 0.6), rgba(141, 77, 255, 0.15));
+  background: linear-gradient(180deg, rgba(0, 168, 150, 0.6), rgba(0, 168, 150, 0.15));
   bottom: 14px;
   content: "";
   left: 16px;
@@ -760,7 +761,7 @@
 .timelineBlock,
 .timelineReadOnlyBlock {
   background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(123, 243, 245, 0.12);
+  border: 1px solid rgba(0, 168, 150, 0.12);
   border-radius: 16px;
   display: grid;
   gap: 12px;
@@ -807,7 +808,7 @@
 
 .timelineBlockHeader button {
   background: rgba(255, 255, 255, 0.055);
-  border: 1px solid rgba(182, 140, 255, 0.22);
+  border: 1px solid rgba(212, 175, 55, 0.22);
   border-radius: 10px;
   color: #ffffff;
   cursor: pointer;
@@ -835,15 +836,15 @@
 }
 
 .repeatGroup {
-  background: rgba(141, 77, 255, 0.07);
-  border: 1px solid rgba(182, 140, 255, 0.16);
+  background: rgba(0, 168, 150, 0.07);
+  border: 1px solid rgba(212, 175, 55, 0.16);
   border-radius: 14px;
   padding: 12px;
 }
 
 .repeatChildren,
 .repeatChildrenReadOnly {
-  border-left: 1px solid rgba(123, 243, 245, 0.16);
+  border-left: 1px solid rgba(0, 168, 150, 0.16);
   margin-left: 6px;
   padding-left: 12px;
 }
@@ -867,7 +868,7 @@
 .trainingNotesGrid div,
 .repeatChildrenReadOnly div {
   background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(123, 243, 245, 0.11);
+  border: 1px solid rgba(0, 168, 150, 0.11);
   border-radius: 14px;
   min-width: 0;
   padding: 12px;
@@ -933,7 +934,7 @@
 
 .versionLink {
   background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(182, 140, 255, 0.16);
+  border: 1px solid rgba(212, 175, 55, 0.16);
   border-radius: 14px;
   color: inherit;
   display: grid;
@@ -944,8 +945,8 @@
 }
 
 .versionLinkActive {
-  border-color: rgba(123, 243, 245, 0.34);
-  box-shadow: 0 0 0 1px rgba(31, 216, 229, 0.12);
+  border-color: rgba(0, 168, 150, 0.34);
+  box-shadow: 0 0 0 1px rgba(0, 168, 150, 0.12);
 }
 
 .versionLink span {
@@ -964,11 +965,11 @@
 .builderSectionCompact,
 .builderSummaryPanel {
   background:
-    radial-gradient(circle at 92% 8%, rgba(31, 216, 229, 0.08), transparent 14rem),
-    linear-gradient(180deg, rgba(20, 19, 31, 0.94), rgba(10, 17, 30, 0.96));
-  border: 1px solid rgba(182, 140, 255, 0.2);
+    radial-gradient(circle at 92% 8%, rgba(0, 168, 150, 0.08), transparent 14rem),
+    linear-gradient(180deg, rgba(15, 32, 56, 0.94), rgba(10, 25, 47, 0.96));
+  border: 1px solid rgba(212, 175, 55, 0.2);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-night-card), 0 0 34px rgba(141, 77, 255, 0.08);
+  box-shadow: var(--shadow-night-card), 0 0 34px rgba(0, 168, 150, 0.08);
   color: var(--text-inverse);
   min-width: 0;
 }
@@ -1020,7 +1021,7 @@
 }
 
 .phaseTimeline::before {
-  background: linear-gradient(180deg, rgba(31, 216, 229, 0.55), rgba(141, 77, 255, 0.14));
+  background: linear-gradient(180deg, rgba(0, 168, 150, 0.55), rgba(0, 168, 150, 0.14));
   bottom: 20px;
   content: "";
   left: 20px;
@@ -1031,7 +1032,7 @@
 
 .phaseCard {
   background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(123, 243, 245, 0.12);
+  border: 1px solid rgba(0, 168, 150, 0.12);
   border-radius: 18px;
   display: grid;
   gap: 12px;
@@ -1063,10 +1064,10 @@
 
 .phaseNumber {
   align-items: center;
-  background: rgba(31, 216, 229, 0.1);
-  border: 1px solid rgba(123, 243, 245, 0.2);
+  background: rgba(0, 168, 150, 0.1);
+  border: 1px solid rgba(0, 168, 150, 0.2);
   border-radius: 999px;
-  color: #c8fbfb;
+  color: #e0ddcf;
   display: inline-flex;
   font-size: 0.78rem;
   font-weight: 900;
@@ -1110,7 +1111,7 @@
 .phaseActions button,
 .stepperField button {
   background: rgba(255, 255, 255, 0.055);
-  border: 1px solid rgba(182, 140, 255, 0.22);
+  border: 1px solid rgba(212, 175, 55, 0.22);
   border-radius: 10px;
   color: #ffffff;
   cursor: pointer;
@@ -1138,14 +1139,14 @@
 
 .phaseEditor {
   background: rgba(3, 9, 19, 0.38);
-  border: 1px solid rgba(182, 140, 255, 0.14);
+  border: 1px solid rgba(212, 175, 55, 0.14);
   border-radius: 16px;
   padding: 14px;
 }
 
 .seriesComputed {
-  background: rgba(31, 216, 229, 0.08);
-  border: 1px solid rgba(123, 243, 245, 0.15);
+  background: rgba(0, 168, 150, 0.08);
+  border: 1px solid rgba(0, 168, 150, 0.15);
   border-radius: 12px;
   display: grid;
   gap: 6px;
@@ -1169,7 +1170,7 @@
 
 .seriesStepCard {
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(123, 243, 245, 0.1);
+  border: 1px solid rgba(0, 168, 150, 0.1);
   border-radius: 14px;
   padding: 12px;
 }
@@ -1223,7 +1224,7 @@
 }
 
 .zoneSummaryItem i {
-  background: linear-gradient(90deg, var(--color-sea-500), var(--color-violet-500));
+  background: linear-gradient(90deg, var(--accent-lagoon), var(--accent-lagoon-hover));
   border-radius: inherit;
   display: block;
   height: 100%;
@@ -1232,7 +1233,7 @@
 .builderStickyActions {
   align-items: center;
   background: rgba(6, 8, 18, 0.86);
-  border: 1px solid rgba(182, 140, 255, 0.18);
+  border: 1px solid rgba(212, 175, 55, 0.18);
   border-radius: 18px;
   bottom: 16px;
   box-shadow: var(--shadow-night-card);
@@ -1260,11 +1261,11 @@
 .vesselTopStrip {
   align-items: center;
   background:
-    radial-gradient(circle at 92% 12%, rgba(31, 216, 229, 0.08), transparent 14rem),
-    linear-gradient(180deg, rgba(20, 19, 31, 0.92), rgba(10, 17, 30, 0.94));
-  border: 1px solid rgba(182, 140, 255, 0.18);
+    radial-gradient(circle at 92% 12%, rgba(0, 168, 150, 0.08), transparent 14rem),
+    linear-gradient(180deg, rgba(15, 32, 56, 0.92), rgba(10, 25, 47, 0.94));
+  border: 1px solid rgba(212, 175, 55, 0.18);
   border-radius: 18px;
-  box-shadow: var(--shadow-night-card), 0 0 28px rgba(141, 77, 255, 0.06);
+  box-shadow: var(--shadow-night-card), 0 0 28px rgba(0, 168, 150, 0.06);
   display: flex;
   gap: 14px;
   justify-content: space-between;
@@ -1288,7 +1289,7 @@
 
 .vesselFilterPanel {
   background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(182, 140, 255, 0.16);
+  border: 1px solid rgba(212, 175, 55, 0.16);
   border-radius: 16px;
   min-width: 0;
   padding: 12px;
@@ -1320,11 +1321,11 @@
 
 .vesselList {
   background:
-    radial-gradient(circle at 94% 10%, rgba(31, 216, 229, 0.07), transparent 16rem),
-    linear-gradient(180deg, rgba(20, 19, 31, 0.92), rgba(10, 17, 30, 0.94));
-  border: 1px solid rgba(182, 140, 255, 0.18);
+    radial-gradient(circle at 94% 10%, rgba(0, 168, 150, 0.07), transparent 16rem),
+    linear-gradient(180deg, rgba(15, 32, 56, 0.92), rgba(10, 25, 47, 0.94));
+  border: 1px solid rgba(212, 175, 55, 0.18);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-night-card), 0 0 34px rgba(141, 77, 255, 0.06);
+  box-shadow: var(--shadow-night-card), 0 0 34px rgba(0, 168, 150, 0.06);
   display: grid;
   min-width: 0;
   overflow: hidden;
@@ -1364,7 +1365,7 @@
 }
 
 .vesselListItem:hover {
-  background: rgba(123, 243, 245, 0.045);
+  background: rgba(0, 168, 150, 0.045);
 }
 
 .vesselListItem:focus-visible {
@@ -1406,7 +1407,7 @@
 
 .vesselDetailsCell {
   align-items: center;
-  color: #c8fbfb;
+  color: #e0ddcf;
   display: inline-flex;
   font-size: 0.88rem;
   font-weight: 900;
@@ -1417,9 +1418,9 @@
 .vesselDetailActions {
   align-items: flex-start;
   background:
-    radial-gradient(circle at 92% 14%, rgba(31, 216, 229, 0.07), transparent 12rem),
-    linear-gradient(180deg, rgba(20, 19, 31, 0.92), rgba(10, 17, 30, 0.94));
-  border: 1px solid rgba(182, 140, 255, 0.18);
+    radial-gradient(circle at 92% 14%, rgba(0, 168, 150, 0.07), transparent 12rem),
+    linear-gradient(180deg, rgba(15, 32, 56, 0.92), rgba(10, 25, 47, 0.94));
+  border: 1px solid rgba(212, 175, 55, 0.18);
   border-radius: 18px;
   display: flex;
   gap: 16px;
@@ -1450,11 +1451,11 @@
 
 .vesselCard {
   background:
-    radial-gradient(circle at 92% 10%, rgba(31, 216, 229, 0.08), transparent 14rem),
-    linear-gradient(180deg, rgba(20, 19, 31, 0.94), rgba(10, 17, 30, 0.96));
-  border: 1px solid rgba(182, 140, 255, 0.2);
+    radial-gradient(circle at 92% 10%, rgba(0, 168, 150, 0.08), transparent 14rem),
+    linear-gradient(180deg, rgba(15, 32, 56, 0.94), rgba(10, 25, 47, 0.96));
+  border: 1px solid rgba(212, 175, 55, 0.2);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-night-card), 0 0 34px rgba(141, 77, 255, 0.08);
+  box-shadow: var(--shadow-night-card), 0 0 34px rgba(0, 168, 150, 0.08);
   display: grid;
   gap: 16px;
   min-width: 0;
@@ -1494,8 +1495,8 @@
 
 .vesselStatus_disponivel {
   background: rgba(22, 163, 136, 0.14);
-  border: 1px solid rgba(123, 243, 245, 0.22);
-  color: #bffcf1;
+  border: 1px solid rgba(0, 168, 150, 0.22);
+  color: #e0ddcf;
 }
 
 .vesselStatus_manutencao {
@@ -1522,7 +1523,7 @@
 .vesselMetaBlock p,
 .vesselSummaryList div {
   background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(123, 243, 245, 0.11);
+  border: 1px solid rgba(0, 168, 150, 0.11);
   border-radius: 14px;
   min-width: 0;
   padding: 12px;
@@ -1574,7 +1575,7 @@
 
 .compactButton {
   background: rgba(255, 255, 255, 0.055);
-  border: 1px solid rgba(182, 140, 255, 0.22);
+  border: 1px solid rgba(212, 175, 55, 0.22);
   border-radius: 10px;
   color: #ffffff;
   cursor: pointer;
@@ -1606,7 +1607,7 @@
 
 .vesselPolicyOption {
   background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(123, 243, 245, 0.12);
+  border: 1px solid rgba(0, 168, 150, 0.12);
   border-radius: 14px;
   cursor: pointer;
   display: grid;
@@ -1646,7 +1647,7 @@
 
 .dayPill {
   background: rgba(255, 255, 255, 0.055);
-  border: 1px solid rgba(182, 140, 255, 0.24);
+  border: 1px solid rgba(212, 175, 55, 0.24);
   border-radius: 999px;
   color: rgba(238, 248, 247, 0.78);
   flex: 0 0 auto;
@@ -1667,8 +1668,8 @@
 }
 
 .dayPillActive {
-  background: linear-gradient(135deg, rgba(31, 216, 229, 0.16), rgba(141, 77, 255, 0.2));
-  border-color: rgba(123, 243, 245, 0.34);
+  background: linear-gradient(135deg, rgba(0, 168, 150, 0.16), rgba(0, 168, 150, 0.2));
+  border-color: rgba(0, 168, 150, 0.34);
   color: #ffffff;
 }
 
@@ -1695,9 +1696,9 @@
 .baseScheduleItem {
   align-items: center;
   background:
-    radial-gradient(circle at 94% 12%, rgba(31, 216, 229, 0.07), transparent 12rem),
-    linear-gradient(180deg, rgba(20, 19, 31, 0.94), rgba(10, 17, 30, 0.96));
-  border: 1px solid rgba(182, 140, 255, 0.18);
+    radial-gradient(circle at 94% 12%, rgba(0, 168, 150, 0.07), transparent 12rem),
+    linear-gradient(180deg, rgba(15, 32, 56, 0.94), rgba(10, 25, 47, 0.96));
+  border: 1px solid rgba(212, 175, 55, 0.18);
   border-radius: 16px;
   color: inherit;
   display: grid;
@@ -1753,10 +1754,10 @@
 .baseScheduleVessels span,
 .vesselAvatar {
   align-items: center;
-  background: rgba(31, 216, 229, 0.12);
-  border: 1px solid rgba(123, 243, 245, 0.24);
+  background: rgba(0, 168, 150, 0.12);
+  border: 1px solid rgba(0, 168, 150, 0.24);
   border-radius: 999px;
-  color: #c8fbfb;
+  color: #e0ddcf;
   display: inline-flex;
   font-size: 0.78rem;
   font-weight: 900;
@@ -1780,8 +1781,8 @@
 }
 
 .weekDayCard {
-  background: linear-gradient(180deg, rgba(20, 19, 31, 0.94), rgba(10, 17, 30, 0.96));
-  border: 1px solid rgba(182, 140, 255, 0.18);
+  background: linear-gradient(180deg, rgba(15, 32, 56, 0.94), rgba(10, 25, 47, 0.96));
+  border: 1px solid rgba(212, 175, 55, 0.18);
   border-radius: var(--radius-lg);
   display: grid;
   gap: 12px;
@@ -1814,7 +1815,7 @@
 .attendanceList li {
   align-items: center;
   background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(123, 243, 245, 0.12);
+  border: 1px solid rgba(0, 168, 150, 0.12);
   border-radius: 14px;
   display: flex;
   gap: 16px;
@@ -1846,7 +1847,7 @@
 
 .attendanceAvatar {
   align-items: center;
-  background: rgba(31, 216, 229, 0.12);
+  background: rgba(0, 168, 150, 0.12);
   border-radius: 50%;
   display: flex;
   height: 44px;
@@ -1862,7 +1863,7 @@
 
 .attendanceButton,
 .attendanceButtonActive {
-  border: 1px solid rgba(123, 243, 245, 0.2);
+  border: 1px solid rgba(0, 168, 150, 0.2);
   border-radius: 999px;
   cursor: pointer;
   font: inherit;
@@ -1903,8 +1904,8 @@
 }
 
 .attendanceButtonActive {
-  background: rgba(31, 216, 229, 0.18);
-  border-color: rgba(123, 243, 245, 0.48);
+  background: rgba(0, 168, 150, 0.18);
+  border-color: rgba(0, 168, 150, 0.48);
   color: #ffffff;
 }
 
@@ -1934,7 +1935,7 @@
 
 .baseResourceOption {
   background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(123, 243, 245, 0.12);
+  border: 1px solid rgba(0, 168, 150, 0.12);
   border-radius: 16px;
   cursor: pointer;
   display: grid;
@@ -1945,8 +1946,8 @@
 }
 
 .baseResourceOptionSelected {
-  border-color: rgba(123, 243, 245, 0.36);
-  box-shadow: 0 0 0 1px rgba(31, 216, 229, 0.1);
+  border-color: rgba(0, 168, 150, 0.36);
+  box-shadow: 0 0 0 1px rgba(0, 168, 150, 0.1);
 }
 
 .baseResourceOption input {
@@ -2002,7 +2003,7 @@
 
 .baseVesselDetailCard {
   background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(123, 243, 245, 0.12);
+  border: 1px solid rgba(0, 168, 150, 0.12);
   border-radius: 16px;
   display: grid;
   gap: 12px;
@@ -2014,11 +2015,11 @@
 .agendaToolbar {
   align-items: flex-start;
   background:
-    radial-gradient(circle at 88% 18%, rgba(31, 216, 229, 0.1), transparent 18rem),
-    linear-gradient(180deg, rgba(20, 19, 31, 0.94), rgba(10, 17, 30, 0.96));
-  border: 1px solid rgba(182, 140, 255, 0.2);
+    radial-gradient(circle at 88% 18%, rgba(0, 168, 150, 0.1), transparent 18rem),
+    linear-gradient(180deg, rgba(15, 32, 56, 0.94), rgba(10, 25, 47, 0.96));
+  border: 1px solid rgba(212, 175, 55, 0.2);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-night-card), 0 0 34px rgba(141, 77, 255, 0.08);
+  box-shadow: var(--shadow-night-card), 0 0 34px rgba(0, 168, 150, 0.08);
   display: flex;
   gap: 18px;
   justify-content: space-between;
@@ -2069,7 +2070,7 @@
 }
 
 .agendaPrimaryActions {
-  border-top: 1px solid rgba(182, 140, 255, 0.14);
+  border-top: 1px solid rgba(212, 175, 55, 0.14);
   padding-top: 10px;
   width: 100%;
 }
@@ -2082,7 +2083,7 @@
 .agendaMoreActions summary {
   align-items: center;
   background: rgba(255, 255, 255, 0.055);
-  border: 1px solid rgba(182, 140, 255, 0.28);
+  border: 1px solid rgba(212, 175, 55, 0.28);
   border-radius: 12px;
   color: #ffffff;
   cursor: pointer;
@@ -2103,7 +2104,7 @@
 
 .agendaMoreActions div {
   background: rgba(7, 13, 26, 0.98);
-  border: 1px solid rgba(182, 140, 255, 0.24);
+  border: 1px solid rgba(212, 175, 55, 0.24);
   border-radius: 14px;
   box-shadow: var(--shadow-night-card);
   display: grid;
@@ -2142,11 +2143,11 @@
 
 .agendaDayCard {
   background:
-    radial-gradient(circle at 94% 10%, rgba(31, 216, 229, 0.07), transparent 14rem),
-    linear-gradient(180deg, rgba(20, 19, 31, 0.94), rgba(10, 17, 30, 0.96));
-  border: 1px solid rgba(182, 140, 255, 0.18);
+    radial-gradient(circle at 94% 10%, rgba(0, 168, 150, 0.07), transparent 14rem),
+    linear-gradient(180deg, rgba(15, 32, 56, 0.94), rgba(10, 25, 47, 0.96));
+  border: 1px solid rgba(212, 175, 55, 0.18);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-night-card), 0 0 34px rgba(141, 77, 255, 0.07);
+  box-shadow: var(--shadow-night-card), 0 0 34px rgba(0, 168, 150, 0.07);
   display: grid;
   gap: 14px;
   min-width: 0;
@@ -2182,7 +2183,7 @@
 .agendaSessionCard {
   align-items: center;
   background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(123, 243, 245, 0.11);
+  border: 1px solid rgba(0, 168, 150, 0.11);
   border-radius: 15px;
   color: inherit;
   display: grid;
@@ -2215,19 +2216,19 @@
 }
 
 .agendaTrainingLink {
-  background: rgba(31, 216, 229, 0.1);
-  color: rgba(123, 243, 245, 0.95);
+  background: rgba(0, 168, 150, 0.1);
+  color: rgba(0, 168, 150, 0.95);
 }
 
 .agendaTrainingEmpty {
-  background: rgba(182, 140, 255, 0.1);
+  background: rgba(212, 175, 55, 0.1);
   color: rgba(214, 190, 255, 0.92);
 }
 
 .stepperField {
   align-items: center;
   background: rgba(5, 12, 23, 0.78);
-  border: 1px solid rgba(182, 140, 255, 0.22);
+  border: 1px solid rgba(212, 175, 55, 0.22);
   border-radius: 12px;
   display: grid;
   grid-template-columns: auto minmax(54px, 1fr) auto auto;
@@ -2316,7 +2317,7 @@
 .memberSearch input,
 .memberFilter select {
   background: rgba(255, 255, 255, 0.045);
-  border: 1px solid rgba(182, 140, 255, 0.2);
+  border: 1px solid rgba(212, 175, 55, 0.2);
   border-radius: 12px;
   color: #ffffff;
   font: inherit;
@@ -2330,7 +2331,7 @@
 
 .memberSearch input:focus,
 .memberFilter select:focus {
-  border-color: rgba(123, 243, 245, 0.52);
+  border-color: rgba(0, 168, 150, 0.52);
   outline: var(--focus-ring);
   outline-offset: var(--focus-offset);
 }
@@ -2345,7 +2346,7 @@
 }
 
 .membersTable {
-  border: 1px solid rgba(182, 140, 255, 0.16);
+  border: 1px solid rgba(212, 175, 55, 0.16);
   border-radius: 15px;
   overflow: hidden;
 }
@@ -2376,12 +2377,12 @@
 
 .memberRow {
   background: rgba(255, 255, 255, 0.035);
-  border-top: 1px solid rgba(182, 140, 255, 0.11);
+  border-top: 1px solid rgba(212, 175, 55, 0.11);
   min-height: 64px;
 }
 
 .memberRow:hover {
-  background: rgba(123, 243, 245, 0.045);
+  background: rgba(0, 168, 150, 0.045);
 }
 
 .memberIdentity {
@@ -2406,8 +2407,8 @@
 
 .memberAvatar {
   align-items: center;
-  background: linear-gradient(135deg, rgba(31, 216, 229, 0.2), rgba(141, 77, 255, 0.24));
-  border: 1px solid rgba(123, 243, 245, 0.24);
+  background: linear-gradient(135deg, rgba(0, 168, 150, 0.2), rgba(0, 168, 150, 0.24));
+  border: 1px solid rgba(0, 168, 150, 0.24);
   border-radius: 50%;
   color: #ffffff;
   display: inline-flex;
@@ -2419,7 +2420,7 @@
 
 .memberRole,
 .activeInviteCount {
-  color: rgba(123, 243, 245, 0.92);
+  color: rgba(0, 168, 150, 0.92);
   font-size: 0.76rem;
   font-weight: 800;
 }
@@ -2479,7 +2480,7 @@
 
 .memberRoleForm select {
   background: rgba(255, 255, 255, 0.045);
-  border: 1px solid rgba(182, 140, 255, 0.2);
+  border: 1px solid rgba(212, 175, 55, 0.2);
   border-radius: 9px;
   color: #ffffff;
   font: inherit;
@@ -2505,8 +2506,8 @@
 }
 
 .memberSaveButton {
-  background: rgba(31, 216, 229, 0.1);
-  border: 1px solid rgba(123, 243, 245, 0.25);
+  background: rgba(0, 168, 150, 0.1);
+  border: 1px solid rgba(0, 168, 150, 0.25);
   color: #9af6f4;
 }
 
@@ -2562,7 +2563,7 @@
 
 .membersPagination button {
   background: rgba(255, 255, 255, 0.045);
-  border: 1px solid rgba(182, 140, 255, 0.2);
+  border: 1px solid rgba(212, 175, 55, 0.2);
   border-radius: 10px;
   color: #ffffff;
   cursor: pointer;
@@ -2579,15 +2580,15 @@
 }
 
 .activeInviteCount {
-  background: rgba(31, 216, 229, 0.08);
-  border: 1px solid rgba(123, 243, 245, 0.18);
+  background: rgba(0, 168, 150, 0.08);
+  border: 1px solid rgba(0, 168, 150, 0.18);
   border-radius: 999px;
   padding: 8px 11px;
 }
 
 .inviteComposer {
-  background: linear-gradient(135deg, rgba(31, 216, 229, 0.055), rgba(141, 77, 255, 0.055));
-  border: 1px solid rgba(123, 243, 245, 0.15);
+  background: linear-gradient(135deg, rgba(0, 168, 150, 0.055), rgba(0, 168, 150, 0.055));
+  border: 1px solid rgba(0, 168, 150, 0.15);
   border-radius: 16px;
   display: grid;
   gap: 12px;
@@ -2619,7 +2620,7 @@
 }
 
 .invitationHistory {
-  border-top: 1px solid rgba(182, 140, 255, 0.14);
+  border-top: 1px solid rgba(212, 175, 55, 0.14);
   padding-top: 14px;
 }
 
@@ -2650,10 +2651,10 @@
 .listItem,
 .listItemVertical,
 .empty {
-  background: linear-gradient(180deg, rgba(20, 19, 31, 0.94), rgba(10, 17, 30, 0.96));
-  border: 1px solid rgba(182, 140, 255, 0.2);
+  background: linear-gradient(180deg, rgba(15, 32, 56, 0.94), rgba(10, 25, 47, 0.96));
+  border: 1px solid rgba(212, 175, 55, 0.2);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-night-card), 0 0 34px rgba(141, 77, 255, 0.08);
+  box-shadow: var(--shadow-night-card), 0 0 34px rgba(0, 168, 150, 0.08);
   color: var(--text-inverse);
 }
 
@@ -2665,10 +2666,10 @@
 }
 
 .moduleCardLink {
-  background: linear-gradient(180deg, rgba(20, 19, 31, 0.94), rgba(10, 17, 30, 0.96));
-  border: 1px solid rgba(182, 140, 255, 0.2);
+  background: linear-gradient(180deg, rgba(15, 32, 56, 0.94), rgba(10, 25, 47, 0.96));
+  border: 1px solid rgba(212, 175, 55, 0.2);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-night-card), 0 0 34px rgba(141, 77, 255, 0.08);
+  box-shadow: var(--shadow-night-card), 0 0 34px rgba(0, 168, 150, 0.08);
   color: var(--text-inverse);
   display: grid;
   gap: 14px;
@@ -2682,8 +2683,8 @@
 }
 
 .moduleCardLink:hover {
-  border-color: rgba(123, 243, 245, 0.32);
-  box-shadow: var(--shadow-night-card), 0 0 42px rgba(31, 216, 229, 0.11);
+  border-color: rgba(0, 168, 150, 0.32);
+  box-shadow: var(--shadow-night-card), 0 0 42px rgba(0, 168, 150, 0.11);
   transform: translateY(-2px);
 }
 
@@ -2727,11 +2728,11 @@
 .overviewHero {
   align-items: stretch;
   background:
-    radial-gradient(circle at 88% 20%, rgba(31, 216, 229, 0.16), transparent 18rem),
-    linear-gradient(135deg, rgba(20, 19, 31, 0.96), rgba(5, 19, 32, 0.96));
-  border: 1px solid rgba(182, 140, 255, 0.22);
+    radial-gradient(circle at 88% 20%, rgba(0, 168, 150, 0.16), transparent 18rem),
+    linear-gradient(135deg, rgba(15, 32, 56, 0.96), rgba(5, 19, 32, 0.96));
+  border: 1px solid rgba(212, 175, 55, 0.22);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-night-card), 0 0 44px rgba(31, 216, 229, 0.08);
+  box-shadow: var(--shadow-night-card), 0 0 44px rgba(0, 168, 150, 0.08);
   display: grid;
   gap: 20px;
   grid-template-columns: minmax(0, 1.3fr) minmax(240px, 0.7fr);
@@ -2756,14 +2757,14 @@
 
 .moduleStatusActive {
   background: rgba(22, 163, 136, 0.14);
-  border: 1px solid rgba(123, 243, 245, 0.22);
-  color: #bffcf1;
+  border: 1px solid rgba(0, 168, 150, 0.22);
+  color: #e0ddcf;
 }
 
 .moduleStatusReady {
-  background: rgba(31, 216, 229, 0.12);
-  border: 1px solid rgba(123, 243, 245, 0.2);
-  color: #c8fbfb;
+  background: rgba(0, 168, 150, 0.12);
+  border: 1px solid rgba(0, 168, 150, 0.2);
+  color: #e0ddcf;
 }
 
 .moduleStatusPlanned {
@@ -2818,7 +2819,7 @@
 .overviewPeriodNav {
   align-items: center;
   background: rgba(5, 12, 23, 0.72);
-  border: 1px solid rgba(182, 140, 255, 0.18);
+  border: 1px solid rgba(212, 175, 55, 0.18);
   border-radius: 12px;
   display: flex;
   padding: 4px;
@@ -2834,8 +2835,8 @@
 
 .overviewPeriodNav a:hover,
 .overviewPeriodNav .overviewPeriodActive {
-  background: rgba(31, 216, 229, 0.12);
-  color: #c8fbfb;
+  background: rgba(0, 168, 150, 0.12);
+  color: #e0ddcf;
 }
 
 .overviewHeroMain {
@@ -2852,7 +2853,7 @@
 }
 
 .overviewHeroTitle > strong {
-  color: #7bf3f5;
+  color: #00a896;
   font-size: clamp(2rem, 5vw, 4rem);
   line-height: 1;
 }
@@ -2878,7 +2879,7 @@
 
 .overviewHeroDetails > span {
   background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(123, 243, 245, 0.1);
+  border: 1px solid rgba(0, 168, 150, 0.1);
   border-radius: 12px;
   display: grid;
   gap: 5px;
@@ -2902,7 +2903,7 @@
 
 .overviewHeroLink,
 .overviewTextLink {
-  color: #7bf3f5;
+  color: #00a896;
   font-size: 0.84rem;
   font-weight: 850;
 }
@@ -2919,7 +2920,7 @@
 
 .overviewToday {
   background: rgba(3, 9, 19, 0.62);
-  border: 1px solid rgba(182, 140, 255, 0.16);
+  border: 1px solid rgba(212, 175, 55, 0.16);
   border-radius: 16px;
   padding: 16px;
 }
@@ -2938,7 +2939,7 @@
 }
 
 .overviewTodayHead > a {
-  color: #7bf3f5;
+  color: #00a896;
   font-size: 0.76rem;
   font-weight: 800;
 }
@@ -2991,7 +2992,7 @@
 .overviewTodayList em[data-status="published"],
 .overviewSessionStatus em[data-status="published"] {
   background: rgba(22, 163, 136, 0.14);
-  color: #bffcf1;
+  color: #e0ddcf;
 }
 
 .overviewTodayList em[data-status="draft"],
@@ -3032,7 +3033,7 @@
 .overviewSessionRow {
   align-items: center;
   background: rgba(255, 255, 255, 0.025);
-  border: 1px solid rgba(182, 140, 255, 0.1);
+  border: 1px solid rgba(212, 175, 55, 0.1);
   border-radius: 12px;
   display: grid;
   gap: 12px;
@@ -3042,8 +3043,8 @@
 }
 
 .overviewSessionRow:hover {
-  background: rgba(31, 216, 229, 0.04);
-  border-color: rgba(123, 243, 245, 0.24);
+  background: rgba(0, 168, 150, 0.04);
+  border-color: rgba(0, 168, 150, 0.24);
 }
 
 .overviewSessionTime,
@@ -3079,7 +3080,7 @@
 }
 
 .overviewSessionMain > span {
-  color: #7bf3f5;
+  color: #00a896;
   font-size: 0.73rem;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -3093,7 +3094,7 @@
 }
 
 .overviewSessionArrow {
-  color: rgba(123, 243, 245, 0.6);
+  color: rgba(0, 168, 150, 0.6);
 }
 
 .overviewAlertCount {
@@ -3156,13 +3157,13 @@
 
 .overviewAllGood {
   background: rgba(22, 163, 136, 0.08);
-  border: 1px solid rgba(123, 243, 245, 0.13);
+  border: 1px solid rgba(0, 168, 150, 0.13);
   border-radius: 12px;
   padding: 18px;
 }
 
 .overviewAllGood strong {
-  color: #bffcf1;
+  color: #e0ddcf;
 }
 
 .overviewAllGood p {
@@ -3189,8 +3190,8 @@
 }
 
 .overviewQuickGrid > a {
-  background: linear-gradient(180deg, rgba(20, 19, 31, 0.9), rgba(10, 17, 30, 0.94));
-  border: 1px solid rgba(182, 140, 255, 0.16);
+  background: linear-gradient(180deg, rgba(15, 32, 56, 0.9), rgba(10, 25, 47, 0.94));
+  border: 1px solid rgba(212, 175, 55, 0.16);
   border-radius: 14px;
   display: grid;
   gap: 5px;
@@ -3199,11 +3200,11 @@
 }
 
 .overviewQuickGrid > a:hover {
-  border-color: rgba(123, 243, 245, 0.28);
+  border-color: rgba(0, 168, 150, 0.28);
 }
 
 .overviewQuickGrid > a > span {
-  color: #7bf3f5;
+  color: #00a896;
   font-size: 1.2rem;
   margin-bottom: 5px;
 }
@@ -3257,7 +3258,7 @@
 
 .formSection {
   background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(123, 243, 245, 0.12);
+  border: 1px solid rgba(0, 168, 150, 0.12);
   border-radius: 16px;
   display: grid;
   gap: 14px;
@@ -3297,7 +3298,7 @@
 .select,
 .textarea {
   background: rgba(5, 12, 23, 0.78);
-  border: 1px solid rgba(182, 140, 255, 0.22);
+  border: 1px solid rgba(212, 175, 55, 0.22);
   border-radius: 12px;
   color: #ffffff;
   font: inherit;
@@ -3319,7 +3320,7 @@
 .priceFieldShell {
   align-items: center;
   background: rgba(5, 12, 23, 0.78);
-  border: 1px solid rgba(182, 140, 255, 0.22);
+  border: 1px solid rgba(212, 175, 55, 0.22);
   border-radius: 12px;
   display: flex;
   min-height: 46px;
@@ -3333,8 +3334,8 @@
 .dateFieldShell:focus-within,
 .numberFieldShell:focus-within,
 .priceFieldShell:focus-within {
-  border-color: rgba(123, 243, 245, 0.48);
-  box-shadow: 0 0 0 3px rgba(31, 216, 229, 0.14);
+  border-color: rgba(0, 168, 150, 0.48);
+  box-shadow: 0 0 0 3px rgba(0, 168, 150, 0.14);
 }
 
 .dateInput,
@@ -3365,8 +3366,8 @@
 .priceFieldShell > span {
   align-items: center;
   align-self: stretch;
-  background: rgba(123, 243, 245, 0.08);
-  border-left: 1px solid rgba(123, 243, 245, 0.12);
+  background: rgba(0, 168, 150, 0.08);
+  border-left: 1px solid rgba(0, 168, 150, 0.12);
   color: rgba(238, 248, 247, 0.72);
   display: inline-flex;
   flex: 0 0 auto;
@@ -3390,7 +3391,7 @@
 .derivedField {
   align-items: center;
   background: rgba(5, 12, 23, 0.78);
-  border: 1px solid rgba(123, 243, 245, 0.18);
+  border: 1px solid rgba(0, 168, 150, 0.18);
   border-radius: 12px;
   color: #ffffff;
   display: flex;
@@ -3507,7 +3508,7 @@
 }
 
 .checkPanel {
-  border: 1px solid rgba(182, 140, 255, 0.2);
+  border: 1px solid rgba(212, 175, 55, 0.2);
   border-radius: var(--radius-md);
   margin: 0;
   padding: 12px;
@@ -3529,7 +3530,7 @@
 .checkItem {
   align-items: center;
   background: rgba(255, 255, 255, 0.045);
-  border: 1px solid rgba(123, 243, 245, 0.11);
+  border: 1px solid rgba(0, 168, 150, 0.11);
   border-radius: 12px;
   color: rgba(238, 248, 247, 0.82);
   display: flex;
@@ -3555,7 +3556,7 @@
 }
 
 .success {
-  color: #bffcf1;
+  color: #e0ddcf;
 }
 
 .error {
@@ -3578,7 +3579,7 @@
 .trainingListItem,
 .emptyStateCompact {
   background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(182, 140, 255, 0.16);
+  border: 1px solid rgba(212, 175, 55, 0.16);
   border-radius: 15px;
   min-width: 0;
   padding: 13px;
@@ -3604,10 +3605,10 @@
 }
 
 .trainingListItem > span {
-  background: rgba(123, 243, 245, 0.1);
-  border: 1px solid rgba(123, 243, 245, 0.16);
+  background: rgba(0, 168, 150, 0.1);
+  border: 1px solid rgba(0, 168, 150, 0.16);
   border-radius: 999px;
-  color: #c8fbfb;
+  color: #e0ddcf;
   flex: 0 0 auto;
   font-size: 0.78rem;
   font-weight: 850;
@@ -3650,7 +3651,7 @@
 }
 
 .tableWrap {
-  border: 1px solid rgba(182, 140, 255, 0.16);
+  border: 1px solid rgba(212, 175, 55, 0.16);
   border-radius: var(--radius-md);
   margin-top: 14px;
   max-width: 100%;
@@ -3689,7 +3690,7 @@
 
 .agendaViewToggle {
   background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(182, 140, 255, 0.16);
+  border: 1px solid rgba(212, 175, 55, 0.16);
   border-radius: 14px;
   display: inline-flex;
   gap: 6px;
@@ -3707,7 +3708,7 @@
 .agendaPeriodFilter {
   align-items: end;
   background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(182, 140, 255, 0.16);
+  border: 1px solid rgba(212, 175, 55, 0.16);
   border-radius: 14px;
   display: flex;
   flex-wrap: wrap;
@@ -3726,7 +3727,7 @@
 
 .agendaPeriodFilter input {
   background: rgba(5, 12, 23, 0.78);
-  border: 1px solid rgba(182, 140, 255, 0.22);
+  border: 1px solid rgba(212, 175, 55, 0.22);
   border-radius: 9px;
   color: #ffffff;
   font: inherit;
@@ -3735,10 +3736,10 @@
 }
 
 .agendaPeriodFilter button {
-  background: rgba(31, 216, 229, 0.12);
-  border: 1px solid rgba(123, 243, 245, 0.24);
+  background: rgba(0, 168, 150, 0.12);
+  border: 1px solid rgba(0, 168, 150, 0.24);
   border-radius: 9px;
-  color: #c8fbfb;
+  color: #e0ddcf;
   cursor: pointer;
   font: inherit;
   font-size: 0.82rem;
@@ -3763,11 +3764,11 @@
 
 .agendaDayCard {
   background:
-    radial-gradient(circle at 92% 8%, rgba(31, 216, 229, 0.08), transparent 14rem),
-    linear-gradient(180deg, rgba(20, 19, 31, 0.94), rgba(10, 17, 30, 0.96));
-  border: 1px solid rgba(182, 140, 255, 0.18);
+    radial-gradient(circle at 92% 8%, rgba(0, 168, 150, 0.08), transparent 14rem),
+    linear-gradient(180deg, rgba(15, 32, 56, 0.94), rgba(10, 25, 47, 0.96));
+  border: 1px solid rgba(212, 175, 55, 0.18);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-night-card), 0 0 34px rgba(141, 77, 255, 0.08);
+  box-shadow: var(--shadow-night-card), 0 0 34px rgba(0, 168, 150, 0.08);
   min-width: 0;
   padding: 13px;
 }
@@ -3802,7 +3803,7 @@
 .agendaSessionCard {
   align-items: start;
   background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(123, 243, 245, 0.12);
+  border: 1px solid rgba(0, 168, 150, 0.12);
   border-radius: 15px;
   color: inherit;
   display: grid;
@@ -3817,7 +3818,7 @@
 }
 
 .agendaSessionCard:hover {
-  border-color: rgba(123, 243, 245, 0.28);
+  border-color: rgba(0, 168, 150, 0.28);
   transform: translateY(-1px);
 }
 
@@ -3834,7 +3835,7 @@
 }
 
 .agendaDetailsLink {
-  color: #c8fbfb;
+  color: #e0ddcf;
   font-size: 0.78rem;
   font-weight: 850;
   grid-column: 2;
@@ -3842,10 +3843,10 @@
 
 .baseScheduleTime {
   align-items: center;
-  background: rgba(31, 216, 229, 0.1);
-  border: 1px solid rgba(123, 243, 245, 0.18);
+  background: rgba(0, 168, 150, 0.1);
+  border: 1px solid rgba(0, 168, 150, 0.18);
   border-radius: 12px;
-  color: #c8fbfb;
+  color: #e0ddcf;
   display: inline-flex;
   font-size: 0.86rem;
   font-weight: 900;
@@ -3886,9 +3887,9 @@
 
 .agendaMonthCell {
   background:
-    radial-gradient(circle at 92% 8%, rgba(31, 216, 229, 0.06), transparent 10rem),
-    linear-gradient(180deg, rgba(20, 19, 31, 0.92), rgba(10, 17, 30, 0.94));
-  border: 1px solid rgba(182, 140, 255, 0.16);
+    radial-gradient(circle at 92% 8%, rgba(0, 168, 150, 0.06), transparent 10rem),
+    linear-gradient(180deg, rgba(15, 32, 56, 0.92), rgba(10, 25, 47, 0.94));
+  border: 1px solid rgba(212, 175, 55, 0.16);
   border-radius: 15px;
   color: inherit;
   display: grid;
@@ -3902,7 +3903,7 @@
 }
 
 .agendaMonthCell:hover {
-  border-color: rgba(123, 243, 245, 0.32);
+  border-color: rgba(0, 168, 150, 0.32);
   transform: translateY(-1px);
 }
 
@@ -3937,7 +3938,7 @@
 }
 
 .agendaMonthActivity {
-  border-top: 1px solid rgba(123, 243, 245, 0.08);
+  border-top: 1px solid rgba(0, 168, 150, 0.08);
   display: grid;
   gap: 3px;
   padding-top: 5px;
@@ -3975,7 +3976,7 @@
 }
 
 .agendaMonthTrainingLink {
-  color: rgba(123, 243, 245, 0.92);
+  color: rgba(0, 168, 150, 0.92);
 }
 
 .agendaMonthTrainingEmpty {
@@ -3996,8 +3997,8 @@
 }
 
 .agendaMonthCellActive {
-  border-color: rgba(123, 243, 245, 0.4);
-  box-shadow: 0 0 0 1px rgba(31, 216, 229, 0.12);
+  border-color: rgba(0, 168, 150, 0.4);
+  box-shadow: 0 0 0 1px rgba(0, 168, 150, 0.12);
 }
 
 .agendaMonthMobile {
@@ -4191,7 +4192,7 @@
 
   .mobileTopbar {
     align-items: center;
-    border-bottom: 1px solid rgba(182, 140, 255, 0.14);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.14);
     display: flex;
     gap: 11px;
     margin: 0 calc(var(--space-4) * -1);
@@ -4239,7 +4240,7 @@
   .mobileProfileButton {
     align-items: center;
     background: rgba(255, 255, 255, 0.055);
-    border: 1px solid rgba(182, 140, 255, 0.22);
+    border: 1px solid rgba(212, 175, 55, 0.22);
     color: #ffffff;
     display: inline-flex;
     height: 38px;
@@ -4263,8 +4264,8 @@
   }
 
   .mobileProfileButton {
-    background: linear-gradient(135deg, var(--color-sea-500), var(--color-violet-500));
-    border-color: rgba(123, 243, 245, 0.34);
+    background: var(--accent-lagoon);
+    border-color: rgba(0, 168, 150, 0.34);
     border-radius: 50%;
     color: #04121f;
     font-size: 0.82rem;
@@ -4310,7 +4311,7 @@
 
   .mobileNav {
     background: rgba(3, 9, 19, 0.86);
-    border-bottom: 1px solid rgba(182, 140, 255, 0.14);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.14);
     display: block;
     padding: 10px var(--space-4);
   }
@@ -4347,7 +4348,7 @@
 
   .mobileMenuLabel {
     align-items: center;
-    border: 1px solid rgba(123, 243, 245, 0.2);
+    border: 1px solid rgba(0, 168, 150, 0.2);
     border-radius: 999px;
     color: rgba(238, 248, 247, 0.82);
     display: inline-flex;
@@ -4436,9 +4437,9 @@
 
   .vesselListItem {
     background:
-      radial-gradient(circle at 94% 12%, rgba(31, 216, 229, 0.07), transparent 12rem),
-      linear-gradient(180deg, rgba(20, 19, 31, 0.94), rgba(10, 17, 30, 0.96));
-    border: 1px solid rgba(182, 140, 255, 0.18);
+      radial-gradient(circle at 94% 12%, rgba(0, 168, 150, 0.07), transparent 12rem),
+      linear-gradient(180deg, rgba(15, 32, 56, 0.94), rgba(10, 25, 47, 0.96));
+    border: 1px solid rgba(212, 175, 55, 0.18);
     border-radius: 16px;
     grid-template-columns: minmax(0, 1fr) auto;
     min-height: 82px;
@@ -4446,7 +4447,7 @@
   }
 
   .vesselListItem + .vesselListItem {
-    border-top: 1px solid rgba(182, 140, 255, 0.18);
+    border-top: 1px solid rgba(212, 175, 55, 0.18);
   }
 
   .vesselNameCell {
@@ -4607,7 +4608,7 @@
   }
 
   .memberRow {
-    border: 1px solid rgba(182, 140, 255, 0.16);
+    border: 1px solid rgba(212, 175, 55, 0.16);
     border-radius: 14px;
     grid-template-columns: 1fr 1fr;
     min-width: 0;

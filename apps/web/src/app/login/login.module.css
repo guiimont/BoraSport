@@ -12,7 +12,7 @@
 
 .input {
   background: rgba(255, 255, 255, 0.88);
-  border: 1px solid rgba(141, 77, 255, 0.18);
+  border: 1px solid rgba(0, 168, 150, 0.18);
   border-radius: var(--radius-md);
   color: var(--text-primary);
   font: inherit;
@@ -25,6 +25,6 @@
 
 .input:focus-visible {
   border-color: var(--color-sea-500);
-  box-shadow: var(--shadow-focus), 0 0 18px rgba(141, 77, 255, 0.16);
+  box-shadow: var(--shadow-focus), 0 0 18px rgba(0, 168, 150, 0.16);
   outline: none;
 }

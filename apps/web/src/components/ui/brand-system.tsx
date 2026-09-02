@@ -19,8 +19,16 @@ export function BrandIcon({ name, title }: { name: BrandIconName; title?: string
   return <svg {...common}>{label}<path d="m16 3 10 5v8c0 6-4 10-10 13C10 26 6 22 6 16V8l10-5Z"/><path d="M11 16l3 3 7-8"/></svg>;
 }
 
+export function BrandEmblem({ name, title }: { name: BrandIconName; title?: string }) {
+  return <span className={styles.emblem}><BrandIcon name={name} title={title} /><i /><b /></span>;
+}
+
 export function DividerNihoMano() {
   return <div aria-hidden className={styles.divider}><span /><i className={styles.dividerMark} /><span /></div>;
+}
+
+export function AncestralDivider({ variant = "niho" }: { variant?: "lashings" | "niho" | "swells" }) {
+  return <div aria-hidden className={styles.ancestralDivider} data-variant={variant}><i /><span /><i /></div>;
 }
 
 export function RahuiSeal() {

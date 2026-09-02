@@ -19,9 +19,9 @@
 .brandSymbol {
   align-items: center;
   background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(123, 243, 245, 0.16);
+  border: 1px solid rgba(0, 168, 150, 0.16);
   border-radius: 13px;
-  box-shadow: 0 0 28px rgba(31, 216, 229, 0.12);
+  box-shadow: 0 0 28px rgba(0, 168, 150, 0.12);
   display: inline-flex;
   height: 40px;
   justify-content: center;
@@ -75,15 +75,15 @@
 }
 
 .buttonprimary {
-  background: linear-gradient(135deg, var(--color-sea-500), var(--color-violet-500));
-  border: 1px solid rgba(123, 243, 245, 0.48);
-  box-shadow: 0 18px 42px rgba(31, 216, 229, 0.18), 0 0 30px rgba(141, 77, 255, 0.2);
+  background: var(--accent-lagoon);
+  border: 1px solid rgba(0, 168, 150, 0.48);
+  box-shadow: 0 18px 42px rgba(0, 168, 150, 0.18), 0 0 30px rgba(0, 168, 150, 0.2);
   color: #04121f;
 }
 
 .buttonsecondary {
   background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(182, 140, 255, 0.36);
+  border: 1px solid rgba(212, 175, 55, 0.36);
   color: var(--text-inverse);
 }
 
@@ -151,10 +151,10 @@
 
 .fileButton {
   align-items: center;
-  background: linear-gradient(135deg, rgba(34, 210, 214, 0.95), rgba(141, 77, 255, 0.95));
-  border: 1px solid rgba(123, 243, 245, 0.44);
+  background: linear-gradient(135deg, rgba(34, 210, 214, 0.95), rgba(0, 168, 150, 0.95));
+  border: 1px solid rgba(0, 168, 150, 0.44);
   border-radius: 12px;
-  box-shadow: 0 16px 34px rgba(31, 216, 229, 0.14), 0 0 24px rgba(141, 77, 255, 0.16);
+  box-shadow: 0 16px 34px rgba(0, 168, 150, 0.14), 0 0 24px rgba(0, 168, 150, 0.16);
   color: #04121f;
   cursor: pointer;
   display: inline-flex;
@@ -184,7 +184,7 @@
 
 .fileName {
   background: rgba(255, 255, 255, 0.055);
-  border: 1px solid rgba(182, 140, 255, 0.2);
+  border: 1px solid rgba(212, 175, 55, 0.2);
   border-radius: 12px;
   color: color-mix(in srgb, currentColor 76%, transparent);
   display: block;
@@ -209,8 +209,8 @@
 
 .alertsuccess {
   background: rgba(22, 163, 136, 0.14);
-  border-color: rgba(123, 243, 245, 0.22);
-  color: #bffcf1;
+  border-color: rgba(0, 168, 150, 0.22);
+  color: #e0ddcf;
 }
 
 .alerterror {
@@ -220,9 +220,9 @@
 }
 
 .alertinfo {
-  background: rgba(31, 216, 229, 0.12);
-  border-color: rgba(123, 243, 245, 0.2);
-  color: #c8fbfb;
+  background: rgba(0, 168, 150, 0.12);
+  border-color: rgba(0, 168, 150, 0.2);
+  color: #e0ddcf;
 }
 
 .alertwarning {
@@ -248,8 +248,8 @@
 
 .authPage {
   background:
-    radial-gradient(circle at 18% 12%, rgba(141, 77, 255, 0.26), transparent 29rem),
-    radial-gradient(circle at 82% 18%, rgba(31, 216, 229, 0.16), transparent 27rem),
+    radial-gradient(circle at 18% 12%, rgba(0, 168, 150, 0.26), transparent 29rem),
+    radial-gradient(circle at 82% 18%, rgba(0, 168, 150, 0.16), transparent 27rem),
     radial-gradient(circle at 48% 92%, rgba(248, 217, 133, 0.08), transparent 34rem),
     linear-gradient(180deg, #060812 0%, var(--color-ocean-950) 48%, #091a2b 100%);
   color: var(--text-inverse);
@@ -297,7 +297,7 @@
 }
 
 .authRoute {
-  border: 1px solid rgba(141, 77, 255, 0.34);
+  border: 1px solid rgba(0, 168, 150, 0.34);
   border-bottom: 0;
   border-left: 0;
   border-radius: 50%;
@@ -310,7 +310,7 @@
 }
 
 .authHorizon {
-  background: linear-gradient(90deg, transparent, rgba(31, 216, 229, 0.52), rgba(141, 77, 255, 0.42), transparent);
+  background: linear-gradient(90deg, transparent, rgba(0, 168, 150, 0.52), rgba(0, 168, 150, 0.42), transparent);
   bottom: 22%;
   height: 1px;
   left: 0;
@@ -366,9 +366,9 @@
 .authPanel {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(237, 252, 252, 0.94));
-  border: 1px solid rgba(141, 77, 255, 0.28);
+  border: 1px solid rgba(0, 168, 150, 0.28);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card-strong), var(--shadow-violet-glow);
+  box-shadow: var(--shadow-card-strong), var(--shadow-prestige-glow);
   color: var(--text-primary);
   grid-area: panel;
   padding: clamp(20px, 4vw, 28px);
@@ -547,8 +547,8 @@
   transform: translateY(-1px);
 }
 
-.memberNavLink > svg { --brand-icon-size: 25px; color: var(--sand-muted); }
-.memberNavLink[data-active="true"] > svg { color: var(--accent-lagoon); filter: drop-shadow(0 0 8px rgba(0,168,150,.42)); }
+.memberNavLink > span:first-child { color: var(--sand-muted); height: 38px; width: 38px; }
+.memberNavLink[data-active="true"] > span:first-child { color: var(--accent-lagoon); filter: drop-shadow(0 0 8px rgba(0,168,150,.3)); }
 .memberNavLink span { display: grid; min-width: 0; }
 .memberNavLink strong { font-size: .82rem; line-height: 1.15; }
 .memberNavLink small { color: rgba(255,255,255,.5); font-size: .62rem; line-height: 1.2; margin-top: 3px; }
