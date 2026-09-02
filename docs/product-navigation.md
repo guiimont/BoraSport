@@ -249,3 +249,31 @@ Estas hipoteses precisam de validacao e nao devem ser decididas silenciosamente:
 - rankings e gamificacao;
 - pagamentos;
 - comunicacao entre remadores.
+
+# Navegação oficial — setembro de 2026
+
+## ‘Āmuira‘a — ambiente do remador
+
+| Destino | Apoio funcional | Responsabilidade |
+| --- | --- | --- |
+| ‘Āmuira‘a | Feed & Comunidade | resumo pessoal, atividades e vínculos |
+| Hoe | Diário & Atividades | histórico, métricas e importação FIT/GPX/TCX |
+| Moana | Descobrir o Mar | grupos, clubes, eventos e participação voluntária |
+| ‘Aito | Atleta & Ajustes | identidade, dispositivos e privacidade |
+
+A ação contextual de Hoe usa `Hoe! · Registrar Remada`.
+
+## Pupu — ambiente das organizações
+
+Pupu Grupo expõe apenas Início, Agenda, Pessoas e Atividades. Funcionalidades formais de clube ficam ocultas.
+
+Pupu Clube possui quatro destinos:
+
+| Destino | Apoio funcional | Áreas internas |
+| --- | --- | --- |
+| Mahana | Agenda Imediata | visão do dia e agenda |
+| Fa‘atere | Canoas & Treinos | treinos, canoas e bases |
+| Ta‘ata | Remadores & Equipe | pessoas e presenças auditadas |
+| Pū | Financeiro & Planos | financeiro, configurações e site público |
+
+O destino Pū não autoriza inventar planos, preços ou regras de inadimplência. Essas regras exigem aprovação específica de produto antes de ganhar persistência e automação.

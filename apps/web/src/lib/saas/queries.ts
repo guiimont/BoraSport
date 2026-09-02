@@ -1,10 +1,13 @@
 import type {
   ActivityRecord,
+  ActivitySessionCandidate,
+  AthletePrivacySettings,
   AthleteBodyMeasurement,
   BaseSchedule,
   BaseScheduleResource,
   Booking,
   Company,
+  CompanyActivityRecord,
   CompanyInvitation,
   CompanyLocation,
   CompanyMember,
@@ -294,6 +297,18 @@ export async function getCompanyBySlug(slug: string): Promise<Company | null> {
   return fallback.data
     ? ({ ...fallback.data, organization_kind: "club", type_de_negocio: null } as Company)
     : null;
+}
+
+export async function getDiscoverableCompanies(): Promise<Company[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("companies")
+    .select("id,name,slug,logo_url,organization_kind,theme_colors,vocabulary_config,type_de_negocio,created_at,updated_at")
+    .order("name", { ascending: true })
+    .limit(50);
+
+  if (error) return [];
+  return (data as Company[] | null) ?? [];
 }
 
 async function getCompanyBySlugViaRest(slug: string): Promise<Company | null> {
@@ -1151,7 +1166,7 @@ export async function getCurrentUserActivityRecords(): Promise<ActivityRecord[]>
   const { data, error } = await supabase
     .from("activity_records")
     .select(
-      "id,company_id,provider,activity_type,title,started_at,duration_seconds,distance_meters,average_heart_rate,visibility",
+      "id,company_id,operational_session_id,provider,activity_type,title,started_at,duration_seconds,distance_meters,average_heart_rate,visibility,attendance_validation_status,attendance_validation_source,attendance_validated_at,route_privacy_mode",
     )
     .eq("user_id", user.id)
     .order("started_at", { ascending: false });
@@ -1161,6 +1176,75 @@ export async function getCurrentUserActivityRecords(): Promise<ActivityRecord[]>
   }
 
   return (data as ActivityRecord[] | null) ?? [];
+}
+
+export async function getCompanyActivityRecords(companyId: string): Promise<CompanyActivityRecord[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("activity_records")
+    .select("id,company_id,operational_session_id,provider,activity_type,title,started_at,duration_seconds,distance_meters,average_heart_rate,visibility,attendance_validation_status,attendance_validation_source,attendance_validated_at,route_privacy_mode,athlete:user_id(id,name,avatar_url)")
+    .eq("company_id", companyId)
+    .order("started_at", { ascending: false })
+    .limit(100);
+
+  if (error) return [];
+  return (data ?? []).map((activity) => ({
+    ...activity,
+    athlete: firstJoin(activity.athlete),
+  })) as CompanyActivityRecord[];
+}
+
+export async function getCurrentAthletePrivacySettings(): Promise<AthletePrivacySettings | null> {
+  const user = await getCurrentUser();
+  if (!user) return null;
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("athlete_privacy_settings")
+    .select("user_id,rankings_opt_in,challenges_opt_in,hide_route_start_end")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (error) return null;
+  return data as AthletePrivacySettings | null;
+}
+
+export async function getCurrentUserSessionCandidates(): Promise<ActivitySessionCandidate[]> {
+  const user = await getCurrentUser();
+  if (!user) return [];
+
+  const memberships = await getCurrentUserMemberships();
+  if (!memberships.length) return [];
+
+  const companyNames = new Map(
+    memberships.flatMap((membership) =>
+      membership.companies
+        ? [[membership.company_id, membership.companies.name] as const]
+        : [],
+    ),
+  );
+  const start = new Date();
+  start.setDate(start.getDate() - 45);
+  const end = new Date();
+  end.setDate(end.getDate() + 14);
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("operational_sessions")
+    .select("id,company_id,group_name,session_date,start_time")
+    .in("company_id", memberships.map((membership) => membership.company_id))
+    .eq("status", "published")
+    .gte("session_date", start.toISOString().slice(0, 10))
+    .lte("session_date", end.toISOString().slice(0, 10))
+    .order("session_date", { ascending: false })
+    .order("start_time", { ascending: false });
+
+  if (error) return [];
+
+  return (data ?? []).map((session) => ({
+    ...session,
+    company_name: companyNames.get(session.company_id) ?? "Organização",
+  })) as ActivitySessionCandidate[];
 }
 
 export async function getCurrentUserMemberships(): Promise<MembershipWithCompany[]> {
@@ -1185,7 +1269,8 @@ export async function getCurrentUserMemberships(): Promise<MembershipWithCompany
           id,
           name,
           slug,
-          logo_url
+          logo_url,
+          organization_kind
         )
       `,
     )

@@ -5,8 +5,10 @@ import {
   getCurrentUser,
   getCurrentUserActivityRecords,
   getCurrentUserMemberships,
+  getCurrentUserSessionCandidates,
 } from "../../lib/saas/queries";
 import { ActivityForm } from "./activity-form";
+import { ActivityMatchForm } from "./activity-match-form";
 import styles from "./remadas.module.css";
 
 const number = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 1 });
@@ -22,9 +24,10 @@ export default async function RemadasPage() {
   const user = await getCurrentUser();
   if (!user) redirect("/login?next=/remadas");
 
-  const [activities, memberships] = await Promise.all([
+  const [activities, memberships, sessionCandidates] = await Promise.all([
     getCurrentUserActivityRecords(),
     getCurrentUserMemberships(),
+    getCurrentUserSessionCandidates(),
   ]);
   const companies = new Map(
     memberships.flatMap((membership) => membership.companies ? [[membership.company_id, membership.companies.name] as const] : []),
@@ -32,13 +35,14 @@ export default async function RemadasPage() {
 
   return (
     <MemberShell
+      active="hoe"
       company={memberships[0]?.companies ?? null}
-      context="Meu Va'a"
+      context="Hoe · Diário & Atividades"
       description="Seu histórico pertence a você. Importe do relógio ou registre só o essencial."
-      title="Minhas remadas"
+      title="Diário de remadas"
     >
       <div className={styles.layout}>
-        <section className={styles.panel}>
+        <section className={styles.panel} id="registrar-remada">
           <ActivityForm memberships={memberships} />
         </section>
 
@@ -66,18 +70,33 @@ export default async function RemadasPage() {
                     <span><strong>{duration(activity.duration_seconds)}</strong>Duração</span>
                     <span><strong>{activity.average_heart_rate ? `${activity.average_heart_rate} bpm` : "—"}</strong>FC média</span>
                   </div>
+                  <div className={styles.activityAudit}>
+                    <span data-validated={activity.attendance_validation_status === "validated"}>
+                      {activity.attendance_validation_status === "validated"
+                        ? "Presença auditada"
+                        : "Atividade ainda não vinculada"}
+                    </span>
+                    <span>Modo Rāhui Ativo 🛡️ · início e chegada protegidos</span>
+                  </div>
+                  {activity.attendance_validation_status !== "validated" && sessionCandidates.length ? (
+                    <ActivityMatchForm activityId={activity.id} candidates={sessionCandidates} />
+                  ) : null}
                 </li>
               ))}
             </ol>
           ) : (
             <div className={styles.empty}>
               <span aria-hidden>≈</span>
-              <h3>Sua primeira remada começa aqui</h3>
-              <p>Importe um arquivo do relógio ou faça um registro simples.</p>
+              <h3>O mar chama.</h3>
+              <p>Você ainda não registrou atividades esta semana. Conecte seu dispositivo e vá para a água.</p>
             </div>
           )}
         </section>
       </div>
+      <a className={styles.fab} href="#registrar-remada">
+        <strong>Hoe!</strong>
+        <span>Registrar Remada</span>
+      </a>
     </MemberShell>
   );
 }

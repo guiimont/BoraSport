@@ -323,3 +323,18 @@
     grid-column: 1 / -1;
   }
 }
+.privacyForm { display: grid; gap: var(--space-3); margin-top: var(--space-4); }
+.preferenceRow { align-items: center; background: rgba(255,255,255,.035); border: 1px solid rgba(255,255,255,.08); border-radius: var(--radius-md); cursor: pointer; display: flex; gap: var(--space-3); justify-content: space-between; padding: var(--space-3); }
+.preferenceRow span { display: grid; gap: 3px; }
+.preferenceRow strong { color: #fff; font-size: .86rem; }
+.preferenceRow small { color: rgba(238,248,247,.55); font-size: .72rem; line-height: 1.4; }
+.preferenceRow input { accent-color: var(--color-sea-500); height: 20px; width: 20px; }
+.rahuiSeal { background: rgba(22,163,136,.12); border: 1px solid rgba(116,238,240,.18); border-radius: var(--radius-md); color: #bffcf1; display: grid; gap: 4px; padding: var(--space-3); }
+.rahuiSeal span { font-size: .74rem; line-height: 1.45; }
+.connectionList { display: grid; gap: var(--space-2); list-style: none; margin: var(--space-4) 0; padding: 0; }
+.connectionList li { align-items: center; border-bottom: 1px solid rgba(255,255,255,.07); display: flex; gap: var(--space-3); justify-content: space-between; padding: var(--space-3) 0; }
+.connectionList div { display: grid; gap: 3px; }
+.connectionList strong { color: #fff; font-size: .86rem; }
+.connectionList span { color: rgba(238,248,247,.55); font-size: .72rem; }
+.connectionList em { color: rgba(238,248,247,.48); font-size: .7rem; font-style: normal; font-weight: 800; }
+.connectionList em[data-active="true"] { color: var(--color-sea-300); }

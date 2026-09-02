@@ -12,7 +12,7 @@ function SubmitButton() {
   const { pending } = useFormStatus();
   return (
     <Button disabled={pending} type="submit">
-      {pending ? <Spinner label="Processando" /> : "Salvar remada"}
+      {pending ? <Spinner label="Processando" /> : "Hoe! · Registrar Remada"}
     </Button>
   );
 }
@@ -24,7 +24,7 @@ export function ActivityForm({ memberships }: { memberships: MembershipWithCompa
     <form action={action} className={styles.form}>
       <div className={styles.formIntro}>
         <p className={styles.eyebrow}>Menos digitação</p>
-        <h2>Importar ou registrar</h2>
+        <h2>Hoe! · Registrar Remada</h2>
         <p>FIT, GPX e TCX são lidos automaticamente. Sem arquivo, preencha só o essencial.</p>
       </div>
 

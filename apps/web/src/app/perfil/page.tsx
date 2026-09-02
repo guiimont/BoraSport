@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 
 import {
   getCurrentProfile,
+  getCurrentAthletePrivacySettings,
   getCurrentUser,
   getCurrentUserActivityRecords,
   getCurrentUserBodyMeasurements,
@@ -9,6 +10,7 @@ import {
 } from "../../lib/saas/queries";
 import { ActionLink, Alert, MemberShell } from "../../components/ui";
 import { ProfileForm } from "./profile-form";
+import { PrivacySettingsForm } from "./privacy-settings-form";
 import styles from "./profile.module.css";
 
 const numberFormatter = new Intl.NumberFormat("pt-BR", {
@@ -48,11 +50,13 @@ export default async function ProfilePage() {
     memberships,
     activities,
     bodyMeasurements,
+    privacySettings,
   ] = await Promise.all([
     getCurrentProfile(),
     getCurrentUserMemberships(),
     getCurrentUserActivityRecords(),
     getCurrentUserBodyMeasurements(),
+    getCurrentAthletePrivacySettings(),
   ]);
   const latestBodyMeasurement = bodyMeasurements[0] ?? null;
   const primaryCompany = memberships[0]?.companies ?? null;
@@ -81,10 +85,12 @@ export default async function ProfilePage() {
 
   return (
     <MemberShell
+      active="aito"
       company={primaryCompany}
-      context="Perfil do remador"
+      context="‘Aito · Atleta & Ajustes"
       description="Sua identidade no va'a: clubes, remadas e evolução reunidos em uma única jornada."
-      title="Meu perfil esportivo"
+      greetingName={profile?.name?.split(" ")[0] ?? null}
+      title="Identidade do atleta"
     >
       <section className={styles.sportSummary} aria-label="Resumo esportivo">
         <article className={styles.summaryCard}>
@@ -225,6 +231,23 @@ export default async function ProfilePage() {
               Este histórico é privado. Clube, treinador e outros remadores não
               recebem acesso aos valores.
             </p>
+          </section>
+
+          <section className={styles.card}>
+            <p className={styles.eyebrow}>Privacidade & Comunidade</p>
+            <h3>Suas escolhas</h3>
+            <PrivacySettingsForm settings={privacySettings} />
+          </section>
+
+          <section className={styles.card}>
+            <p className={styles.eyebrow}>Dispositivos & Aplicativos</p>
+            <h3>Conexões de atividade</h3>
+            <ul className={styles.connectionList}>
+              <li><div><strong>FIT, GPX e TCX</strong><span>Importação direta em Hoe</span></div><em data-active="true">Ativo</em></li>
+              <li><div><strong>Garmin</strong><span>Conexão oficial ainda não autorizada</span></div><em>Não conectado</em></li>
+              <li><div><strong>Strava</strong><span>Conexão oficial ainda não autorizada</span></div><em>Não conectado</em></li>
+            </ul>
+            <p className={styles.cardText}>Nenhuma conexão será simulada: Garmin e Strava exigem credenciais e autorização oficial dos provedores.</p>
           </section>
 
           <section className={styles.card}>

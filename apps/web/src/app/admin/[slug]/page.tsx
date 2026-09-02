@@ -227,13 +227,13 @@ export default async function AdminOverviewPage({
 
   const operationalAlerts = activeSessions.flatMap((session) => {
     const issues: Array<{ label: string; type: string }> = [];
-    if (!session.training_plan_version_id) {
+    if (company.organization_kind === "club" && !session.training_plan_version_id) {
       issues.push({ label: "Treino não definido", type: "training" });
     }
-    if (!session.coach) {
+    if (company.organization_kind === "club" && !session.coach) {
       issues.push({ label: "Instrutor não definido", type: "coach" });
     }
-    if (session.resources.length === 0) {
+    if (company.organization_kind === "club" && session.resources.length === 0) {
       issues.push({ label: `${vocabulary.resource_label} não definida`, type: "resource" });
     }
     if (session.status === "draft") {
@@ -246,8 +246,9 @@ export default async function AdminOverviewPage({
     <AdminShell
       active="overview"
       context={context}
-      subtitle="Acompanhe a operação do clube e resolva o que exige atenção."
-      title="Visão geral"
+      eyebrow={company.organization_kind === "club" ? "Mahana · Agenda Imediata" : "Pupu Grupo · Início"}
+      subtitle={company.organization_kind === "club" ? "Acompanhe saídas, canoas e check-ins que exigem atenção agora." : "Acompanhe a agenda, as pessoas e as remadas do coletivo."}
+      title={company.organization_kind === "club" ? "Operação de hoje" : "Visão do grupo"}
     >
       <section className={styles.overviewControlBar}>
         <div>
@@ -284,7 +285,7 @@ export default async function AdminOverviewPage({
                   <p>{formatSessionDate(nextSession.session_date)}</p>
                 </div>
               </div>
-              <div className={styles.overviewHeroDetails}>
+              {company.organization_kind === "club" ? <div className={styles.overviewHeroDetails}>
                 <span>
                   <small>Treino</small>
                   <strong>
@@ -304,7 +305,7 @@ export default async function AdminOverviewPage({
                       .join(", ") || "Não definida"}
                   </strong>
                 </span>
-              </div>
+              </div> : null}
               <Link
                 className={styles.overviewHeroLink}
                 href={`/admin/${company.slug}/agenda/sessoes/${nextSession.id}`}
@@ -366,11 +367,11 @@ export default async function AdminOverviewPage({
           label="Atividades"
           value={activeSessions.length}
         />
-        <StatCard
+        {company.organization_kind === "club" ? <StatCard
           hint={`${sessionsWithTraining} de ${activeSessions.length} atividades`}
           label="Treinos planejados"
           value={`${trainingCoverage}%`}
-        />
+        /> : null}
         <StatCard
           hint={`${totalOccupied} de ${totalCapacity || 0} vagas`}
           label="Ocupação"
@@ -449,15 +450,15 @@ export default async function AdminOverviewPage({
           <Link href={`/admin/${company.slug}/agenda/novo?date=${todayKey}`}>
             <span>＋</span><strong>Criar atividade</strong><small>Planejar data, horário e turma</small>
           </Link>
-          <Link href={`/admin/${company.slug}/treinos/novo`}>
+          {company.organization_kind === "club" ? <Link href={`/admin/${company.slug}/treinos/novo`}>
             <span>⌁</span><strong>Criar treino</strong><small>Adicionar à Biblioteca</small>
-          </Link>
+          </Link> : null}
           <Link href={`/admin/${company.slug}/remadores#convidar-remador`}>
             <span>◎</span><strong>Convidar remador</strong><small>Vincular ao clube</small>
           </Link>
-          <Link href={`/admin/${company.slug}/canoas#cadastrar-canoa`}>
+          {company.organization_kind === "club" ? <Link href={`/admin/${company.slug}/canoas#cadastrar-canoa`}>
             <span>◇</span><strong>Cadastrar {vocabulary.resource_label.toLowerCase()}</strong><small>{resources.length} ativas no clube</small>
-          </Link>
+          </Link> : null}
         </div>
       </section>
     </AdminShell>

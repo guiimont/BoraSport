@@ -116,6 +116,11 @@ function ReservationActionForm({
           {state.error}
         </p>
       ) : null}
+      {state.success ? (
+        <p aria-live="polite" className={styles.reservationSuccess} role="status">
+          {state.success}
+        </p>
+      ) : null}
     </form>
   );
 }
