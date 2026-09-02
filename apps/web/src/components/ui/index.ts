@@ -7,4 +7,5 @@ export type { BrandIconName } from "./brand-system";
 export { Field } from "./field";
 export { FileField } from "./file-field";
 export { MemberShell } from "./member-shell";
+export { MasteryShowcase } from "./mastery-showcase";
 export { Spinner } from "./spinner";

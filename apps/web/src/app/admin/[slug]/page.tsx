@@ -8,6 +8,7 @@ import {
   getCompanySlots,
 } from "../../../lib/saas/queries";
 import type { OperationalSession } from "../../../types/saas";
+import { BrandIcon } from "../../../components/ui";
 import { ClaimCompanyForm } from "./claim-company-form";
 import { getAdminContext } from "./admin-context";
 import { AdminShell } from "./admin-shell";
@@ -448,16 +449,16 @@ export default async function AdminOverviewPage({
         </div>
         <div className={styles.overviewQuickGrid}>
           <Link href={`/admin/${company.slug}/agenda/novo?date=${todayKey}`}>
-            <span>＋</span><strong>Criar atividade</strong><small>Planejar data, horário e turma</small>
+            <span><BrandIcon name="mahana" /></span><strong>Criar atividade</strong><small>Planejar data, horário e turma</small>
           </Link>
           {company.organization_kind === "club" ? <Link href={`/admin/${company.slug}/treinos/novo`}>
-            <span>⌁</span><strong>Criar treino</strong><small>Adicionar à Biblioteca</small>
+            <span><BrandIcon name="hoe" /></span><strong>Criar treino</strong><small>Adicionar à Biblioteca</small>
           </Link> : null}
           <Link href={`/admin/${company.slug}/remadores#convidar-remador`}>
-            <span>◎</span><strong>Convidar remador</strong><small>Vincular ao clube</small>
+            <span><BrandIcon name="taata" /></span><strong>Convidar remador</strong><small>Vincular ao clube</small>
           </Link>
           {company.organization_kind === "club" ? <Link href={`/admin/${company.slug}/canoas#cadastrar-canoa`}>
-            <span>◇</span><strong>Cadastrar {vocabulary.resource_label.toLowerCase()}</strong><small>{resources.length} ativas no clube</small>
+            <span><BrandIcon name="faatere" /></span><strong>Cadastrar {vocabulary.resource_label.toLowerCase()}</strong><small>{resources.length} ativas no clube</small>
           </Link> : null}
         </div>
       </section>

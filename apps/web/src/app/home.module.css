@@ -232,6 +232,18 @@
   margin-top: 30px;
 }
 
+.platformSection,
+.masterySection { padding: clamp(64px,9vw,112px) clamp(18px,5vw,72px); }
+.platformSection { background: linear-gradient(180deg, rgba(15,32,56,.52), rgba(10,25,47,.18)); }
+.masterySection { padding-top: 0; }
+.platformSection > :global(div[aria-hidden]) { margin: 34px 0; }
+.worldGrid { display: grid; gap: 18px; grid-template-columns: repeat(2,minmax(0,1fr)); }
+.worldGrid article { background: linear-gradient(145deg, rgba(21,43,74,.84), rgba(7,18,33,.92)); border: 1px solid rgba(0,168,150,.2); border-radius: 22px; min-width: 0; padding: clamp(22px,4vw,36px); }
+.worldGrid svg { color: var(--accent-lagoon); height: 42px; margin-bottom: 20px; width: 42px; }
+.worldGrid span { color: var(--gold-bronze); display: block; font-size: .75rem; font-weight: 850; letter-spacing: .09em; text-transform: uppercase; }
+.worldGrid h3 { color: #fff; font-size: clamp(1.4rem,3vw,2rem); margin: 8px 0 10px; }
+.worldGrid p { color: rgba(244,241,234,.66); line-height: 1.6; margin: 0; max-width: 580px; }
+
 .productScene {
   align-self: end;
   background: linear-gradient(180deg, rgba(21, 18, 34, 0.94), rgba(12, 15, 25, 0.92));
@@ -700,6 +712,7 @@
   }
 
   .problemGrid,
+  .worldGrid,
   .resourceGrid,
   .profileGrid,
   .stepsGrid,
@@ -754,6 +767,7 @@
   }
 
   .sceneGrid,
+  .worldGrid,
   .problemGrid,
   .resourceGrid,
   .profileGrid,
