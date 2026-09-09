@@ -181,3 +181,10 @@ Termos taitianos nunca aparecem sozinhos em navegação primária ou ações. O 
 ## Limites de integração
 
 A importação FIT, GPX e TCX está ativa. Garmin e Strava só podem aparecer como conectados depois da implementação OAuth oficial e da autorização real do usuário. A interface não simula integrações.
+
+### Estado Garmin — 09/09/2026
+
+A solicitação do Garmin Connect Developer Program foi enviada para acesso à
+Activity API. A integração Garmin passa a ser porta de entrada do primeiro
+piloto individual. Registro manual e upload permanecem como contingência, não
+como fluxo principal de adesão.
