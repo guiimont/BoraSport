@@ -8,6 +8,7 @@ import {
   getCurrentUserBodyMeasurements,
   getCurrentUserMemberships,
 } from "../../lib/saas/queries";
+import { getGarminIntegrationStatus } from "../../lib/integrations/garmin";
 import { ActionLink, Alert, MasteryShowcase, MemberShell } from "../../components/ui";
 import { ProfileForm } from "./profile-form";
 import { PrivacySettingsForm } from "./privacy-settings-form";
@@ -82,6 +83,13 @@ export default async function ProfilePage() {
     !profile?.phone ||
     !profile?.avatar_url ||
     !latestBodyMeasurement;
+  const garminStatus = getGarminIntegrationStatus();
+  const garminLabel =
+    garminStatus === "ready" ? "Disponível" : "Em homologação";
+  const garminDescription =
+    garminStatus === "ready"
+      ? "Integração aprovada e pronta para conexão"
+      : "Solicitação enviada à Garmin em 09/09/2026";
 
   return (
     <MemberShell
@@ -248,10 +256,10 @@ export default async function ProfilePage() {
             <h3>Conexões de atividade</h3>
             <ul className={styles.connectionList}>
               <li><div><strong>FIT, GPX e TCX</strong><span>Importação direta em Hoe</span></div><em data-active="true">Ativo</em></li>
-              <li><div><strong>Garmin</strong><span>Conexão oficial ainda não autorizada</span></div><em>Não conectado</em></li>
+              <li><div><strong>Garmin</strong><span>{garminDescription}</span></div><em data-active={garminStatus === "ready"}>{garminLabel}</em></li>
               <li><div><strong>Strava</strong><span>Conexão oficial ainda não autorizada</span></div><em>Não conectado</em></li>
             </ul>
-            <p className={styles.cardText}>Nenhuma conexão será simulada: Garmin e Strava exigem credenciais e autorização oficial dos provedores.</p>
+            <p className={styles.cardText}>A conexão Garmin será liberada assim que a homologação e as credenciais oficiais forem concluídas.</p>
           </section>
 
           <section className={styles.card}>
