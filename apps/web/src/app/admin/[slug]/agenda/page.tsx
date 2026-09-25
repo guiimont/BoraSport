@@ -670,6 +670,7 @@ function AgendaStat({ label, value }: { label: string; value: number }) {
   );
 }
 
+// A janela operacional mantém a grade legível sem alterar horários persistidos.
 const timelineStartHour = 5;
 const timelineEndHour = 21;
 const timelineHourHeight = 72;
