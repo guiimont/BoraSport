@@ -129,7 +129,21 @@ As referências de DropZone e Loja Broxada orientam qualidade, não aparência:
 - movimento com intenção;
 - uma assinatura visual reconhecível aplicada em todo o produto.
 
-Não copiar paletas, componentes, textos ou grafismos das marcas.
+Não copiar paletas, componentes, textos, código, animações prontas, layouts ou grafismos das marcas.
+
+### Protocolo de referência profissional
+
+DropZone e Loja Broxada são estudos de referência do trabalho do Márcio. O que o BoraSport absorve é o raciocínio de design:
+
+- hierarquia que orienta a próxima ação;
+- ritmo consistente entre telas e estados;
+- movimento vinculado a função e feedback;
+- comportamento responsivo pensado como produto;
+- microinterações que confirmam ações;
+- acessibilidade, foco visível e redução de movimento;
+- coerência entre identidade, interface e animação.
+
+O processo será sempre: identificar a intenção da solução, reinterpretá-la a partir do problema do BoraSport e criar uma execução original. Elementos reconhecíveis, gestos de marca, composição, ativos e implementação dos projetos de referência não serão reproduzidos.
 
 ### Assinatura BoraSport
 
@@ -159,14 +173,19 @@ Direção principal:
 
 ## Movimento
 
-Criar um sistema de movimento BoraSport:
+Criar um sistema de movimento original do BoraSport, derivado da experiência do Va'a:
 
-- transições de contexto como deslocamento sobre a água;
-- entradas suaves de cartões;
-- mudança de agenda com continuidade espacial;
-- estados ativos inspirados em rota e horizonte;
+- **Corrente** — navegação e troca de contexto com deslocamento curto, fluido e previsível;
+- **Remada** — confirmação de ações com impulso rápido e retorno controlado;
+- **Esteira** — progresso, sincronização e carregamento como rastro contínuo, sem distração;
+- **Maré** — expansão e recolhimento de painéis preservando continuidade espacial;
+- **Horizonte** — estados ativos e orientação de página por linha, direção e posição;
+- mudança de agenda mantendo relação visual entre dia, semana, quinzena e mês;
 - feedback tátil e visual curto em reserva, presença e sincronização;
-- respeitar `prefers-reduced-motion`.
+- nenhuma animação puramente decorativa em fluxos operacionais;
+- suporte obrigatório a `prefers-reduced-motion`.
+
+O movimento deve reforçar localização, causa e efeito. Ele não reproduzirá as assinaturas visuais ou sequências de animação dos projetos usados como referência.
 
 ## Ordem de implementação
 
