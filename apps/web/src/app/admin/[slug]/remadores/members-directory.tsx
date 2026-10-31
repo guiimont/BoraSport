@@ -150,8 +150,6 @@ export function MembersDirectory({
             <span>Pessoa</span>
             <span>Função</span>
             <span>Status</span>
-            <span>Celular</span>
-            <span>Entrada</span>
             {canManage ? <span>Ações</span> : null}
           </div>
           {visibleMembers.map((member) => (
@@ -160,7 +158,12 @@ export function MembersDirectory({
                 <span className={styles.memberAvatar} aria-hidden="true">
                   {(member.profile?.name || "U").trim().charAt(0).toUpperCase()}
                 </span>
-                <strong>{member.profile?.name || "Usuário BoraSport"}</strong>
+                <div>
+                  <strong>{member.profile?.name || "Usuário BoraSport"}</strong>
+                  <small>
+                    {member.profile?.phone || "Celular não informado"} · desde {new Date(member.created_at).toLocaleDateString("pt-BR")}
+                  </small>
+                </div>
               </div>
               {canManage ? (
                 <form
@@ -190,8 +193,6 @@ export function MembersDirectory({
                 <span className={styles.memberRole} data-label="Função" role="cell">{getRoleLabel(member.role)}</span>
               )}
               <span className={styles.memberActive} data-label="Status" role="cell">Ativo</span>
-              <span className={styles.memberPhone} data-label="Celular" role="cell">{member.profile?.phone || "Não informado"}</span>
-              <span className={styles.memberSince} data-label="Entrada" role="cell">{new Date(member.created_at).toLocaleDateString("pt-BR")}</span>
               {canManage ? (
                 <div className={styles.memberActions} data-label="Ações" role="cell">
                   {member.user_id === currentUserId ? (

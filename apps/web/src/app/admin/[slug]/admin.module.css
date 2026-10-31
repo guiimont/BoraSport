@@ -2274,7 +2274,7 @@
 .membersStatGrid {
   display: grid;
   gap: 12px;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .membersStatGrid .statCard {
@@ -2356,14 +2356,14 @@
   align-items: center;
   display: grid;
   gap: 12px;
-  grid-template-columns: minmax(190px, 1.35fr) minmax(170px, 1fr) minmax(72px, 0.48fr) minmax(120px, 0.8fr) minmax(82px, 0.55fr) minmax(82px, 0.55fr);
+  grid-template-columns: minmax(240px, 1.6fr) minmax(180px, 1fr) minmax(82px, 0.48fr) minmax(92px, 0.55fr);
   min-width: 0;
   padding: 11px 14px;
 }
 
 .membersTable[data-manage="false"] .membersTableHead,
 .membersTable[data-manage="false"] .memberRow {
-  grid-template-columns: minmax(210px, 1.5fr) minmax(90px, 0.65fr) minmax(72px, 0.48fr) minmax(130px, 0.85fr) minmax(90px, 0.58fr);
+  grid-template-columns: minmax(240px, 1.6fr) minmax(110px, 0.7fr) minmax(82px, 0.48fr);
 }
 
 .membersTableHead {
@@ -2378,6 +2378,8 @@
 .memberRow {
   background: rgba(255, 255, 255, 0.035);
   border-top: 1px solid rgba(212, 175, 55, 0.11);
+  contain-intrinsic-size: 64px;
+  content-visibility: auto;
   min-height: 64px;
 }
 
@@ -2400,6 +2402,14 @@
 
 .memberIdentity strong {
   color: #ffffff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.memberIdentity small {
+  color: rgba(238, 248, 247, 0.48);
+  font-size: 0.68rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -5277,5 +5287,236 @@
 @media (max-width: 900px) {
   .sidebar::after {
     display: none;
+  }
+}
+
+/* Agenda simples: estrutura semanal inspirada no fluxo validado do ALV. */
+.agendaWorkspace {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.agendaInlineFilter {
+  align-items: end;
+  border-top: 1px solid rgba(212, 175, 55, 0.14);
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  padding-top: 10px;
+  width: 100%;
+}
+
+.agendaInlineFilter label {
+  display: grid;
+  gap: 5px;
+  min-width: 180px;
+}
+
+.agendaInlineFilter label span {
+  color: rgba(238, 248, 247, 0.56);
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.agendaInlineFilter select,
+.agendaInlineFilter button {
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid rgba(212, 175, 55, 0.18);
+  border-radius: 10px;
+  color: #f4f1ea;
+  min-height: 40px;
+  padding: 0 12px;
+}
+
+.agendaInlineFilter option {
+  background: #0f2038;
+}
+
+.agendaInlineFilter button {
+  background: var(--accent-lagoon);
+  border-color: transparent;
+  color: #041827;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.agendaSummaryBar {
+  align-items: stretch;
+  background: rgba(15, 32, 56, 0.62);
+  border: 1px solid rgba(212, 175, 55, 0.14);
+  border-radius: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px;
+}
+
+.agendaSummaryBar .agendaStat {
+  background: transparent;
+  border: 0;
+  border-right: 1px solid rgba(212, 175, 55, 0.12);
+  border-radius: 0;
+  min-width: 96px;
+  padding: 7px 12px;
+}
+
+.agendaSummaryBar .agendaGradeLink {
+  align-self: center;
+  border: 0;
+  margin-left: auto;
+  padding: 9px 12px;
+}
+
+.agendaWeekBoard {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(7, minmax(150px, 1fr));
+  min-width: 0;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  scrollbar-color: rgba(0, 168, 150, 0.35) transparent;
+}
+
+.agendaWeekDay {
+  background: linear-gradient(180deg, rgba(15, 32, 56, 0.96), rgba(10, 25, 47, 0.96));
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  min-height: 390px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.agendaWeekDayActive {
+  border-color: rgba(95, 224, 209, 0.46);
+  box-shadow: inset 0 3px var(--accent-lagoon), 0 14px 34px rgba(0, 168, 150, 0.08);
+}
+
+.agendaWeekDayHeader {
+  align-items: center;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.12);
+  color: #f4f1ea;
+  display: flex;
+  justify-content: space-between;
+  padding: 14px;
+  text-decoration: none;
+}
+
+.agendaWeekDayHeader strong {
+  font-size: 0.78rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.agendaWeekDayHeader span {
+  color: rgba(244, 241, 234, 0.52);
+  font-size: 0.76rem;
+}
+
+.agendaWeekDayBody {
+  align-content: start;
+  display: grid;
+  flex: 1;
+  gap: 8px;
+  padding: 10px;
+}
+
+.agendaWeekCard {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(212, 175, 55, 0.13);
+  border-left: 3px solid #d4af37;
+  border-radius: 11px;
+  color: #f4f1ea;
+  display: grid;
+  gap: 4px;
+  padding: 11px;
+  text-decoration: none;
+  transition: background var(--motion-stroke), transform var(--motion-stroke);
+}
+
+.agendaWeekCard:hover {
+  background: rgba(0, 168, 150, 0.08);
+  transform: translateY(-2px);
+}
+
+.agendaWeekCard[data-status="published"] { border-left-color: var(--accent-lagoon); }
+.agendaWeekCard[data-status="cancelled"] { border-left-color: var(--status-alert); opacity: 0.66; }
+.agendaWeekCard > span { color: var(--color-sea-300); font-size: 0.72rem; font-weight: 900; }
+.agendaWeekCard strong { font-size: 0.8rem; line-height: 1.25; }
+.agendaWeekCard small { color: rgba(244, 241, 234, 0.52); font-size: 0.66rem; }
+
+.agendaWeekEmpty {
+  color: rgba(244, 241, 234, 0.46);
+  display: grid;
+  gap: 5px;
+  padding: 12px 4px;
+}
+
+.agendaWeekEmpty strong { color: rgba(244, 241, 234, 0.72); font-size: 0.8rem; }
+.agendaWeekEmpty span { font-size: 0.7rem; line-height: 1.4; }
+
+.agendaWeekAdd {
+  background: rgba(255, 255, 255, 0.025);
+  border-top: 1px solid rgba(212, 175, 55, 0.1);
+  color: rgba(244, 241, 234, 0.68);
+  font-size: 0.72rem;
+  font-weight: 850;
+  margin-top: auto;
+  padding: 12px;
+  text-align: center;
+  text-decoration: none;
+}
+
+@media (max-width: 900px) {
+  .agendaToolbar {
+    display: grid;
+  }
+
+  .agendaControls,
+  .agendaPeriodControls,
+  .agendaNavigation,
+  .agendaPrimaryActions {
+    justify-items: stretch;
+    width: 100%;
+  }
+
+  .agendaInlineFilter {
+    justify-content: stretch;
+  }
+
+  .agendaInlineFilter label {
+    flex: 1;
+  }
+
+  .agendaWeekBoard {
+    grid-auto-columns: minmax(78vw, 1fr);
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    margin-inline: calc(var(--space-4) * -1);
+    padding-inline: var(--space-4);
+    scroll-snap-type: x mandatory;
+  }
+
+  .agendaWeekDay {
+    min-height: 360px;
+    scroll-snap-align: start;
+  }
+}
+
+@media (max-width: 560px) {
+  .agendaInlineFilter {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .agendaSummaryBar .agendaStat {
+    flex: 1 1 28%;
+  }
+
+  .agendaSummaryBar .agendaGradeLink {
+    margin-left: 0;
+    width: 100%;
   }
 }

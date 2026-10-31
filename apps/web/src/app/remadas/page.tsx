@@ -40,9 +40,9 @@ export default async function RemadasPage() {
     <MemberShell
       active="hoe"
       company={memberships[0]?.companies ?? null}
-      context="Hoe · Diário & Atividades"
-      description="Seu histórico pertence a você. Importe do relógio ou registre só o essencial."
-      title="Diário de remadas"
+      context="Atividades"
+      description="Treinos do clube e seu histórico esportivo em uma única tela."
+      title="Minhas atividades"
     >
       <div className={styles.layout}>
         <section className={`${styles.panel} ${styles.weekPanel}`}>
@@ -146,8 +146,8 @@ export default async function RemadasPage() {
         </section>
       </div>
       <a className={styles.fab} href="#registrar-remada">
-        <strong>Hoe!</strong>
-        <span>Registrar Remada</span>
+        <strong>+</strong>
+        <span>Registrar atividade</span>
       </a>
     </MemberShell>
   );

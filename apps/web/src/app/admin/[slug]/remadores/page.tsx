@@ -54,11 +54,6 @@ export default async function AdminMembersPage({ params }: AdminMembersPageProps
           <strong>{equipe}</strong>
           <span>Gestores e treinadores</span>
         </article>
-        <article className={styles.statCard}>
-          <p>Convites ativos</p>
-          <strong>{activeInvitations}</strong>
-          <span>Aguardando aceite</span>
-        </article>
       </section>
 
       <section className={`${styles.panel} ${styles.membersPanel}`}>
@@ -72,7 +67,7 @@ export default async function AdminMembersPage({ params }: AdminMembersPageProps
           </div>
           {role === "admin" ? (
             <a className={styles.primaryButtonLink} href="#convidar-remador">
-              Convidar remador
+              Convidar remador{activeInvitations ? ` · ${activeInvitations} pendente${activeInvitations === 1 ? "" : "s"}` : ""}
             </a>
           ) : null}
         </div>
