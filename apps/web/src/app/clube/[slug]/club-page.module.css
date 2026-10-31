@@ -540,6 +540,183 @@
   }
 }
 
+/* Hierarquia correta: agenda ALV > treino > carrossel de canoas. */
+.publicTrainingCard {
+  background: linear-gradient(180deg, rgba(15, 32, 56, 0.94), rgba(10, 25, 47, 0.97));
+  border: 1px solid rgba(212, 175, 55, 0.18);
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.publicTrainingCard[open] {
+  border-color: rgba(0, 201, 181, 0.38);
+  box-shadow: 0 14px 34px rgba(0, 168, 150, 0.09);
+}
+
+.publicTrainingCard > summary {
+  align-items: center;
+  cursor: pointer;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: auto minmax(220px, 1fr) auto auto;
+  list-style: none;
+  padding: 18px 20px;
+}
+
+.publicTrainingCard > summary::-webkit-details-marker { display: none; }
+
+.publicTrainingCard > summary > time {
+  align-items: center;
+  background: linear-gradient(180deg, rgba(0, 168, 150, 0.18), rgba(0, 168, 150, 0.1));
+  border: 1px solid rgba(0, 168, 150, 0.26);
+  border-radius: 14px;
+  color: var(--color-sea-300);
+  display: flex;
+  font-size: 1.45rem;
+  font-weight: 950;
+  justify-content: center;
+  min-height: 58px;
+  min-width: 88px;
+}
+
+.publicTrainingIdentity {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.publicTrainingIdentity > span {
+  color: var(--color-star-400);
+  font-size: 0.62rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.publicTrainingIdentity h3 {
+  color: #fff;
+  font-size: clamp(1.15rem, 2.4vw, 1.55rem);
+  line-height: 1.1;
+  margin: 0;
+}
+
+.publicTrainingIdentity p {
+  color: rgba(238, 248, 247, 0.56);
+  font-size: 0.76rem;
+  margin: 2px 0 0;
+}
+
+.publicTrainingNumbers {
+  display: flex;
+  gap: 8px;
+}
+
+.publicTrainingNumbers span {
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(184, 198, 205, 0.1);
+  border-radius: 999px;
+  color: rgba(238, 248, 247, 0.58);
+  font-size: 0.68rem;
+  padding: 8px 10px;
+  white-space: nowrap;
+}
+
+.publicTrainingNumbers strong {
+  color: #fff;
+  margin-right: 3px;
+}
+
+.publicTrainingCard > summary > em {
+  color: var(--color-sea-300);
+  font-size: 0.72rem;
+  font-style: normal;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.publicTrainingExpanded {
+  border-top: 1px solid rgba(212, 175, 55, 0.12);
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+}
+
+.publicTrainingExpanded > header {
+  align-items: end;
+  display: flex;
+  gap: 14px;
+  justify-content: space-between;
+}
+
+.publicTrainingExpanded > header > div {
+  display: grid;
+  gap: 3px;
+}
+
+.publicTrainingExpanded > header span {
+  color: var(--color-star-400);
+  font-size: 0.62rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.publicTrainingExpanded > header strong {
+  color: #fff;
+  font-size: 0.82rem;
+}
+
+.publicTrainingExpanded > header small {
+  color: rgba(238, 248, 247, 0.5);
+  font-size: 0.68rem;
+}
+
+.publicCanoeSummary {
+  display: grid;
+  gap: 7px;
+  padding: 14px 14px 10px;
+}
+
+.publicCanoeSummary h3 {
+  color: #fff;
+  font-size: 1.16rem;
+  margin: 0;
+}
+
+.publicCanoeCard {
+  align-self: start;
+}
+
+@media (max-width: 720px) {
+  .publicTrainingCard > summary {
+    gap: 10px;
+    grid-template-columns: auto minmax(0, 1fr);
+    padding: 13px;
+  }
+
+  .publicTrainingCard > summary > time {
+    font-size: 1.2rem;
+    min-height: 52px;
+    min-width: 76px;
+  }
+
+  .publicTrainingNumbers {
+    grid-column: 1 / -1;
+  }
+
+  .publicTrainingCard > summary > em {
+    grid-column: 1 / -1;
+  }
+
+  .publicTrainingExpanded {
+    padding: 10px;
+  }
+
+  .publicTrainingExpanded > header {
+    align-items: start;
+    flex-direction: column;
+    gap: 5px;
+  }
+}
+
 .page *,
 .page *::before,
 .page *::after {

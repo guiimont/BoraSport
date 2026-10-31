@@ -159,18 +159,43 @@ export function ReservationSlots({
   return (
     <div className={styles.publicDayAgenda}>
       {groupByTime(slots).map(([time, timeSlots]) => (
-        <section className={styles.publicTimeGroup} key={time}>
-          <header>
-            <div>
-              <span>Horário</span>
-              <strong>{time}</strong>
+        <details className={styles.publicTrainingCard} key={time}>
+          <summary>
+            <time>{time}</time>
+            <div className={styles.publicTrainingIdentity}>
+              <span>Treino do dia</span>
+              <h3>{timeSlots[0]?.services?.name || vocabulary.service_label}</h3>
+              <p>
+                {timeSlots.length} {timeSlots.length === 1 ? "canoa" : "canoas"} na água
+              </p>
             </div>
-            <p>
-              {timeSlots.length} {timeSlots.length === 1 ? "canoa" : "canoas"} na água
-            </p>
-          </header>
+            <div className={styles.publicTrainingNumbers}>
+              <span>
+                <strong>{timeSlots.reduce((total, slot) => total + slot.spots_occupied, 0)}</strong>
+                confirmados
+              </span>
+              <span>
+                <strong>
+                  {timeSlots.reduce(
+                    (total, slot) => total + Math.max(0, slot.spots_total - slot.spots_occupied),
+                    0,
+                  )}
+                </strong>
+                vagas
+              </span>
+            </div>
+            <em>Abrir treino e escolher canoa ↓</em>
+          </summary>
 
-          <div className={styles.publicCanoeRail}>
+          <div className={styles.publicTrainingExpanded}>
+            <header>
+              <div>
+                <span>Canoas deste horário</span>
+                <strong>Escolha uma canoa para ver a tripulação e reservar</strong>
+              </div>
+              <small>Deslize para o lado →</small>
+            </header>
+            <div className={styles.publicCanoeRail}>
             {timeSlots.map((slot) => {
               const remaining = Math.max(0, slot.spots_total - slot.spots_occupied);
               const isFull = remaining === 0;
@@ -180,17 +205,15 @@ export function ReservationSlots({
               const price = formatCurrency(slot.services?.price);
 
               return (
-                <details className={styles.publicCanoeCard} key={slot.id}>
-                  <summary>
+                <article className={styles.publicCanoeCard} key={slot.id}>
+                  <div className={styles.publicCanoeSummary}>
                     <span className={styles.publicCanoeTag}>Canoa</span>
                     <h3>{slot.resources?.name || "A definir"}</h3>
-                    <p>{slot.services?.name || vocabulary.service_label}</p>
                     <div className={styles.publicCanoeNumbers}>
                       <span><strong>{slot.spots_occupied}</strong> confirmados</span>
                       <span data-full={isFull}><strong>{remaining}</strong> vagas</span>
                     </div>
-                    <small>Abrir canoa e participantes →</small>
-                  </summary>
+                  </div>
 
                   <div className={styles.publicCanoeExpanded}>
                     <div className={styles.publicCanoeMeta}>
@@ -222,11 +245,12 @@ export function ReservationSlots({
                       </p>
                     ) : null}
                   </div>
-                </details>
+                </article>
               );
             })}
+            </div>
           </div>
-        </section>
+        </details>
       ))}
     </div>
   );
