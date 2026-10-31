@@ -123,7 +123,7 @@ export function AdminShell({
             <div className={styles.clubIdentity}>
               <span>Contexto atual · {company.organization_kind === "group" ? "Grupo" : "Clube"}</span>
               <strong>{company.name}</strong>
-              <small>{role || "Gestão"} · trocar contexto pelo perfil</small>
+              <small>{role || "Gestão"} · contextos e acessos no perfil</small>
             </div>
           </div>
 
