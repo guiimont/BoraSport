@@ -120,7 +120,7 @@ export function AdminShell({
             <Link className={styles.brandLink} href="/">
               <BrandMark tone="light" variant="monochromeLight" />
             </Link>
-            <div className={styles.clubIdentity}>
+            <div aria-label={`Contexto atual: ${company.name}`} className={styles.clubIdentity}>
               <span>Contexto atual · {company.organization_kind === "group" ? "Grupo" : "Clube"}</span>
               <strong>{company.name}</strong>
               <small>{role || "Gestão"} · contextos e acessos no perfil</small>
