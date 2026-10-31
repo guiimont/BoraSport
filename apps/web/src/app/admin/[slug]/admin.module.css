@@ -5197,3 +5197,84 @@
     left: -27px;
   }
 }
+
+
+/* BoraSport relaunch: role shell and original motion language */
+.clubIdentity small {
+  color: rgba(238, 248, 247, 0.52);
+  font-size: 0.68rem;
+  font-weight: 720;
+  line-height: 1.35;
+}
+
+.sidebar {
+  position: relative;
+}
+
+.sidebar::after {
+  background: linear-gradient(180deg, transparent, rgba(0, 168, 150, 0.72), transparent);
+  content: "";
+  height: 132px;
+  opacity: 0.42;
+  position: absolute;
+  right: -1px;
+  top: 84px;
+  width: 1px;
+}
+
+.navLink {
+  isolation: isolate;
+  overflow: hidden;
+  position: relative;
+}
+
+.navLink::after {
+  background: linear-gradient(90deg, transparent, rgba(95, 224, 209, 0.11), transparent);
+  content: "";
+  inset: 0;
+  position: absolute;
+  transform: translateX(-115%);
+  transition: transform var(--motion-current);
+  z-index: -1;
+}
+
+.navLink:hover::after,
+.navLinkActive::after {
+  transform: translateX(115%);
+}
+
+.navLinkActive .navGlyph {
+  border-color: rgba(95, 224, 209, 0.42);
+  box-shadow: 0 0 0 4px rgba(0, 168, 150, 0.07);
+  color: #ffffff;
+  transform: translateX(2px);
+}
+
+.navGlyph {
+  transition:
+    border-color var(--motion-stroke),
+    box-shadow var(--motion-stroke),
+    color var(--motion-stroke),
+    transform var(--motion-stroke);
+}
+
+.content {
+  animation: boraCurrentIn 420ms var(--ease-current) both;
+}
+
+@keyframes boraCurrentIn {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (max-width: 900px) {
+  .sidebar::after {
+    display: none;
+  }
+}
