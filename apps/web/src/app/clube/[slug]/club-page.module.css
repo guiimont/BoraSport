@@ -1976,6 +1976,48 @@ a.avatar {
   gap: 12px;
 }
 
+.publicWeekAgenda {
+  display: grid;
+  gap: 12px;
+}
+
+.publicAgendaDay {
+  background: rgba(8, 25, 43, 0.42);
+  border: 1px solid rgba(212, 175, 55, 0.12);
+  border-radius: 17px;
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+}
+
+.publicAgendaDayHeader {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  padding: 2px 3px;
+}
+
+.publicAgendaDayHeader h3 {
+  color: #fff;
+  font-size: 0.98rem;
+  margin: 0;
+  text-transform: capitalize;
+}
+
+.publicAgendaDayHeader span {
+  color: rgba(238, 248, 247, 0.52);
+  font-size: 0.7rem;
+}
+
+.publicAgendaDayEmpty {
+  border-top: 1px dashed rgba(184, 198, 205, 0.12);
+  color: rgba(238, 248, 247, 0.42);
+  font-size: 0.76rem;
+  margin: 0;
+  padding: 14px 3px 3px;
+}
+
 .publicTrainingCard {
   background: rgba(15, 32, 56, 0.78);
   border: 1px solid rgba(212, 175, 55, 0.18);
@@ -2261,6 +2303,16 @@ a.avatar {
     gap: 10px;
     grid-template-columns: 72px minmax(0, 1fr);
     padding: 12px;
+  }
+
+  .publicAgendaDay {
+    padding: 9px;
+  }
+
+  .publicAgendaDayHeader {
+    align-items: start;
+    flex-direction: column;
+    gap: 3px;
   }
 
   .publicTrainingCard > summary > time {
