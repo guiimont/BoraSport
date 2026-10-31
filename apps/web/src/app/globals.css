@@ -272,3 +272,18 @@ dd { font-weight: 800; margin: 4px 0 0; }
   .timeLockup span { font-size: 3.8rem; }
   .floatingAction { bottom: 16px; left: 16px; right: 16px; width: auto; }
 }
+
+
+/* BoraSport motion system */
+:root {
+  --ease-current: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-stroke: cubic-bezier(0.34, 1.2, 0.64, 1);
+  --motion-current: 360ms var(--ease-current);
+  --motion-stroke: 220ms var(--ease-stroke);
+  --motion-tide: 520ms var(--ease-current);
+}
+
+::selection {
+  background: color-mix(in srgb, var(--accent-lagoon) 34%, transparent);
+  color: var(--color-ocean-950);
+}
