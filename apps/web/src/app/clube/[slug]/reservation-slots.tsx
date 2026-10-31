@@ -205,15 +205,16 @@ export function ReservationSlots({
               const price = formatCurrency(slot.services?.price);
 
               return (
-                <article className={styles.publicCanoeCard} key={slot.id}>
-                  <div className={styles.publicCanoeSummary}>
+                <details className={styles.publicCanoeCard} key={slot.id}>
+                  <summary className={styles.publicCanoeSummary}>
                     <span className={styles.publicCanoeTag}>Canoa</span>
                     <h3>{slot.resources?.name || "A definir"}</h3>
                     <div className={styles.publicCanoeNumbers}>
                       <span><strong>{slot.spots_occupied}</strong> confirmados</span>
                       <span data-full={isFull}><strong>{remaining}</strong> vagas</span>
                     </div>
-                  </div>
+                    <small>Ver detalhes e reservar ↓</small>
+                  </summary>
 
                   <div className={styles.publicCanoeExpanded}>
                     <div className={styles.publicCanoeMeta}>
@@ -245,7 +246,7 @@ export function ReservationSlots({
                       </p>
                     ) : null}
                   </div>
-                </article>
+                </details>
               );
             })}
             </div>

@@ -482,7 +482,6 @@ export function ClubTabs({
   const [activeTab, setActiveTab] = useState<TabId>("agenda");
   const tabs = experience.tabs;
   const activeTabMeta = tabs.find((tab) => tab.id === activeTab) || tabs[0];
-  const nextSlot = slots[0];
 
   return (
     <section className={styles.content}>
@@ -506,28 +505,6 @@ export function ClubTabs({
           })}
         </div>
       </div>
-
-      {nextSlot ? (
-        <button
-          className={styles.nextTrainingStrip}
-          onClick={() => setActiveTab("agenda")}
-          type="button"
-        >
-          <span>
-            <small>Próximo treino</small>
-            <strong>{nextSlot.services?.name || vocabulary.service_label}</strong>
-          </span>
-          <span>
-            <small>Quando</small>
-            <strong>{dayKey(nextSlot.start_time)} · {formatTime(nextSlot.start_time)}</strong>
-          </span>
-          <span>
-            <small>Canoa</small>
-            <strong>{nextSlot.resources?.name || "A definir"}</strong>
-          </span>
-          <em>Ver na agenda →</em>
-        </button>
-      ) : null}
 
       <div className={styles.intro}>
         <p className={styles.introLabel}>{activeTabMeta.label}</p>
@@ -762,10 +739,12 @@ function AgendaPanel({
     <div>
       <div className={styles.agendaHeader}>
         <div>
-          <p className={styles.introLabel}>{hasTodaySlots ? "Hoje no clube" : "Próximo dia com treino"}</p>
+          <p className={styles.introLabel}>{hasTodaySlots ? "Agenda de hoje" : "Próximo treino"}</p>
           <h2 className={styles.sectionTitle}>{selectedLabel}</h2>
         </div>
-        <p className={styles.muted}>{daySlots.length} canoas disponíveis</p>
+        <p className={styles.muted}>
+          {new Set(daySlots.map((slot) => formatTime(slot.start_time))).size} horários · {daySlots.length} canoas
+        </p>
       </div>
 
       <ReservationSlots

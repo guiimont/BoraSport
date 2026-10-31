@@ -9,6 +9,7 @@
   width: 100%;
 }
 
+
 .publicAgenda {
   display: grid;
   gap: 14px;
@@ -1896,5 +1897,399 @@ a.avatar {
 
   .windyFrame {
     height: 430px;
+  }
+}
+/* Public club home: one task at a time. The ALV agenda is the primary layer;
+   canoe details are disclosed only after the athlete opens a training. */
+.heroInner {
+  grid-template-columns: minmax(0, 1fr);
+  padding-bottom: clamp(30px, 4vw, 48px);
+  padding-top: clamp(38px, 6vw, 68px);
+}
+
+.heroInner > div {
+  max-width: 780px;
+}
+
+.content {
+  padding-top: 0;
+}
+
+.tabsBar {
+  backdrop-filter: none;
+  background: transparent;
+  border: 0;
+  margin: 0;
+  padding: 14px 0 4px;
+  position: static;
+}
+
+.tabsScroller {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 0 0 6px;
+  scrollbar-width: none;
+}
+
+.tabsScroller::-webkit-scrollbar {
+  display: none;
+}
+
+.tabButton {
+  border-radius: 999px;
+  flex: 0 0 auto;
+  font-size: 0.78rem;
+  min-height: 36px;
+  min-width: 108px;
+  padding: 0 14px;
+}
+
+.intro {
+  margin: 22px 0 16px;
+}
+
+.agendaHeader {
+  align-items: end;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.14);
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+}
+
+.agendaHeader .sectionTitle {
+  margin-top: 5px;
+  text-transform: capitalize;
+}
+
+.agendaHeader .muted {
+  font-size: 0.78rem;
+  margin: 0 0 3px;
+  white-space: nowrap;
+}
+
+.publicDayAgenda {
+  display: grid;
+  gap: 12px;
+}
+
+.publicTrainingCard {
+  background: rgba(15, 32, 56, 0.78);
+  border: 1px solid rgba(212, 175, 55, 0.18);
+  border-left: 3px solid var(--accent-lagoon);
+  border-radius: 16px;
+  box-shadow: none;
+  overflow: hidden;
+}
+
+.publicTrainingCard[open] {
+  background: rgba(15, 32, 56, 0.92);
+  border-color: rgba(0, 201, 181, 0.36);
+}
+
+.publicTrainingCard > summary {
+  align-items: center;
+  cursor: pointer;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 84px minmax(220px, 1fr) auto auto;
+  list-style: none;
+  padding: 16px;
+}
+
+.publicTrainingCard > summary::-webkit-details-marker,
+.publicCanoeCard > summary::-webkit-details-marker {
+  display: none;
+}
+
+.publicTrainingCard > summary > time {
+  align-items: center;
+  background: rgba(0, 168, 150, 0.11);
+  border: 1px solid rgba(0, 201, 181, 0.25);
+  border-radius: 12px;
+  color: var(--color-sea-300);
+  display: flex;
+  font-size: 1.35rem;
+  font-weight: 950;
+  justify-content: center;
+  min-height: 56px;
+  min-width: 0;
+}
+
+.publicTrainingIdentity {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.publicTrainingIdentity > span,
+.publicCanoeTag,
+.publicTrainingExpanded > header span {
+  color: var(--color-star-400);
+  font-size: 0.62rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.publicTrainingIdentity h3 {
+  color: #fff;
+  font-size: clamp(1.05rem, 2vw, 1.35rem);
+  line-height: 1.15;
+  margin: 0;
+}
+
+.publicTrainingIdentity p {
+  color: rgba(238, 248, 247, 0.56);
+  font-size: 0.74rem;
+  margin: 0;
+}
+
+.publicTrainingNumbers {
+  display: flex;
+  gap: 7px;
+}
+
+.publicTrainingNumbers span {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(184, 198, 205, 0.11);
+  border-radius: 999px;
+  color: rgba(238, 248, 247, 0.6);
+  font-size: 0.68rem;
+  padding: 7px 9px;
+  white-space: nowrap;
+}
+
+.publicTrainingNumbers strong {
+  color: #fff;
+  margin-right: 3px;
+}
+
+.publicTrainingCard > summary > em {
+  color: var(--color-sea-300);
+  font-size: 0.7rem;
+  font-style: normal;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.publicTrainingExpanded {
+  border-top: 1px solid rgba(212, 175, 55, 0.12);
+  display: grid;
+  gap: 12px;
+  padding: 14px 14px 12px;
+}
+
+.publicTrainingExpanded > header {
+  align-items: end;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.publicTrainingExpanded > header > div {
+  display: grid;
+  gap: 3px;
+}
+
+.publicTrainingExpanded > header strong {
+  color: #fff;
+  font-size: 0.8rem;
+}
+
+.publicTrainingExpanded > header small {
+  color: rgba(238, 248, 247, 0.48);
+  font-size: 0.66rem;
+}
+
+.publicCanoeRail {
+  display: grid;
+  gap: 10px;
+  grid-auto-columns: minmax(248px, 310px);
+  grid-auto-flow: column;
+  min-width: 0;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  padding: 1px 1px 8px;
+  scroll-snap-type: x mandatory;
+  scrollbar-color: rgba(0, 168, 150, 0.32) transparent;
+}
+
+.publicCanoeCard {
+  align-self: start;
+  background: rgba(7, 26, 44, 0.76);
+  border: 1px solid rgba(0, 168, 150, 0.2);
+  border-radius: 14px;
+  min-width: 0;
+  overflow: hidden;
+  scroll-snap-align: start;
+}
+
+.publicCanoeCard[open] {
+  border-color: rgba(0, 201, 181, 0.44);
+}
+
+.publicCanoeSummary {
+  cursor: pointer;
+  display: grid;
+  gap: 7px;
+  list-style: none;
+  padding: 13px;
+}
+
+.publicCanoeSummary h3 {
+  color: #fff;
+  font-size: 1.08rem;
+  margin: 0;
+}
+
+.publicCanoeNumbers {
+  border-top: 1px solid rgba(212, 175, 55, 0.1);
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding-top: 8px;
+}
+
+.publicCanoeNumbers span {
+  color: rgba(238, 248, 247, 0.56);
+  font-size: 0.66rem;
+}
+
+.publicCanoeNumbers strong {
+  color: #fff;
+  font-size: 0.82rem;
+}
+
+.publicCanoeSummary small {
+  color: var(--color-sea-300);
+  font-size: 0.66rem;
+  font-weight: 900;
+}
+
+.publicCanoeExpanded {
+  border-top: 1px solid rgba(212, 175, 55, 0.12);
+  display: grid;
+  gap: 10px;
+  padding: 11px;
+}
+
+.publicCanoeMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.publicCanoeMeta span {
+  background: rgba(255, 255, 255, 0.045);
+  border-radius: 999px;
+  color: rgba(238, 248, 247, 0.62);
+  font-size: 0.62rem;
+  padding: 5px 7px;
+}
+
+.publicCanoeExpanded .participantsSummary {
+  gap: 8px;
+  grid-template-columns: minmax(0, 1fr);
+  padding: 10px;
+}
+
+.publicCanoeExpanded .participantsSummaryActions {
+  justify-content: space-between;
+}
+
+.publicCanoeExpanded .slotAction {
+  align-items: stretch;
+  padding: 0;
+}
+
+.publicCanoeExpanded .reserveButton {
+  font-size: 0.74rem;
+  min-height: 40px;
+  width: 100%;
+}
+
+@media (max-width: 720px) {
+  .heroInner {
+    padding-bottom: 26px;
+    padding-top: 32px;
+  }
+
+  .title {
+    font-size: clamp(2.55rem, 14vw, 3.8rem);
+  }
+
+  .contextNav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .contextNav > :first-child {
+    grid-column: 1 / -1;
+  }
+
+  .tabsBar {
+    margin: 0;
+    padding: 10px 0 2px;
+  }
+
+  .tabsScroller {
+    display: flex;
+    margin-right: calc(var(--space-4) * -1);
+  }
+
+  .tabButton {
+    font-size: 0.72rem;
+    min-height: 34px;
+    min-width: 92px;
+    padding: 0 12px;
+  }
+
+  .agendaHeader {
+    align-items: start;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .agendaHeader .muted {
+    margin: 0;
+  }
+
+  .publicTrainingCard > summary {
+    gap: 10px;
+    grid-template-columns: 72px minmax(0, 1fr);
+    padding: 12px;
+  }
+
+  .publicTrainingCard > summary > time {
+    font-size: 1.12rem;
+    min-height: 50px;
+  }
+
+  .publicTrainingNumbers,
+  .publicTrainingCard > summary > em {
+    grid-column: 1 / -1;
+  }
+
+  .publicTrainingCard > summary > em {
+    border-top: 1px solid rgba(212, 175, 55, 0.1);
+    padding-top: 9px;
+  }
+
+  .publicTrainingExpanded {
+    padding: 10px;
+  }
+
+  .publicTrainingExpanded > header {
+    align-items: start;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .publicCanoeRail {
+    grid-auto-columns: minmax(78vw, 86vw);
+    margin-right: -10px;
   }
 }
