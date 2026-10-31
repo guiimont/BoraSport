@@ -5232,6 +5232,7 @@
   background: linear-gradient(90deg, transparent, rgba(95, 224, 209, 0.11), transparent);
   content: "";
   inset: 0;
+  pointer-events: none;
   position: absolute;
   transform: translateX(-115%);
   transition: transform var(--motion-current);
