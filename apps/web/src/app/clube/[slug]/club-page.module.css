@@ -9,6 +9,255 @@
   width: 100%;
 }
 
+.publicAgenda {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+.publicAgendaNav {
+  align-items: center;
+  background: rgba(15, 32, 56, 0.72);
+  border: 1px solid rgba(212, 175, 55, 0.16);
+  border-radius: 16px;
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+  padding: 13px 15px;
+}
+
+.publicAgendaNav > div {
+  display: grid;
+  gap: 3px;
+}
+
+.publicAgendaNav > div span {
+  color: var(--color-star-400);
+  font-size: 0.68rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.publicAgendaNav > div strong {
+  color: #fff;
+  font-size: 1rem;
+}
+
+.publicAgendaNav nav {
+  display: flex;
+  gap: 7px;
+}
+
+.publicAgendaNav button {
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(184, 198, 205, 0.16);
+  border-radius: 10px;
+  color: rgba(238, 248, 247, 0.82);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 850;
+  min-height: 38px;
+  padding: 0 11px;
+}
+
+.publicAgendaNav button:hover {
+  background: rgba(0, 168, 150, 0.1);
+  border-color: rgba(0, 168, 150, 0.38);
+  color: #fff;
+}
+
+.publicWeekBoard {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(7, minmax(150px, 1fr));
+  min-width: 0;
+  overflow-x: auto;
+  padding-bottom: 7px;
+  scroll-snap-type: x proximity;
+}
+
+.publicDayColumn {
+  background: linear-gradient(180deg, rgba(15, 32, 56, 0.9), rgba(9, 24, 45, 0.96));
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  border-radius: 17px;
+  min-height: 430px;
+  overflow: hidden;
+  scroll-snap-align: start;
+}
+
+.publicDayColumn > header {
+  align-items: center;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.12);
+  display: flex;
+  justify-content: space-between;
+  padding: 13px;
+  text-transform: capitalize;
+}
+
+.publicDayColumn > header span {
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 900;
+}
+
+.publicDayColumn > header strong {
+  color: rgba(238, 248, 247, 0.58);
+  font-size: 0.78rem;
+}
+
+.publicDayBody {
+  display: grid;
+  gap: 9px;
+  padding: 9px;
+}
+
+.publicSlotCard {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(0, 168, 150, 0.18);
+  border-left: 3px solid var(--accent-lagoon);
+  border-radius: 13px;
+  overflow: hidden;
+}
+
+.publicSlotCard summary {
+  cursor: pointer;
+  display: grid;
+  gap: 7px;
+  list-style: none;
+  padding: 11px;
+}
+
+.publicSlotCard summary::-webkit-details-marker { display: none; }
+
+.publicSlotCard[open] {
+  background: rgba(0, 168, 150, 0.055);
+  border-color: rgba(0, 201, 181, 0.42);
+}
+
+.publicSlotTime,
+.publicSlotCapacity {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.publicSlotTime strong {
+  color: var(--color-sea-300);
+  font-size: 1.18rem;
+}
+
+.publicSlotTime span {
+  color: rgba(238, 248, 247, 0.5);
+  font-size: 0.68rem;
+}
+
+.publicSlotCard h3 {
+  color: #fff;
+  font-size: 0.9rem;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.publicSlotCard summary > p {
+  color: rgba(238, 248, 247, 0.6);
+  font-size: 0.72rem;
+  margin: 0;
+}
+
+.publicSlotCapacity {
+  border-top: 1px solid rgba(212, 175, 55, 0.1);
+  color: rgba(238, 248, 247, 0.66);
+  font-size: 0.65rem;
+  gap: 6px;
+  padding-top: 7px;
+}
+
+.publicSlotCapacity span[data-full="true"] { color: #ffb8a0; }
+
+.publicSlotCard summary small {
+  color: var(--color-sea-300);
+  font-size: 0.64rem;
+  font-weight: 900;
+}
+
+.publicSlotExpanded {
+  border-top: 1px solid rgba(212, 175, 55, 0.12);
+  display: grid;
+  gap: 10px;
+  padding: 10px;
+}
+
+.publicSlotMeta {
+  display: grid;
+  gap: 2px;
+}
+
+.publicSlotMeta span,
+.publicSlotMeta em {
+  color: rgba(238, 248, 247, 0.48);
+  font-size: 0.66rem;
+  font-style: normal;
+}
+
+.publicSlotMeta strong {
+  color: #fff;
+  font-size: 0.76rem;
+}
+
+.publicSlotExpanded .slotAction {
+  align-items: stretch;
+  padding: 0;
+}
+
+.publicSlotExpanded .reserveButton {
+  font-size: 0.76rem;
+  min-height: 40px;
+  width: 100%;
+}
+
+.publicBookingStatus {
+  color: rgba(238, 248, 247, 0.72);
+  font-size: 0.7rem;
+  margin: 0;
+}
+
+.publicDayEmpty {
+  display: grid;
+  gap: 5px;
+  padding: 12px 4px;
+}
+
+.publicDayEmpty strong {
+  color: rgba(238, 248, 247, 0.7);
+  font-size: 0.8rem;
+}
+
+.publicDayEmpty span {
+  color: rgba(238, 248, 247, 0.42);
+  font-size: 0.7rem;
+}
+
+@media (max-width: 900px) {
+  .publicAgendaNav {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .publicAgendaNav nav {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .publicAgendaNav button { padding: 0 6px; }
+
+  .publicWeekBoard {
+    grid-template-columns: repeat(7, minmax(78vw, 1fr));
+  }
+
+  .publicDayColumn { min-height: 390px; }
+}
+
 .page *,
 .page *::before,
 .page *::after {

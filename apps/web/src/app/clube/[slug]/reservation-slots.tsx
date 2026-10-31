@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useMemo, useState } from "react";
 import { useFormStatus } from "react-dom";
 import type { ActivityExperience } from "../../../lib/saas/activity-presets";
 import type {
@@ -132,16 +132,6 @@ function formatTime(value: string) {
   }).format(new Date(value));
 }
 
-function formatDayHeading(value: string) {
-  const label = new Intl.DateTimeFormat("pt-BR", {
-    weekday: "long",
-    day: "2-digit",
-    month: "long",
-  }).format(new Date(value));
-
-  return label.charAt(0).toUpperCase() + label.slice(1);
-}
-
 function dayKey(value: string) {
   return new Intl.DateTimeFormat("en-CA", {
     day: "2-digit",
@@ -150,6 +140,39 @@ function dayKey(value: string) {
     year: "numeric",
   }).format(new Date(value));
 }
+
+function addDays(date: Date, days: number) {
+  const next = new Date(date);
+  next.setDate(next.getDate() + days);
+  return next;
+}
+
+function parseDateKey(value: string) {
+  return new Date(`${value}T12:00:00-03:00`);
+}
+
+function weekStartKey(value: string) {
+  const local = parseDateKey(dayKey(value));
+  const weekday = local.getDay();
+  local.setDate(local.getDate() + (weekday === 0 ? -6 : 1 - weekday));
+  return dayKey(local.toISOString());
+}
+
+function formatWeekRange(startKey: string) {
+  const start = parseDateKey(startKey);
+  const end = addDays(start, 6);
+  const formatter = new Intl.DateTimeFormat("pt-BR", {
+    day: "numeric",
+    month: "long",
+    timeZone: "America/Sao_Paulo",
+  });
+  return `${formatter.format(start)} a ${formatter.format(end)}`;
+}
+
+const weekdayFormatter = new Intl.DateTimeFormat("pt-BR", {
+  timeZone: "America/Sao_Paulo",
+  weekday: "long",
+});
 
 function formatCurrency(value?: number | string | null) {
   if (value === null || value === undefined) {
@@ -168,22 +191,6 @@ function formatCurrency(value?: number | string | null) {
   }).format(amount);
 }
 
-function groupSlotsByDay(slots: CompanySlot[]) {
-  const grouped = new Map<string, { heading: string; slots: CompanySlot[] }>();
-
-  for (const slot of slots) {
-    const key = dayKey(slot.start_time);
-    const current = grouped.get(key) || {
-      heading: formatDayHeading(slot.start_time),
-      slots: [],
-    };
-    current.slots.push(slot);
-    grouped.set(key, current);
-  }
-
-  return Array.from(grouped.values());
-}
-
 export function ReservationSlots({
   companyId,
   currentUserBookings,
@@ -196,6 +203,25 @@ export function ReservationSlots({
   const bookingsBySlot = new Map(
     currentUserBookings.map((booking) => [booking.slot_id, booking]),
   );
+  const firstWeekKey = slots[0]
+    ? weekStartKey(slots[0].start_time)
+    : weekStartKey(new Date().toISOString());
+  const [selectedWeekKey, setSelectedWeekKey] = useState(firstWeekKey);
+  const weekDays = useMemo(() => {
+    const start = parseDateKey(selectedWeekKey);
+    return Array.from({ length: 7 }, (_, index) => {
+      const date = addDays(start, index);
+      return { date, key: dayKey(date.toISOString()) };
+    });
+  }, [selectedWeekKey]);
+  const slotsByDay = useMemo(() => {
+    const grouped = new Map<string, CompanySlot[]>();
+    for (const slot of slots) {
+      const key = dayKey(slot.start_time);
+      grouped.set(key, [...(grouped.get(key) || []), slot]);
+    }
+    return grouped;
+  }, [slots]);
 
   if (slots.length === 0) {
     return (
@@ -206,16 +232,52 @@ export function ReservationSlots({
     );
   }
 
-  const slotsByDay = groupSlotsByDay(slots);
-
   return (
-    <div className={styles.scheduleDays}>
-      {slotsByDay.map((day) => (
-        <section className={styles.scheduleDay} key={day.heading}>
-          <h3 className={styles.dayHeading}>{day.heading}</h3>
+    <div className={styles.publicAgenda}>
+      <div className={styles.publicAgendaNav}>
+        <div>
+          <span>Semana</span>
+          <strong>{formatWeekRange(selectedWeekKey)}</strong>
+        </div>
+        <nav aria-label="Navegação da agenda">
+          <button
+            onClick={() =>
+              setSelectedWeekKey(
+                dayKey(addDays(parseDateKey(selectedWeekKey), -7).toISOString()),
+              )
+            }
+            type="button"
+          >
+            ← Anterior
+          </button>
+          <button onClick={() => setSelectedWeekKey(firstWeekKey)} type="button">
+            Próximos treinos
+          </button>
+          <button
+            onClick={() =>
+              setSelectedWeekKey(
+                dayKey(addDays(parseDateKey(selectedWeekKey), 7).toISOString()),
+              )
+            }
+            type="button"
+          >
+            Próxima →
+          </button>
+        </nav>
+      </div>
 
-          <div className={styles.slotList}>
-            {day.slots.map((slot) => {
+      <div className={styles.publicWeekBoard}>
+        {weekDays.map(({ date, key }) => {
+          const daySlots = slotsByDay.get(key) || [];
+
+          return (
+            <section className={styles.publicDayColumn} key={key}>
+              <header>
+                <span>{weekdayFormatter.format(date).replace("-feira", "")}</span>
+                <strong>{date.getDate().toString().padStart(2, "0")}</strong>
+              </header>
+              <div className={styles.publicDayBody}>
+                {daySlots.length ? daySlots.map((slot) => {
               const remaining = Math.max(
                 0,
                 Number(slot.spots_total || 0) - Number(slot.spots_occupied || 0),
@@ -239,85 +301,64 @@ export function ReservationSlots({
                       remaining === 1 ? "vaga restante" : "vagas restantes"
                     }`;
 
-              return (
-                <article className={styles.slotCard} key={slot.id}>
-                  <div className={styles.slotMain}>
-                    <div className={styles.slotIdentity}>
-                      <time className={styles.slotTime} dateTime={slot.start_time}>
-                        {formatTime(slot.start_time)}
-                      </time>
-
-                      <div className={styles.slotHeading}>
-                        <h4 className={styles.slotTitle}>
-                          {slot.services?.name || vocabulary.service_label}
-                        </h4>
-                        <p className={styles.slotMeta}>
-                          {vocabulary.resource_label}:{" "}
-                          <strong>{slot.resources?.name || "A definir"}</strong>
-                        </p>
-                        <p className={styles.slotMeta}>
-                          Base: <strong>{slot.company_locations?.name || "A definir"}</strong>
-                        </p>
-                        {slot.company_locations?.address ? (
-                          <p className={styles.slotMeta}>{slot.company_locations.address}</p>
+                  return (
+                    <details className={styles.publicSlotCard} key={slot.id}>
+                      <summary>
+                        <div className={styles.publicSlotTime}>
+                          <strong>{formatTime(slot.start_time)}</strong>
+                          <span>{slot.services?.duration_minutes || "--"} min</span>
+                        </div>
+                        <h3>{slot.services?.name || vocabulary.service_label}</h3>
+                        <p>{slot.resources?.name || "Canoa a definir"}</p>
+                        <div className={styles.publicSlotCapacity}>
+                          <span>{occupied}/{slot.spots_total} confirmados</span>
+                          <span data-full={isFull}>{remainingLabel}</span>
+                        </div>
+                        <small>Abrir canoa e participantes</small>
+                      </summary>
+                      <div className={styles.publicSlotExpanded}>
+                        <div className={styles.publicSlotMeta}>
+                          <span>Base</span>
+                          <strong>{slot.company_locations?.name || "A definir"}</strong>
+                          {price ? <em>{price}</em> : null}
+                        </div>
+                        <ConfirmedParticipantsComposition
+                          capacity={slot.spots_total}
+                          participantLabel={experience.participantLabel}
+                          participants={participants}
+                        />
+                        <ReservationActionForm
+                          companyId={companyId}
+                          isFull={isFull}
+                          isWaitlisted={isWaitlistedByCurrentUser}
+                          mode={currentUserBooking ? "cancel" : "reserve"}
+                          slug={slug}
+                          slotId={slot.id}
+                          vocabulary={vocabulary}
+                          waitlistPosition={currentUserBooking?.waitlist_position}
+                        />
+                        {isConfirmedByCurrentUser ? (
+                          <p className={styles.publicBookingStatus}>Sua vaga está confirmada.</p>
+                        ) : null}
+                        {isWaitlistedByCurrentUser ? (
+                          <p className={styles.publicBookingStatus}>
+                            Você está na posição {currentUserBooking.waitlist_position ?? "--"} da fila.
+                          </p>
                         ) : null}
                       </div>
-                    </div>
-
-                    <div className={styles.slotSummary}>
-                      <span className={styles.capacityPill}>
-                        {occupied}/{slot.spots_total} confirmados
-                      </span>
-                      <span
-                        className={`${styles.capacityPill} ${
-                          isFull ? styles.capacityPillFull : ""
-                        }`}
-                      >
-                        {remainingLabel}
-                      </span>
-                      <span className={styles.durationText}>
-                        {slot.services?.duration_minutes || "--"} min
-                        {price ? ` · ${price}` : ""}
-                      </span>
-                    </div>
+                    </details>
+                  );
+                }) : (
+                  <div className={styles.publicDayEmpty}>
+                    <strong>Dia livre</strong>
+                    <span>Nenhum treino publicado.</span>
                   </div>
-
-                  <div className={styles.participantsBlock}>
-                    <ConfirmedParticipantsComposition
-                      capacity={slot.spots_total}
-                      participantLabel={experience.participantLabel}
-                      participants={participants}
-                    />
-                  </div>
-
-                  <ReservationActionForm
-                    companyId={companyId}
-                    isFull={isFull}
-                    isWaitlisted={isWaitlistedByCurrentUser}
-                    mode={currentUserBooking ? "cancel" : "reserve"}
-                    slug={slug}
-                    slotId={slot.id}
-                    vocabulary={vocabulary}
-                    waitlistPosition={currentUserBooking?.waitlist_position}
-                  />
-                  {isConfirmedByCurrentUser ? (
-                    <p className={styles.bookingStatus}>
-                      Sua vaga está confirmada.
-                    </p>
-                  ) : null}
-                  {isWaitlistedByCurrentUser ? (
-                    <p className={styles.bookingStatus}>
-                      Você está na posição {currentUserBooking.waitlist_position ?? "--"}{" "}
-                      da lista. Se uma vaga abrir, sua reserva será confirmada
-                      automaticamente.
-                    </p>
-                  ) : null}
-                </article>
-              );
-            })}
-          </div>
-        </section>
-      ))}
+                )}
+              </div>
+            </section>
+          );
+        })}
+      </div>
     </div>
   );
 }
