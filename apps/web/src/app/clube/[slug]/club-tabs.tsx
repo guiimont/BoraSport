@@ -482,6 +482,7 @@ export function ClubTabs({
   const [activeTab, setActiveTab] = useState<TabId>("agenda");
   const tabs = experience.tabs;
   const activeTabMeta = tabs.find((tab) => tab.id === activeTab) || tabs[0];
+  const nextSlot = slots[0];
 
   return (
     <section className={styles.content}>
@@ -505,6 +506,28 @@ export function ClubTabs({
           })}
         </div>
       </div>
+
+      {nextSlot ? (
+        <button
+          className={styles.nextTrainingStrip}
+          onClick={() => setActiveTab("agenda")}
+          type="button"
+        >
+          <span>
+            <small>Próximo treino</small>
+            <strong>{nextSlot.services?.name || vocabulary.service_label}</strong>
+          </span>
+          <span>
+            <small>Quando</small>
+            <strong>{dayKey(nextSlot.start_time)} · {formatTime(nextSlot.start_time)}</strong>
+          </span>
+          <span>
+            <small>Canoa</small>
+            <strong>{nextSlot.resources?.name || "A definir"}</strong>
+          </span>
+          <em>Ver na agenda →</em>
+        </button>
+      ) : null}
 
       <div className={styles.intro}>
         <p className={styles.introLabel}>{activeTabMeta.label}</p>
@@ -712,13 +735,37 @@ function AgendaPanel({
   slots: CompanySlot[];
   vocabulary: Required<VocabularyConfig>;
 }) {
+  const saoPauloKey = (value: Date | string) =>
+    new Intl.DateTimeFormat("en-CA", {
+      day: "2-digit",
+      month: "2-digit",
+      timeZone: "America/Sao_Paulo",
+      year: "numeric",
+    }).format(typeof value === "string" ? new Date(value) : value);
+  const todayKey = saoPauloKey(new Date());
+  const hasTodaySlots = slots.some((slot) => saoPauloKey(slot.start_time) === todayKey);
+  const selectedKey = hasTodaySlots
+    ? todayKey
+    : slots[0]
+      ? saoPauloKey(slots[0].start_time)
+      : todayKey;
+  const daySlots = slots.filter((slot) => saoPauloKey(slot.start_time) === selectedKey);
+  const selectedDate = new Date(`${selectedKey}T12:00:00-03:00`);
+  const selectedLabel = new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "long",
+    timeZone: "America/Sao_Paulo",
+    weekday: "long",
+  }).format(selectedDate);
+
   return (
     <div>
       <div className={styles.agendaHeader}>
-        <h2 className={styles.sectionTitle}>
-          {vocabulary.service_label}s disponíveis
-        </h2>
-        <p className={styles.muted}>{slots.length} horários publicados</p>
+        <div>
+          <p className={styles.introLabel}>{hasTodaySlots ? "Hoje no clube" : "Próximo dia com treino"}</p>
+          <h2 className={styles.sectionTitle}>{selectedLabel}</h2>
+        </div>
+        <p className={styles.muted}>{daySlots.length} canoas disponíveis</p>
       </div>
 
       <ReservationSlots
@@ -727,7 +774,7 @@ function AgendaPanel({
         experience={experience}
         participantsBySlot={participantsBySlot}
         slug={slug}
-        slots={slots}
+        slots={daySlots}
         vocabulary={vocabulary}
       />
     </div>
