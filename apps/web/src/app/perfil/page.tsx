@@ -9,6 +9,7 @@ import {
   getCurrentUserMemberships,
 } from "../../lib/saas/queries";
 import { getGarminIntegrationStatus } from "../../lib/integrations/garmin";
+import { createClient } from "../../lib/saas/supabase-server";
 import { ActionLink, Alert, MemberShell } from "../../components/ui";
 import { ProfileForm } from "./profile-form";
 import { PrivacySettingsForm } from "./privacy-settings-form";
@@ -39,7 +40,7 @@ function formatDuration(totalSeconds: number | null) {
     : `${minutes}min`;
 }
 
-export default async function ProfilePage() {
+export default async function ProfilePage({ searchParams }: { searchParams: Promise<{ garmin?: string }> }) {
   const user = await getCurrentUser();
 
   if (!user) {
@@ -60,6 +61,14 @@ export default async function ProfilePage() {
     getCurrentAthletePrivacySettings(),
   ]);
   const latestBodyMeasurement = bodyMeasurements[0] ?? null;
+  const supabase = await createClient();
+  const { data: garminConnection } = await supabase
+    .from("athlete_provider_connections")
+    .select("status, connected_at")
+    .eq("user_id", user.id)
+    .eq("provider", "garmin")
+    .maybeSingle();
+  const garminResult = (await searchParams).garmin;
   const primaryCompany = memberships[0]?.companies ?? null;
   const companiesById = new Map(
     memberships.flatMap((membership) =>
@@ -85,11 +94,11 @@ export default async function ProfilePage() {
     !latestBodyMeasurement;
   const garminStatus = getGarminIntegrationStatus();
   const garminLabel =
-    garminStatus === "ready" ? "Disponível" : "Em homologação";
+    garminConnection?.status === "connected" ? "Conectado" : garminStatus === "ready" ? "Disponível" : "Configuração pendente";
   const garminDescription =
-    garminStatus === "ready"
-      ? "Integração aprovada e pronta para conexão"
-      : "Solicitação enviada à Garmin em 09/09/2026";
+    garminConnection?.status === "connected"
+      ? "Suas próximas atividades poderão ser sincronizadas"
+      : garminStatus === "ready" ? "Conecte sua conta com autorização segura da Garmin" : "Credenciais ainda não disponíveis neste ambiente";
 
   return (
     <MemberShell
@@ -250,12 +259,21 @@ export default async function ProfilePage() {
           <section className={styles.card}>
             <p className={styles.eyebrow}>Dispositivos & Aplicativos</p>
             <h3>Conexões de atividade</h3>
+            {garminResult === "connected" ? <Alert tone="success">Garmin conectada com sucesso.</Alert> : null}
+            {garminResult && ["connection-error", "configuration-error", "invalid-state", "session-expired"].includes(garminResult) ? <Alert tone="warning">Não foi possível concluir a conexão. Tente novamente.</Alert> : null}
             <ul className={styles.connectionList}>
               <li><div><strong>FIT, GPX e TCX</strong><span>Importação direta em Hoe</span></div><em data-active="true">Ativo</em></li>
-              <li><div><strong>Garmin</strong><span>{garminDescription}</span></div><em data-active={garminStatus === "ready"}>{garminLabel}</em></li>
+              <li><div><strong>Garmin</strong><span>{garminDescription}</span></div><em data-active={garminConnection?.status === "connected"}>{garminLabel}</em></li>
               <li><div><strong>Strava</strong><span>Conexão oficial ainda não autorizada</span></div><em>Não conectado</em></li>
             </ul>
-            <p className={styles.cardText}>A conexão Garmin será liberada assim que a homologação e as credenciais oficiais forem concluídas.</p>
+            {garminConnection?.status === "connected" ? (
+              <form action="/api/integrations/garmin/disconnect" method="post" className={styles.connectionAction}>
+                <button type="submit" className={styles.disconnectButton}>Desconectar Garmin</button>
+              </form>
+            ) : garminStatus === "ready" ? (
+              <div className={styles.connectionAction}><ActionLink href="/api/integrations/garmin/connect">Conectar Garmin</ActionLink></div>
+            ) : null}
+            <p className={styles.cardText}>A conexão é opcional. Seus tokens ficam criptografados e você pode retirar a autorização quando quiser.</p>
           </section>
 
           <section className={styles.card}>
