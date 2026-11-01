@@ -4,6 +4,31 @@ import { NextResponse } from "next/server";
 
 type GarminRecord = Record<string, unknown>;
 
+const paddlingActivityTypes = [
+  "CANOE",
+  "CANOEING",
+  "DRAGON_BOAT",
+  "KAYAK",
+  "KAYAKING",
+  "OUTRIGGER",
+  "OUTRIGGER_CANOE",
+  "PADDLING",
+  "ROWING",
+  "STAND_UP_PADDLEBOARDING",
+  "SUP",
+];
+
+function isPaddlingActivity(activity: GarminRecord) {
+  const activityType = String(activity.activityType || "")
+    .trim()
+    .toUpperCase()
+    .replace(/[\s-]+/g, "_");
+
+  return paddlingActivityTypes.some(
+    (allowedType) => activityType === allowedType || activityType.includes(allowedType),
+  );
+}
+
 function safeEqual(left: string, right: string) {
   const leftBuffer = Buffer.from(left);
   const rightBuffer = Buffer.from(right);
@@ -53,7 +78,7 @@ export async function POST(request: Request) {
     if (rawBody.length > 1_500_000) {
       return NextResponse.json({ error: "Payload too large" }, { status: 413 });
     }
-    const records = await resolveCallbackRecords(JSON.parse(rawBody));
+    const records = (await resolveCallbackRecords(JSON.parse(rawBody))).filter(isPaddlingActivity);
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
