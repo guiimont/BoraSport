@@ -1,0 +1,75 @@
+.page {
+  background: linear-gradient(180deg, #061421, #07111e);
+  color: #eaf5f4;
+  min-height: 100vh;
+  padding: clamp(28px, 6vw, 72px) 18px;
+}
+
+.policy {
+  background: rgba(15, 32, 56, 0.82);
+  border: 1px solid rgba(0, 168, 150, 0.2);
+  border-radius: 22px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.24);
+  margin: 0 auto;
+  max-width: 860px;
+  padding: clamp(24px, 5vw, 56px);
+}
+
+.policy header {
+  border-bottom: 1px solid rgba(212, 175, 55, 0.16);
+  margin-bottom: 30px;
+  padding-bottom: 28px;
+}
+
+.policy header a,
+.policy a {
+  color: #45e0d0;
+  font-weight: 800;
+}
+
+.policy header p {
+  color: #d4af37;
+  font-size: 0.75rem;
+  font-weight: 800;
+  margin: 24px 0 6px;
+  text-transform: uppercase;
+}
+
+.policy h1 {
+  color: #fff;
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  line-height: 1.05;
+  margin: 0 0 12px;
+}
+
+.policy header span {
+  color: rgba(234, 245, 244, 0.56);
+  font-size: 0.8rem;
+}
+
+.policy section + section {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  margin-top: 24px;
+  padding-top: 24px;
+}
+
+.policy h2 {
+  color: #fff;
+  font-size: 1.1rem;
+  margin: 0 0 10px;
+}
+
+.policy p,
+.policy li {
+  color: rgba(234, 245, 244, 0.76);
+  line-height: 1.7;
+}
+
+.policy p {
+  margin: 0;
+}
+
+.policy ul {
+  margin: 10px 0 0;
+  padding-left: 22px;
+}
