@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { encryptGarminToken } from "../../../../../lib/integrations/garmin-crypto";
-import { GARMIN_TOKEN_URL, assertGarminIntegrationReady } from "../../../../../lib/integrations/garmin";
+import { GARMIN_TOKEN_URL, assertGarminIntegrationReady, getGarminCredentials } from "../../../../../lib/integrations/garmin";
 import { createClient } from "../../../../../lib/saas/supabase-server";
 
 function profileRedirect(request: Request, status: string) {
@@ -27,7 +27,8 @@ export async function GET(request: Request) {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return profileRedirect(request, "session-expired");
 
-    const body = new URLSearchParams({ grant_type: "authorization_code", client_id: process.env.GARMIN_CLIENT_ID!, client_secret: process.env.GARMIN_CLIENT_SECRET!, code, code_verifier: verifier, redirect_uri: process.env.GARMIN_REDIRECT_URI! });
+    const { clientId, clientSecret, redirectUri } = getGarminCredentials();
+    const body = new URLSearchParams({ grant_type: "authorization_code", client_id: clientId, client_secret: clientSecret, code, code_verifier: verifier, redirect_uri: redirectUri });
     const tokenResponse = await fetch(GARMIN_TOKEN_URL, { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body, cache: "no-store" });
     if (!tokenResponse.ok) throw new Error(`Garmin token exchange failed: ${tokenResponse.status}`);
     const tokens = await tokenResponse.json() as { access_token: string; refresh_token?: string; expires_in: number; refresh_token_expires_in?: number; scope?: string };

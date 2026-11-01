@@ -17,6 +17,14 @@ export const GARMIN_TOKEN_URL =
   process.env.GARMIN_OAUTH_TOKEN_URL ||
   "https://connectapi.garmin.com/di-oauth2-service/oauth/token";
 
+export function getGarminCredentials() {
+  return {
+    clientId: process.env.GARMIN_CLIENT_ID?.trim() || "",
+    clientSecret: process.env.GARMIN_CLIENT_SECRET?.trim() || "",
+    redirectUri: process.env.GARMIN_REDIRECT_URI?.trim() || "",
+  };
+}
+
 export function getGarminIntegrationStatus(): GarminIntegrationStatus {
   const configured = requiredServerVariables.every((name) =>
     Boolean(process.env[name]?.trim()),
