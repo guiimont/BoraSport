@@ -38,7 +38,7 @@ async function resolveCallbackRecords(payload: unknown) {
 }
 
 export async function GET() {
-  return NextResponse.json({ ok: true, service: "garmin-activity-webhook" });
+  return NextResponse.json({ ok: true, service: "garmin-activity-webhook", version: 1 });
 }
 
 export async function POST(request: Request) {
