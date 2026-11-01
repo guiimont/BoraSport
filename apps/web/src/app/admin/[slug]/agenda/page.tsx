@@ -493,41 +493,26 @@ export default async function AdminAgendaPage({
     <AdminShell
       active="agenda"
       context={context}
-      subtitle="Planeje datas, sessões, canoas e o treino do dia em uma única Agenda operacional."
+      subtitle="Veja a semana, abra um horário e organize o treino."
       title="Agenda"
     >
       <section className={styles.agendaToolbar}>
         <div className={styles.agendaHeading}>
-          <p className={styles.eyebrow}>Agenda operacional</p>
+          <p className={styles.eyebrow}>Agenda do clube</p>
           <h2>{periodLabel}</h2>
           <p>
-            Visualize a operação por horário e abra qualquer sessão para planejar
-            treino, canoas e participantes.
+            Tudo o que acontece na semana, sem precisar decifrar a operação.
           </p>
         </div>
         <div className={styles.agendaControls}>
           <div className={styles.agendaPeriodControls}>
             <div className={styles.agendaViewToggle} aria-label="Modo da agenda">
             <Link
-              aria-current={view === "day" ? "page" : undefined}
-              className={view === "day" ? styles.navPillActive : styles.navPill}
-              href={`/admin/${company.slug}/agenda?view=day&date=${selectedDateKey}`}
-            >
-              Dia
-            </Link>
-            <Link
-              aria-current={view === "week" ? "page" : undefined}
-              className={view === "week" ? styles.navPillActive : styles.navPill}
+              aria-current={view !== "month" ? "page" : undefined}
+              className={view !== "month" ? styles.navPillActive : styles.navPill}
               href={`/admin/${company.slug}/agenda?view=week&date=${selectedDateKey}`}
             >
               Semana
-            </Link>
-            <Link
-              aria-current={view === "fortnight" ? "page" : undefined}
-              className={view === "fortnight" ? styles.navPillActive : styles.navPill}
-              href={`/admin/${company.slug}/agenda?view=fortnight&date=${selectedDateKey}`}
-            >
-              Quinzena
             </Link>
             <Link
               aria-current={view === "month" ? "page" : undefined}
@@ -574,29 +559,17 @@ export default async function AdminAgendaPage({
             className={styles.primaryButtonLink}
             href={`/admin/${company.slug}/agenda/novo?date=${selectedDateKey}`}
           >
-            + Novo treino
+            + Novo horário
             </Link>
             <Link className={styles.secondaryButton} href={`/admin/${company.slug}/treinos`}>
               Biblioteca de treinos
             </Link>
           </div>
-        </div>
-      </section>
-
-      <section className={styles.agendaWorkspace}>
-        <aside className={styles.agendaSidebar}>
-          <div className={styles.agendaMiniCalendar}>
-            <span className={styles.agendaSidebarIcon} aria-hidden="true">◈</span>
-            <div>
-              <strong>{monthTitleFormatter.format(monthStart)}</strong>
-              <small>{periodLabel}</small>
-            </div>
-          </div>
-          <form className={styles.agendaFilterForm} method="get">
+          <form className={styles.agendaInlineFilter} method="get">
             <input name="date" type="hidden" value={selectedDateKey} />
-            <input name="view" type="hidden" value={view === "period" ? "week" : view} />
+            <input name="view" type="hidden" value={view === "month" ? "month" : "week"} />
             <label>
-              Treinador
+              <span>Treinador</span>
               <select defaultValue={coachFilter} name="coach">
                 <option value="">Toda a equipe</option>
                 {coachNames.map((coachName) => (
@@ -604,30 +577,23 @@ export default async function AdminAgendaPage({
                 ))}
               </select>
             </label>
-            <button type="submit">Aplicar filtro</button>
+            <button type="submit">Filtrar</button>
           </form>
-          <div className={styles.agendaLegend}>
-            <span><i data-tone="published" /> Publicado</span>
-            <span><i data-tone="draft" /> A planejar</span>
-            <span><i data-tone="cancelled" /> Cancelado</span>
-          </div>
-          <Link className={styles.agendaGradeLink} href={`/admin/${company.slug}/agenda/grade`}>
-            Grade recorrente
-          </Link>
-        </aside>
+        </div>
+      </section>
 
+      <section className={styles.agendaWorkspace}>
         <div className={styles.agendaMainPanel}>
-          <div className={styles.agendaStats}>
+          <div className={styles.agendaSummaryBar}>
             <AgendaStat label="Sessões" value={visibleActivities.length} />
             <AgendaStat
               label="Publicadas"
               value={visibleActivities.filter((activity) => activity.status === "published").length}
             />
-            <AgendaStat
-              label="Canoas alocadas"
-              value={visibleActivities.reduce((total, activity) => total + activity.resourceCount, 0)}
-            />
             <AgendaStat label="Reservas recentes" value={confirmedBookings.length} />
+            <Link className={styles.agendaGradeLink} href={`/admin/${company.slug}/agenda/grade`}>
+              Editar horários recorrentes
+            </Link>
           </div>
 
           {view === "month" ? (
@@ -638,8 +604,13 @@ export default async function AdminAgendaPage({
               selectedDateKey={selectedDateKey}
               selectedDayActivities={selectedDayActivities}
             />
+          ) : view === "day" ? (
+            <AgendaDay
+              activities={selectedDayActivities}
+              dateLabel={monthDayFormatter.format(parseDateKey(selectedDateKey))}
+            />
           ) : (
-            <TimelineAgenda
+            <WeekBoardAgenda
               activitiesByDate={visibleActivitiesByDate}
               companySlug={company.slug}
               days={period.days}
@@ -650,11 +621,11 @@ export default async function AdminAgendaPage({
       </section>
 
       <section className={styles.infoBox}>
-        <strong>Como a Agenda funciona</strong>
+        <strong>Reservas e fila funcionam automaticamente</strong>
         <p>
-          Horários recorrentes aparecem automaticamente no período aberto. Ao
-          selecionar uma ocorrência, você pode ajustar a sessão daquele dia e
-          vincular o treino sem alterar as demais datas.
+          Quando um horário lota, novas reservas entram na fila. Se alguém
+          cancelar, a primeira pessoa da fila assume a vaga. O gestor só precisa
+          acompanhar as exceções.
         </p>
       </section>
     </AdminShell>
@@ -667,6 +638,73 @@ function AgendaStat({ label, value }: { label: string; value: number }) {
       <strong>{value}</strong>
       <span>{label}</span>
     </div>
+  );
+}
+
+function WeekBoardAgenda({
+  activitiesByDate,
+  companySlug,
+  days,
+  selectedDateKey,
+}: {
+  activitiesByDate: Map<string, AgendaActivity[]>;
+  companySlug: string;
+  days: ReturnType<typeof getPeriodDays>;
+  selectedDateKey: string;
+}) {
+  return (
+    <section className={styles.agendaWeekBoard} aria-label="Agenda da semana">
+      {days.map((day) => {
+        const activities = activitiesByDate.get(day.dateKey) ?? [];
+
+        return (
+          <article
+            className={`${styles.agendaWeekDay} ${
+              day.dateKey === selectedDateKey ? styles.agendaWeekDayActive : ""
+            }`}
+            key={day.dateKey}
+          >
+            <Link
+              className={styles.agendaWeekDayHeader}
+              href={`/admin/${companySlug}/agenda?view=day&date=${day.dateKey}`}
+            >
+              <strong>{weekdayLabels[day.weekday]}</strong>
+              <span>{dayNumberFormatter.format(day.date)}</span>
+            </Link>
+
+            <div className={styles.agendaWeekDayBody}>
+              {activities.length ? (
+                activities.map((activity) => (
+                  <Link
+                    className={styles.agendaWeekCard}
+                    data-status={activity.status}
+                    href={activity.href}
+                    key={activity.id}
+                  >
+                    <span>{activity.startTime}</span>
+                    <strong>{activity.title}</strong>
+                    <small>{activity.coachName}</small>
+                    <small>{activity.locationName}</small>
+                  </Link>
+                ))
+              ) : (
+                <div className={styles.agendaWeekEmpty}>
+                  <strong>Dia livre</strong>
+                  <span>Nenhum treino marcado.</span>
+                </div>
+              )}
+            </div>
+
+            <Link
+              className={styles.agendaWeekAdd}
+              href={`/admin/${companySlug}/agenda/novo?date=${day.dateKey}`}
+            >
+              + Criar horário
+            </Link>
+          </article>
+        );
+      })}
+    </section>
   );
 }
 

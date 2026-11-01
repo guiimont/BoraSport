@@ -44,6 +44,19 @@
   gap: var(--space-6);
   grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
 }
+
+.connectionAction { margin-top: var(--space-4); }
+.disconnectButton {
+  background: transparent;
+  border: 1px solid rgba(255, 132, 132, 0.46);
+  border-radius: var(--radius-md);
+  color: #ffb3b3;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 750;
+  min-height: 42px;
+  padding: 0 14px;
+}
 .masteryJourney { margin-bottom: var(--space-6); }
 
 .profilePanel,

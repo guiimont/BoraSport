@@ -30,10 +30,10 @@ const destinations: Array<{
   label: string;
   subtitle: string;
 }> = [
-  { href: "/comunidade", icon: "amuiraa", id: "amuiraa", label: "‘Āmuira‘a", subtitle: "Feed & Comunidade" },
-  { href: "/remadas", icon: "hoe", id: "hoe", label: "Hoe", subtitle: "Diário & Atividades" },
-  { href: "/descobrir", icon: "moana", id: "moana", label: "Moana", subtitle: "Descobrir o Mar" },
-  { href: "/perfil", icon: "aito", id: "aito", label: "‘Aito", subtitle: "Atleta & Ajustes" },
+  { href: "/comunidade", icon: "amuiraa", id: "amuiraa", label: "Início", subtitle: "Resumo de hoje" },
+  { href: "/remadas", icon: "hoe", id: "hoe", label: "Atividades", subtitle: "Treinos e remadas" },
+  { href: "/descobrir", icon: "moana", id: "moana", label: "Clubes", subtitle: "Agenda e comunidade" },
+  { href: "/perfil", icon: "aito", id: "aito", label: "Perfil", subtitle: "Conta e integrações" },
 ];
 
 export function MemberShell({
@@ -56,7 +56,7 @@ export function MemberShell({
 
         <div className={styles.memberTopbar}>
           <Link aria-label="BoraSport" href="/comunidade"><BrandMark /></Link>
-          <nav className={styles.memberNav} aria-label="‘Āmuira‘a · Ambiente do remador">
+          <nav className={styles.memberNav} aria-label="Área do remador">
             {destinations.map((destination) => (
               <Link
                 aria-current={active === destination.id ? "page" : undefined}
@@ -72,14 +72,14 @@ export function MemberShell({
           </nav>
           {company ? (
             <Link className={styles.organizationSwitch} href={`/clube/${company.slug}`}>
-              <span>Pupu {company.organization_kind === "group" ? "Grupo" : "Clube"}</span>
+              <span>{company.organization_kind === "group" ? "Meu grupo" : "Meu clube"}</span>
               <strong>{company.name}</strong>
             </Link>
           ) : null}
         </div>
 
         <div className={styles.memberHeroContent}>
-          {greetingName ? <p className={styles.memberGreeting}>‘Ia Ora Na, {greetingName}! O mar está pronto para a sua remada de hoje.</p> : null}
+          {greetingName ? <p className={styles.memberGreeting}>Olá, {greetingName}. Seu próximo passo está aqui.</p> : null}
           <p className={styles.memberEyebrow}>{context}</p>
           <h1>{title}</h1>
           <p>{description}</p>

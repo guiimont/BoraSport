@@ -712,24 +712,89 @@ function AgendaPanel({
   slots: CompanySlot[];
   vocabulary: Required<VocabularyConfig>;
 }) {
+  const saoPauloKey = (value: Date | string) =>
+    new Intl.DateTimeFormat("en-CA", {
+      day: "2-digit",
+      month: "2-digit",
+      timeZone: "America/Sao_Paulo",
+      year: "numeric",
+    }).format(typeof value === "string" ? new Date(value) : value);
+  const todayKey = saoPauloKey(new Date());
+  const hasTodaySlots = slots.some((slot) => saoPauloKey(slot.start_time) === todayKey);
+  const selectedKey = hasTodaySlots
+    ? todayKey
+    : slots[0]
+      ? saoPauloKey(slots[0].start_time)
+      : todayKey;
+  const selectedDate = new Date(`${selectedKey}T12:00:00-03:00`);
+  const selectedWeekday = selectedDate.getDay() === 0 ? 7 : selectedDate.getDay();
+  const weekStart = new Date(selectedDate);
+  weekStart.setDate(selectedDate.getDate() - selectedWeekday + 1);
+  const weekDays = Array.from({ length: 7 }, (_, index) => {
+    const date = new Date(weekStart);
+    date.setDate(weekStart.getDate() + index);
+    const dateKey = saoPauloKey(date);
+
+    return {
+      date,
+      dateKey,
+      slots: slots.filter((slot) => saoPauloKey(slot.start_time) === dateKey),
+    };
+  });
+  const weekEnd = weekDays[6]?.date || weekStart;
+  const dayLabelFormatter = new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "long",
+    timeZone: "America/Sao_Paulo",
+    weekday: "long",
+  });
+  const shortDateFormatter = new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "short",
+    timeZone: "America/Sao_Paulo",
+  });
+  const totalWeekSlots = weekDays.reduce((total, day) => total + day.slots.length, 0);
+  const weekRangeLabel = `${shortDateFormatter.format(weekStart)} a ${shortDateFormatter.format(weekEnd)}`;
+
   return (
     <div>
       <div className={styles.agendaHeader}>
-        <h2 className={styles.sectionTitle}>
-          {vocabulary.service_label}s disponíveis
-        </h2>
-        <p className={styles.muted}>{slots.length} horários publicados</p>
+        <div>
+          <p className={styles.introLabel}>{hasTodaySlots ? "Semana atual" : "Próxima semana com treino"}</p>
+          <h2 className={styles.sectionTitle}>{weekRangeLabel}</h2>
+        </div>
+        <p className={styles.muted}>
+          {totalWeekSlots} canoas programadas
+        </p>
       </div>
 
-      <ReservationSlots
-        companyId={companyId}
-        currentUserBookings={currentUserBookings}
-        experience={experience}
-        participantsBySlot={participantsBySlot}
-        slug={slug}
-        slots={slots}
-        vocabulary={vocabulary}
-      />
+      <div className={styles.publicWeekAgenda}>
+        {weekDays.map((day) => (
+          <section className={styles.publicAgendaDay} key={day.dateKey}>
+            <header className={styles.publicAgendaDayHeader}>
+              <h3>{dayLabelFormatter.format(day.date)}</h3>
+              <span>
+                {day.slots.length
+                  ? `${new Set(day.slots.map((slot) => formatTime(slot.start_time))).size} horários · ${day.slots.length} canoas`
+                  : "Sem treino"}
+              </span>
+            </header>
+            {day.slots.length ? (
+              <ReservationSlots
+                companyId={companyId}
+                currentUserBookings={currentUserBookings}
+                experience={experience}
+                participantsBySlot={participantsBySlot}
+                slug={slug}
+                slots={day.slots}
+                vocabulary={vocabulary}
+              />
+            ) : (
+              <p className={styles.publicAgendaDayEmpty}>Dia livre. Nenhum treino programado.</p>
+            )}
+          </section>
+        ))}
+      </div>
     </div>
   );
 }

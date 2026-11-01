@@ -9,6 +9,715 @@
   width: 100%;
 }
 
+
+.publicAgenda {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+.publicAgendaNav {
+  align-items: center;
+  background: rgba(15, 32, 56, 0.72);
+  border: 1px solid rgba(212, 175, 55, 0.16);
+  border-radius: 16px;
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+  padding: 13px 15px;
+}
+
+.publicAgendaNav > div {
+  display: grid;
+  gap: 3px;
+}
+
+.publicAgendaNav > div span {
+  color: var(--color-star-400);
+  font-size: 0.68rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.publicAgendaNav > div strong {
+  color: #fff;
+  font-size: 1rem;
+}
+
+.publicAgendaNav nav {
+  display: flex;
+  gap: 7px;
+}
+
+.publicAgendaNav button {
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(184, 198, 205, 0.16);
+  border-radius: 10px;
+  color: rgba(238, 248, 247, 0.82);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 850;
+  min-height: 38px;
+  padding: 0 11px;
+}
+
+.publicAgendaNav button:hover {
+  background: rgba(0, 168, 150, 0.1);
+  border-color: rgba(0, 168, 150, 0.38);
+  color: #fff;
+}
+
+.publicWeekBoard {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(7, minmax(150px, 1fr));
+  min-width: 0;
+  overflow-x: auto;
+  padding-bottom: 7px;
+  scroll-snap-type: x proximity;
+}
+
+.publicDayColumn {
+  background: linear-gradient(180deg, rgba(15, 32, 56, 0.9), rgba(9, 24, 45, 0.96));
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  border-radius: 17px;
+  min-height: 430px;
+  overflow: hidden;
+  scroll-snap-align: start;
+}
+
+.publicDayColumn > header {
+  align-items: center;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.12);
+  display: flex;
+  justify-content: space-between;
+  padding: 13px;
+  text-transform: capitalize;
+}
+
+.publicDayColumn > header span {
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 900;
+}
+
+.publicDayColumn > header strong {
+  color: rgba(238, 248, 247, 0.58);
+  font-size: 0.78rem;
+}
+
+.publicDayBody {
+  display: grid;
+  gap: 9px;
+  padding: 9px;
+}
+
+.publicSlotCard {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(0, 168, 150, 0.18);
+  border-left: 3px solid var(--accent-lagoon);
+  border-radius: 13px;
+  overflow: hidden;
+}
+
+.publicSlotCard summary {
+  cursor: pointer;
+  display: grid;
+  gap: 7px;
+  list-style: none;
+  padding: 11px;
+}
+
+.publicSlotCard summary::-webkit-details-marker { display: none; }
+
+.publicSlotCard[open] {
+  background: rgba(0, 168, 150, 0.055);
+  border-color: rgba(0, 201, 181, 0.42);
+}
+
+.publicSlotTime,
+.publicSlotCapacity {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.publicSlotTime strong {
+  color: var(--color-sea-300);
+  font-size: 1.18rem;
+}
+
+.publicSlotTime span {
+  color: rgba(238, 248, 247, 0.5);
+  font-size: 0.68rem;
+}
+
+.publicSlotCard h3 {
+  color: #fff;
+  font-size: 0.9rem;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.publicSlotCard summary > p {
+  color: rgba(238, 248, 247, 0.6);
+  font-size: 0.72rem;
+  margin: 0;
+}
+
+.publicSlotCapacity {
+  border-top: 1px solid rgba(212, 175, 55, 0.1);
+  color: rgba(238, 248, 247, 0.66);
+  font-size: 0.65rem;
+  gap: 6px;
+  padding-top: 7px;
+}
+
+.publicSlotCapacity span[data-full="true"] { color: #ffb8a0; }
+
+.publicSlotCard summary small {
+  color: var(--color-sea-300);
+  font-size: 0.64rem;
+  font-weight: 900;
+}
+
+.publicSlotExpanded {
+  border-top: 1px solid rgba(212, 175, 55, 0.12);
+  display: grid;
+  gap: 10px;
+  padding: 10px;
+}
+
+.publicSlotMeta {
+  display: grid;
+  gap: 2px;
+}
+
+.publicSlotMeta span,
+.publicSlotMeta em {
+  color: rgba(238, 248, 247, 0.48);
+  font-size: 0.66rem;
+  font-style: normal;
+}
+
+.publicSlotMeta strong {
+  color: #fff;
+  font-size: 0.76rem;
+}
+
+.publicSlotExpanded .slotAction {
+  align-items: stretch;
+  padding: 0;
+}
+
+.publicSlotExpanded .reserveButton {
+  font-size: 0.76rem;
+  min-height: 40px;
+  width: 100%;
+}
+
+.publicBookingStatus {
+  color: rgba(238, 248, 247, 0.72);
+  font-size: 0.7rem;
+  margin: 0;
+}
+
+.publicDayEmpty {
+  display: grid;
+  gap: 5px;
+  padding: 12px 4px;
+}
+
+.publicDayEmpty strong {
+  color: rgba(238, 248, 247, 0.7);
+  font-size: 0.8rem;
+}
+
+.publicDayEmpty span {
+  color: rgba(238, 248, 247, 0.42);
+  font-size: 0.7rem;
+}
+
+@media (max-width: 900px) {
+  .publicAgendaNav {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .publicAgendaNav nav {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .publicAgendaNav button { padding: 0 6px; }
+
+  .publicWeekBoard {
+    grid-template-columns: repeat(7, minmax(78vw, 1fr));
+  }
+
+  .publicDayColumn { min-height: 390px; }
+}
+
+/* Home pública: hero leve, navegação delicada e canoas por horário. */
+.heroInner {
+  grid-template-columns: minmax(0, 1fr);
+  max-width: var(--container-lg);
+  padding-bottom: clamp(34px, 5vw, 54px);
+}
+
+.heroInner > div {
+  max-width: 860px;
+}
+
+.tabsBar {
+  background: transparent;
+  backdrop-filter: none;
+  border-bottom: 0;
+  margin: 0;
+  padding: 14px 0 10px;
+  position: static;
+}
+
+.tabsScroller {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.tabsScroller::-webkit-scrollbar { display: none; }
+
+.tabButton {
+  border-radius: 999px;
+  flex: 0 0 auto;
+  font-size: 0.8rem;
+  min-height: 36px;
+  min-width: 112px;
+  padding: 0 14px;
+}
+
+.nextTrainingStrip {
+  align-items: center;
+  background: linear-gradient(110deg, rgba(15, 32, 56, 0.86), rgba(8, 29, 46, 0.92));
+  border: 1px solid rgba(0, 168, 150, 0.2);
+  border-radius: 16px;
+  color: inherit;
+  cursor: pointer;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(180px, 1.35fr) minmax(150px, 1fr) minmax(120px, .8fr) auto;
+  margin-top: 8px;
+  padding: 13px 15px;
+  text-align: left;
+  width: 100%;
+}
+
+.nextTrainingStrip > span {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.nextTrainingStrip small {
+  color: rgba(238, 248, 247, 0.45);
+  font-size: 0.62rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.nextTrainingStrip strong {
+  color: #fff;
+  font-size: 0.82rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nextTrainingStrip em {
+  color: var(--color-sea-300);
+  font-size: 0.75rem;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.publicDayAgenda,
+.publicTimeGroup {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+.publicTimeGroup {
+  background: rgba(15, 32, 56, 0.44);
+  border: 1px solid rgba(212, 175, 55, 0.13);
+  border-radius: 18px;
+  padding: 13px;
+}
+
+.publicTimeGroup > header {
+  align-items: end;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.publicTimeGroup > header > div {
+  display: grid;
+  gap: 2px;
+}
+
+.publicTimeGroup > header span {
+  color: var(--color-star-400);
+  font-size: 0.62rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.publicTimeGroup > header strong {
+  color: #fff;
+  font-size: 1.42rem;
+}
+
+.publicTimeGroup > header p {
+  color: rgba(238, 248, 247, 0.54);
+  font-size: 0.76rem;
+  margin: 0;
+}
+
+.publicCanoeRail {
+  display: grid;
+  gap: 10px;
+  grid-auto-columns: minmax(250px, 330px);
+  grid-auto-flow: column;
+  min-width: 0;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  padding: 2px 2px 8px;
+  scroll-snap-type: x mandatory;
+  scrollbar-color: rgba(0, 168, 150, 0.35) transparent;
+}
+
+.publicCanoeCard {
+  background: linear-gradient(180deg, rgba(13, 39, 61, 0.94), rgba(9, 27, 47, 0.98));
+  border: 1px solid rgba(0, 168, 150, 0.2);
+  border-radius: 15px;
+  min-width: 0;
+  overflow: hidden;
+  scroll-snap-align: start;
+}
+
+.publicCanoeCard[open] {
+  border-color: rgba(0, 201, 181, 0.52);
+  box-shadow: 0 12px 28px rgba(0, 168, 150, 0.1);
+}
+
+.publicCanoeCard summary {
+  cursor: pointer;
+  display: grid;
+  gap: 7px;
+  list-style: none;
+  padding: 14px;
+}
+
+.publicCanoeCard summary::-webkit-details-marker { display: none; }
+
+.publicCanoeTag {
+  color: var(--color-star-400);
+  font-size: 0.62rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.publicCanoeCard h3 {
+  color: #fff;
+  font-size: 1.16rem;
+  margin: 0;
+}
+
+.publicCanoeCard summary > p {
+  color: rgba(238, 248, 247, 0.58);
+  font-size: 0.75rem;
+  margin: 0;
+}
+
+.publicCanoeNumbers {
+  border-top: 1px solid rgba(212, 175, 55, 0.1);
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding-top: 9px;
+}
+
+.publicCanoeNumbers span {
+  color: rgba(238, 248, 247, 0.56);
+  font-size: 0.66rem;
+}
+
+.publicCanoeNumbers strong {
+  color: #fff;
+  font-size: 0.86rem;
+}
+
+.publicCanoeNumbers span[data-full="true"] strong { color: #ffb8a0; }
+
+.publicCanoeCard summary small {
+  color: var(--color-sea-300);
+  font-size: 0.66rem;
+  font-weight: 900;
+}
+
+.publicCanoeExpanded {
+  border-top: 1px solid rgba(212, 175, 55, 0.12);
+  display: grid;
+  gap: 11px;
+  padding: 12px;
+}
+
+.publicCanoeMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.publicCanoeMeta span {
+  background: rgba(255, 255, 255, 0.045);
+  border-radius: 999px;
+  color: rgba(238, 248, 247, 0.62);
+  font-size: 0.63rem;
+  padding: 6px 8px;
+}
+
+.publicCanoeExpanded .slotAction {
+  align-items: stretch;
+  padding: 0;
+}
+
+.publicCanoeExpanded .reserveButton {
+  font-size: 0.76rem;
+  min-height: 40px;
+  width: 100%;
+}
+
+@media (max-width: 720px) {
+  .heroInner {
+    padding-bottom: 28px;
+    padding-top: 34px;
+  }
+
+  .title { font-size: clamp(2.7rem, 15vw, 4rem); }
+
+  .contextNav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .contextNav > :first-child { grid-column: 1 / -1; }
+
+  .tabsBar { padding-top: 10px; }
+
+  .tabButton {
+    font-size: 0.74rem;
+    min-height: 34px;
+    min-width: 94px;
+  }
+
+  .nextTrainingStrip {
+    gap: 9px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding: 12px;
+  }
+
+  .nextTrainingStrip > span:nth-child(3) { display: none; }
+  .nextTrainingStrip em { grid-column: 1 / -1; }
+
+  .intro { margin-top: 18px; }
+
+  .publicTimeGroup { padding: 10px; }
+
+  .publicCanoeRail {
+    grid-auto-columns: minmax(82vw, 1fr);
+    margin-right: -10px;
+  }
+}
+
+/* Hierarquia correta: agenda ALV > treino > carrossel de canoas. */
+.publicTrainingCard {
+  background: linear-gradient(180deg, rgba(15, 32, 56, 0.94), rgba(10, 25, 47, 0.97));
+  border: 1px solid rgba(212, 175, 55, 0.18);
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.publicTrainingCard[open] {
+  border-color: rgba(0, 201, 181, 0.38);
+  box-shadow: 0 14px 34px rgba(0, 168, 150, 0.09);
+}
+
+.publicTrainingCard > summary {
+  align-items: center;
+  cursor: pointer;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: auto minmax(220px, 1fr) auto auto;
+  list-style: none;
+  padding: 18px 20px;
+}
+
+.publicTrainingCard > summary::-webkit-details-marker { display: none; }
+
+.publicTrainingCard > summary > time {
+  align-items: center;
+  background: linear-gradient(180deg, rgba(0, 168, 150, 0.18), rgba(0, 168, 150, 0.1));
+  border: 1px solid rgba(0, 168, 150, 0.26);
+  border-radius: 14px;
+  color: var(--color-sea-300);
+  display: flex;
+  font-size: 1.45rem;
+  font-weight: 950;
+  justify-content: center;
+  min-height: 58px;
+  min-width: 88px;
+}
+
+.publicTrainingIdentity {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.publicTrainingIdentity > span {
+  color: var(--color-star-400);
+  font-size: 0.62rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.publicTrainingIdentity h3 {
+  color: #fff;
+  font-size: clamp(1.15rem, 2.4vw, 1.55rem);
+  line-height: 1.1;
+  margin: 0;
+}
+
+.publicTrainingIdentity p {
+  color: rgba(238, 248, 247, 0.56);
+  font-size: 0.76rem;
+  margin: 2px 0 0;
+}
+
+.publicTrainingNumbers {
+  display: flex;
+  gap: 8px;
+}
+
+.publicTrainingNumbers span {
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(184, 198, 205, 0.1);
+  border-radius: 999px;
+  color: rgba(238, 248, 247, 0.58);
+  font-size: 0.68rem;
+  padding: 8px 10px;
+  white-space: nowrap;
+}
+
+.publicTrainingNumbers strong {
+  color: #fff;
+  margin-right: 3px;
+}
+
+.publicTrainingCard > summary > em {
+  color: var(--color-sea-300);
+  font-size: 0.72rem;
+  font-style: normal;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.publicTrainingExpanded {
+  border-top: 1px solid rgba(212, 175, 55, 0.12);
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+}
+
+.publicTrainingExpanded > header {
+  align-items: end;
+  display: flex;
+  gap: 14px;
+  justify-content: space-between;
+}
+
+.publicTrainingExpanded > header > div {
+  display: grid;
+  gap: 3px;
+}
+
+.publicTrainingExpanded > header span {
+  color: var(--color-star-400);
+  font-size: 0.62rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.publicTrainingExpanded > header strong {
+  color: #fff;
+  font-size: 0.82rem;
+}
+
+.publicTrainingExpanded > header small {
+  color: rgba(238, 248, 247, 0.5);
+  font-size: 0.68rem;
+}
+
+.publicCanoeSummary {
+  display: grid;
+  gap: 7px;
+  padding: 14px 14px 10px;
+}
+
+.publicCanoeSummary h3 {
+  color: #fff;
+  font-size: 1.16rem;
+  margin: 0;
+}
+
+.publicCanoeCard {
+  align-self: start;
+}
+
+@media (max-width: 720px) {
+  .publicTrainingCard > summary {
+    gap: 10px;
+    grid-template-columns: auto minmax(0, 1fr);
+    padding: 13px;
+  }
+
+  .publicTrainingCard > summary > time {
+    font-size: 1.2rem;
+    min-height: 52px;
+    min-width: 76px;
+  }
+
+  .publicTrainingNumbers {
+    grid-column: 1 / -1;
+  }
+
+  .publicTrainingCard > summary > em {
+    grid-column: 1 / -1;
+  }
+
+  .publicTrainingExpanded {
+    padding: 10px;
+  }
+
+  .publicTrainingExpanded > header {
+    align-items: start;
+    flex-direction: column;
+    gap: 5px;
+  }
+}
+
 .page *,
 .page *::before,
 .page *::after {
@@ -1188,5 +1897,451 @@ a.avatar {
 
   .windyFrame {
     height: 430px;
+  }
+}
+/* Public club home: one task at a time. The ALV agenda is the primary layer;
+   canoe details are disclosed only after the athlete opens a training. */
+.heroInner {
+  grid-template-columns: minmax(0, 1fr);
+  padding-bottom: clamp(30px, 4vw, 48px);
+  padding-top: clamp(38px, 6vw, 68px);
+}
+
+.heroInner > div {
+  max-width: 780px;
+}
+
+.content {
+  padding-top: 0;
+}
+
+.tabsBar {
+  backdrop-filter: none;
+  background: transparent;
+  border: 0;
+  margin: 0;
+  padding: 14px 0 4px;
+  position: static;
+}
+
+.tabsScroller {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 0 0 6px;
+  scrollbar-width: none;
+}
+
+.tabsScroller::-webkit-scrollbar {
+  display: none;
+}
+
+.tabButton {
+  border-radius: 999px;
+  flex: 0 0 auto;
+  font-size: 0.78rem;
+  min-height: 36px;
+  min-width: 108px;
+  padding: 0 14px;
+}
+
+.intro {
+  margin: 22px 0 16px;
+}
+
+.agendaHeader {
+  align-items: end;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.14);
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+}
+
+.agendaHeader .sectionTitle {
+  margin-top: 5px;
+  text-transform: capitalize;
+}
+
+.agendaHeader .muted {
+  font-size: 0.78rem;
+  margin: 0 0 3px;
+  white-space: nowrap;
+}
+
+.publicDayAgenda {
+  display: grid;
+  gap: 12px;
+}
+
+.publicWeekAgenda {
+  display: grid;
+  gap: 12px;
+}
+
+.publicAgendaDay {
+  background: rgba(8, 25, 43, 0.42);
+  border: 1px solid rgba(212, 175, 55, 0.12);
+  border-radius: 17px;
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+}
+
+.publicAgendaDayHeader {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  padding: 2px 3px;
+}
+
+.publicAgendaDayHeader h3 {
+  color: #fff;
+  font-size: 0.98rem;
+  margin: 0;
+  text-transform: capitalize;
+}
+
+.publicAgendaDayHeader span {
+  color: rgba(238, 248, 247, 0.52);
+  font-size: 0.7rem;
+}
+
+.publicAgendaDayEmpty {
+  border-top: 1px dashed rgba(184, 198, 205, 0.12);
+  color: rgba(238, 248, 247, 0.42);
+  font-size: 0.76rem;
+  margin: 0;
+  padding: 14px 3px 3px;
+}
+
+.publicTrainingCard {
+  background: rgba(15, 32, 56, 0.78);
+  border: 1px solid rgba(212, 175, 55, 0.18);
+  border-left: 3px solid var(--accent-lagoon);
+  border-radius: 16px;
+  box-shadow: none;
+  overflow: hidden;
+}
+
+.publicTrainingCard[open] {
+  background: rgba(15, 32, 56, 0.92);
+  border-color: rgba(0, 201, 181, 0.36);
+}
+
+.publicTrainingCard > summary {
+  align-items: center;
+  cursor: pointer;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 84px minmax(220px, 1fr) auto auto;
+  list-style: none;
+  padding: 16px;
+}
+
+.publicTrainingCard > summary::-webkit-details-marker,
+.publicCanoeCard > summary::-webkit-details-marker {
+  display: none;
+}
+
+.publicTrainingCard > summary > time {
+  align-items: center;
+  background: rgba(0, 168, 150, 0.11);
+  border: 1px solid rgba(0, 201, 181, 0.25);
+  border-radius: 12px;
+  color: var(--color-sea-300);
+  display: flex;
+  font-size: 1.35rem;
+  font-weight: 950;
+  justify-content: center;
+  min-height: 56px;
+  min-width: 0;
+}
+
+.publicTrainingIdentity {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.publicTrainingIdentity > span,
+.publicCanoeTag,
+.publicTrainingExpanded > header span {
+  color: var(--color-star-400);
+  font-size: 0.62rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.publicTrainingIdentity h3 {
+  color: #fff;
+  font-size: clamp(1.05rem, 2vw, 1.35rem);
+  line-height: 1.15;
+  margin: 0;
+}
+
+.publicTrainingIdentity p {
+  color: rgba(238, 248, 247, 0.56);
+  font-size: 0.74rem;
+  margin: 0;
+}
+
+.publicTrainingNumbers {
+  display: flex;
+  gap: 7px;
+}
+
+.publicTrainingNumbers span {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(184, 198, 205, 0.11);
+  border-radius: 999px;
+  color: rgba(238, 248, 247, 0.6);
+  font-size: 0.68rem;
+  padding: 7px 9px;
+  white-space: nowrap;
+}
+
+.publicTrainingNumbers strong {
+  color: #fff;
+  margin-right: 3px;
+}
+
+.publicTrainingCard > summary > em {
+  color: var(--color-sea-300);
+  font-size: 0.7rem;
+  font-style: normal;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.publicTrainingExpanded {
+  border-top: 1px solid rgba(212, 175, 55, 0.12);
+  display: grid;
+  gap: 12px;
+  padding: 14px 14px 12px;
+}
+
+.publicTrainingExpanded > header {
+  align-items: end;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.publicTrainingExpanded > header > div {
+  display: grid;
+  gap: 3px;
+}
+
+.publicTrainingExpanded > header strong {
+  color: #fff;
+  font-size: 0.8rem;
+}
+
+.publicTrainingExpanded > header small {
+  color: rgba(238, 248, 247, 0.48);
+  font-size: 0.66rem;
+}
+
+.publicCanoeRail {
+  display: grid;
+  gap: 10px;
+  grid-auto-columns: minmax(248px, 310px);
+  grid-auto-flow: column;
+  min-width: 0;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  padding: 1px 1px 8px;
+  scroll-snap-type: x mandatory;
+  scrollbar-color: rgba(0, 168, 150, 0.32) transparent;
+}
+
+.publicCanoeCard {
+  align-self: start;
+  background: rgba(7, 26, 44, 0.76);
+  border: 1px solid rgba(0, 168, 150, 0.2);
+  border-radius: 14px;
+  min-width: 0;
+  overflow: hidden;
+  scroll-snap-align: start;
+}
+
+.publicCanoeCard[open] {
+  border-color: rgba(0, 201, 181, 0.44);
+}
+
+.publicCanoeSummary {
+  cursor: pointer;
+  display: grid;
+  gap: 7px;
+  list-style: none;
+  padding: 13px;
+}
+
+.publicCanoeSummary h3 {
+  color: #fff;
+  font-size: 1.08rem;
+  margin: 0;
+}
+
+.publicCanoeNumbers {
+  border-top: 1px solid rgba(212, 175, 55, 0.1);
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding-top: 8px;
+}
+
+.publicCanoeNumbers span {
+  color: rgba(238, 248, 247, 0.56);
+  font-size: 0.66rem;
+}
+
+.publicCanoeNumbers strong {
+  color: #fff;
+  font-size: 0.82rem;
+}
+
+.publicCanoeSummary small {
+  color: var(--color-sea-300);
+  font-size: 0.66rem;
+  font-weight: 900;
+}
+
+.publicCanoeExpanded {
+  border-top: 1px solid rgba(212, 175, 55, 0.12);
+  display: grid;
+  gap: 10px;
+  padding: 11px;
+}
+
+.publicCanoeMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.publicCanoeMeta span {
+  background: rgba(255, 255, 255, 0.045);
+  border-radius: 999px;
+  color: rgba(238, 248, 247, 0.62);
+  font-size: 0.62rem;
+  padding: 5px 7px;
+}
+
+.publicCanoeExpanded .participantsSummary {
+  gap: 8px;
+  grid-template-columns: minmax(0, 1fr);
+  padding: 10px;
+}
+
+.publicCanoeExpanded .participantsSummaryActions {
+  justify-content: space-between;
+}
+
+.publicCanoeExpanded .slotAction {
+  align-items: stretch;
+  padding: 0;
+}
+
+.publicCanoeExpanded .reserveButton {
+  font-size: 0.74rem;
+  min-height: 40px;
+  width: 100%;
+}
+
+@media (max-width: 720px) {
+  .heroInner {
+    padding-bottom: 26px;
+    padding-top: 32px;
+  }
+
+  .title {
+    font-size: clamp(2.55rem, 14vw, 3.8rem);
+  }
+
+  .contextNav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .contextNav > :first-child {
+    grid-column: 1 / -1;
+  }
+
+  .tabsBar {
+    margin: 0;
+    padding: 10px 0 2px;
+  }
+
+  .tabsScroller {
+    display: flex;
+    margin-right: calc(var(--space-4) * -1);
+  }
+
+  .tabButton {
+    font-size: 0.72rem;
+    min-height: 34px;
+    min-width: 92px;
+    padding: 0 12px;
+  }
+
+  .agendaHeader {
+    align-items: start;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .agendaHeader .muted {
+    margin: 0;
+  }
+
+  .publicTrainingCard > summary {
+    gap: 10px;
+    grid-template-columns: 72px minmax(0, 1fr);
+    padding: 12px;
+  }
+
+  .publicAgendaDay {
+    padding: 9px;
+  }
+
+  .publicAgendaDayHeader {
+    align-items: start;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .publicTrainingCard > summary > time {
+    font-size: 1.12rem;
+    min-height: 50px;
+  }
+
+  .publicTrainingNumbers,
+  .publicTrainingCard > summary > em {
+    grid-column: 1 / -1;
+  }
+
+  .publicTrainingCard > summary > em {
+    border-top: 1px solid rgba(212, 175, 55, 0.1);
+    padding-top: 9px;
+  }
+
+  .publicTrainingExpanded {
+    padding: 10px;
+  }
+
+  .publicTrainingExpanded > header {
+    align-items: start;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .publicCanoeRail {
+    grid-auto-columns: minmax(78vw, 86vw);
+    margin-right: -10px;
   }
 }

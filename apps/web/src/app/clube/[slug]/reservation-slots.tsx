@@ -14,8 +14,8 @@ import {
   cancelSlotReservation,
   reserveSlot,
 } from "./actions";
-import styles from "./club-page.module.css";
 import { ConfirmedParticipantsComposition } from "./confirmed-participants-composition";
+import styles from "./club-page.module.css";
 
 type ReservationSlotsProps = {
   companyId: string;
@@ -39,13 +39,10 @@ function ReservationButton({
   tone?: "cancel" | "reserve";
 }) {
   const { pending } = useFormStatus();
-
   return (
     <button
       aria-disabled={pending}
-      className={`${styles.reserveButton} ${
-        tone === "cancel" ? styles.cancelButton : ""
-      }`}
+      className={`${styles.reserveButton} ${tone === "cancel" ? styles.cancelButton : ""}`}
       disabled={pending}
       type="submit"
     >
@@ -80,7 +77,7 @@ function ReservationActionForm({
   const idleLabel =
     mode === "cancel"
       ? isWaitlisted
-        ? `Sair da lista · posição ${waitlistPosition ?? "--"}`
+        ? `Sair da fila · posição ${waitlistPosition ?? "--"}`
         : "Cancelar reserva"
       : isFull
         ? "Entrar na lista de espera"
@@ -98,9 +95,7 @@ function ReservationActionForm({
               ? "Sair da lista de espera deste horário?"
               : "Cancelar sua reserva neste horário?",
           )
-        ) {
-          event.preventDefault();
-        }
+        ) event.preventDefault();
       }}
     >
       <input name="company_id" type="hidden" value={companyId} />
@@ -111,16 +106,8 @@ function ReservationActionForm({
         pendingLabel={mode === "cancel" ? "Cancelando..." : "Reservando..."}
         tone={mode === "cancel" ? "cancel" : "reserve"}
       />
-      {state.error ? (
-        <p aria-live="polite" className={styles.reservationError} role="status">
-          {state.error}
-        </p>
-      ) : null}
-      {state.success ? (
-        <p aria-live="polite" className={styles.reservationSuccess} role="status">
-          {state.success}
-        </p>
-      ) : null}
+      {state.error ? <p className={styles.reservationError}>{state.error}</p> : null}
+      {state.success ? <p className={styles.reservationSuccess}>{state.success}</p> : null}
     </form>
   );
 }
@@ -129,59 +116,27 @@ function formatTime(value: string) {
   return new Intl.DateTimeFormat("pt-BR", {
     hour: "2-digit",
     minute: "2-digit",
-  }).format(new Date(value));
-}
-
-function formatDayHeading(value: string) {
-  const label = new Intl.DateTimeFormat("pt-BR", {
-    weekday: "long",
-    day: "2-digit",
-    month: "long",
-  }).format(new Date(value));
-
-  return label.charAt(0).toUpperCase() + label.slice(1);
-}
-
-function dayKey(value: string) {
-  return new Intl.DateTimeFormat("en-CA", {
-    day: "2-digit",
-    month: "2-digit",
     timeZone: "America/Sao_Paulo",
-    year: "numeric",
   }).format(new Date(value));
 }
 
 function formatCurrency(value?: number | string | null) {
-  if (value === null || value === undefined) {
-    return null;
-  }
-
+  if (value === null || value === undefined) return null;
   const amount = Number(value);
-
-  if (amount === 0) {
-    return "Incluso";
-  }
-
+  if (amount === 0) return "Incluso";
   return new Intl.NumberFormat("pt-BR", {
     style: "currency",
     currency: "BRL",
   }).format(amount);
 }
 
-function groupSlotsByDay(slots: CompanySlot[]) {
-  const grouped = new Map<string, { heading: string; slots: CompanySlot[] }>();
-
+function groupByTime(slots: CompanySlot[]) {
+  const grouped = new Map<string, CompanySlot[]>();
   for (const slot of slots) {
-    const key = dayKey(slot.start_time);
-    const current = grouped.get(key) || {
-      heading: formatDayHeading(slot.start_time),
-      slots: [],
-    };
-    current.slots.push(slot);
-    grouped.set(key, current);
+    const key = formatTime(slot.start_time);
+    grouped.set(key, [...(grouped.get(key) || []), slot]);
   }
-
-  return Array.from(grouped.values());
+  return Array.from(grouped.entries());
 }
 
 export function ReservationSlots({
@@ -197,126 +152,106 @@ export function ReservationSlots({
     currentUserBookings.map((booking) => [booking.slot_id, booking]),
   );
 
-  if (slots.length === 0) {
-    return (
-      <div className={styles.emptyState}>
-        Nenhum {vocabulary.service_label.toLowerCase()} disponível para os
-        próximos dias.
-      </div>
-    );
+  if (!slots.length) {
+    return <div className={styles.emptyState}>Nenhum treino disponível para este dia.</div>;
   }
 
-  const slotsByDay = groupSlotsByDay(slots);
-
   return (
-    <div className={styles.scheduleDays}>
-      {slotsByDay.map((day) => (
-        <section className={styles.scheduleDay} key={day.heading}>
-          <h3 className={styles.dayHeading}>{day.heading}</h3>
+    <div className={styles.publicDayAgenda}>
+      {groupByTime(slots).map(([time, timeSlots]) => (
+        <details className={styles.publicTrainingCard} key={time}>
+          <summary>
+            <time>{time}</time>
+            <div className={styles.publicTrainingIdentity}>
+              <span>Treino do dia</span>
+              <h3>{timeSlots[0]?.services?.name || vocabulary.service_label}</h3>
+              <p>
+                {timeSlots.length} {timeSlots.length === 1 ? "canoa" : "canoas"} na água
+              </p>
+            </div>
+            <div className={styles.publicTrainingNumbers}>
+              <span>
+                <strong>{timeSlots.reduce((total, slot) => total + slot.spots_occupied, 0)}</strong>
+                confirmados
+              </span>
+              <span>
+                <strong>
+                  {timeSlots.reduce(
+                    (total, slot) => total + Math.max(0, slot.spots_total - slot.spots_occupied),
+                    0,
+                  )}
+                </strong>
+                vagas
+              </span>
+            </div>
+            <em>Abrir treino e escolher canoa ↓</em>
+          </summary>
 
-          <div className={styles.slotList}>
-            {day.slots.map((slot) => {
-              const remaining = Math.max(
-                0,
-                Number(slot.spots_total || 0) - Number(slot.spots_occupied || 0),
-              );
-              const price = formatCurrency(slot.services?.price);
+          <div className={styles.publicTrainingExpanded}>
+            <header>
+              <div>
+                <span>Canoas deste horário</span>
+                <strong>Escolha uma canoa para ver a tripulação e reservar</strong>
+              </div>
+              <small>Deslize para o lado →</small>
+            </header>
+            <div className={styles.publicCanoeRail}>
+            {timeSlots.map((slot) => {
+              const remaining = Math.max(0, slot.spots_total - slot.spots_occupied);
               const isFull = remaining === 0;
               const participants = participantsBySlot[slot.id] || [];
               const currentUserBooking = bookingsBySlot.get(slot.id);
-              const isConfirmedByCurrentUser =
-                currentUserBooking?.status === "confirmed";
-              const isWaitlistedByCurrentUser =
-                currentUserBooking?.status === "waitlisted";
-              const occupied = Math.min(
-                Number(slot.spots_occupied || 0),
-                Number(slot.spots_total || 0),
-              );
-              const remainingLabel =
-                remaining === 0
-                  ? "Lotado"
-                  : `${remaining} ${
-                      remaining === 1 ? "vaga restante" : "vagas restantes"
-                    }`;
+              const isWaitlisted = currentUserBooking?.status === "waitlisted";
+              const price = formatCurrency(slot.services?.price);
 
               return (
-                <article className={styles.slotCard} key={slot.id}>
-                  <div className={styles.slotMain}>
-                    <div className={styles.slotIdentity}>
-                      <time className={styles.slotTime} dateTime={slot.start_time}>
-                        {formatTime(slot.start_time)}
-                      </time>
-
-                      <div className={styles.slotHeading}>
-                        <h4 className={styles.slotTitle}>
-                          {slot.services?.name || vocabulary.service_label}
-                        </h4>
-                        <p className={styles.slotMeta}>
-                          {vocabulary.resource_label}:{" "}
-                          <strong>{slot.resources?.name || "A definir"}</strong>
-                        </p>
-                        <p className={styles.slotMeta}>
-                          Base: <strong>{slot.company_locations?.name || "A definir"}</strong>
-                        </p>
-                        {slot.company_locations?.address ? (
-                          <p className={styles.slotMeta}>{slot.company_locations.address}</p>
-                        ) : null}
-                      </div>
+                <details className={styles.publicCanoeCard} key={slot.id}>
+                  <summary className={styles.publicCanoeSummary}>
+                    <span className={styles.publicCanoeTag}>Canoa</span>
+                    <h3>{slot.resources?.name || "A definir"}</h3>
+                    <div className={styles.publicCanoeNumbers}>
+                      <span><strong>{slot.spots_occupied}</strong> confirmados</span>
+                      <span data-full={isFull}><strong>{remaining}</strong> vagas</span>
                     </div>
+                    <small>Ver detalhes e reservar ↓</small>
+                  </summary>
 
-                    <div className={styles.slotSummary}>
-                      <span className={styles.capacityPill}>
-                        {occupied}/{slot.spots_total} confirmados
-                      </span>
-                      <span
-                        className={`${styles.capacityPill} ${
-                          isFull ? styles.capacityPillFull : ""
-                        }`}
-                      >
-                        {remainingLabel}
-                      </span>
-                      <span className={styles.durationText}>
-                        {slot.services?.duration_minutes || "--"} min
-                        {price ? ` · ${price}` : ""}
-                      </span>
+                  <div className={styles.publicCanoeExpanded}>
+                    <div className={styles.publicCanoeMeta}>
+                      <span>{slot.services?.duration_minutes || "--"} min</span>
+                      <span>{slot.company_locations?.name || "Base a definir"}</span>
+                      {price ? <span>{price}</span> : null}
                     </div>
-                  </div>
-
-                  <div className={styles.participantsBlock}>
                     <ConfirmedParticipantsComposition
                       capacity={slot.spots_total}
                       participantLabel={experience.participantLabel}
                       participants={participants}
                     />
+                    <ReservationActionForm
+                      companyId={companyId}
+                      isFull={isFull}
+                      isWaitlisted={isWaitlisted}
+                      mode={currentUserBooking ? "cancel" : "reserve"}
+                      slug={slug}
+                      slotId={slot.id}
+                      vocabulary={vocabulary}
+                      waitlistPosition={currentUserBooking?.waitlist_position}
+                    />
+                    {currentUserBooking?.status === "confirmed" ? (
+                      <p className={styles.publicBookingStatus}>Sua vaga está confirmada.</p>
+                    ) : null}
+                    {isWaitlisted ? (
+                      <p className={styles.publicBookingStatus}>
+                        Você está na posição {currentUserBooking?.waitlist_position ?? "--"} da fila.
+                      </p>
+                    ) : null}
                   </div>
-
-                  <ReservationActionForm
-                    companyId={companyId}
-                    isFull={isFull}
-                    isWaitlisted={isWaitlistedByCurrentUser}
-                    mode={currentUserBooking ? "cancel" : "reserve"}
-                    slug={slug}
-                    slotId={slot.id}
-                    vocabulary={vocabulary}
-                    waitlistPosition={currentUserBooking?.waitlist_position}
-                  />
-                  {isConfirmedByCurrentUser ? (
-                    <p className={styles.bookingStatus}>
-                      Sua vaga está confirmada.
-                    </p>
-                  ) : null}
-                  {isWaitlistedByCurrentUser ? (
-                    <p className={styles.bookingStatus}>
-                      Você está na posição {currentUserBooking.waitlist_position ?? "--"}{" "}
-                      da lista. Se uma vaga abrir, sua reserva será confirmada
-                      automaticamente.
-                    </p>
-                  ) : null}
-                </article>
+                </details>
               );
             })}
+            </div>
           </div>
-        </section>
+        </details>
       ))}
     </div>
   );

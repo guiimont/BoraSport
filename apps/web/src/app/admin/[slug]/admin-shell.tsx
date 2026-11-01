@@ -17,7 +17,7 @@ type AdminSection =
   | "site"
   | "treinos";
 
-type AdminModule = "agenda" | "atividades" | "faatere" | "inicio" | "mahana" | "pessoas" | "pu" | "taata";
+type AdminModule = "agenda" | "atividades" | "gestao" | "inicio" | "operacao" | "pessoas" | "visao";
 
 type AdminShellProps = {
   active: AdminSection;
@@ -39,20 +39,24 @@ type AdminModuleItem = {
 
 const clubModuleItems: AdminModuleItem[] = [
   {
-    id: "mahana",
+    id: "visao",
     icon: "mahana",
-    label: "Mahana",
-    subtitle: "Agenda Imediata",
-    sections: [
-      { hrefSuffix: "", id: "overview", label: "Visão do dia" },
-      { hrefSuffix: "/agenda", id: "agenda", label: "Agenda" },
-    ],
+    label: "Visão geral",
+    subtitle: "Mahana · o clube hoje",
+    sections: [{ hrefSuffix: "", id: "overview", label: "Visão do dia" }],
   },
   {
-    id: "faatere",
+    id: "agenda",
+    icon: "mahana",
+    label: "Agenda",
+    subtitle: "Sessões, vagas e presença",
+    sections: [{ hrefSuffix: "/agenda", id: "agenda", label: "Agenda" }],
+  },
+  {
+    id: "operacao",
     icon: "faatere",
-    label: "Fa‘atere",
-    subtitle: "Canoas & Treinos",
+    label: "Operação",
+    subtitle: "Fa‘atere · canoas e treinos",
     sections: [
       { hrefSuffix: "/treinos", id: "treinos", label: "Treinos" },
       { hrefSuffix: "/canoas", id: "canoas", label: "Canoas" },
@@ -60,40 +64,40 @@ const clubModuleItems: AdminModuleItem[] = [
     ],
   },
   {
-    id: "taata",
+    id: "pessoas",
     icon: "taata",
-    label: "Ta‘ata",
-    subtitle: "Remadores & Equipe",
+    label: "Pessoas",
+    subtitle: "Ta‘ata · remadores e equipe",
     sections: [
       { hrefSuffix: "/remadores", id: "remadores", label: "Remadores" },
       { hrefSuffix: "/atividades", id: "atividades", label: "Presenças" },
     ],
   },
   {
-    id: "pu",
+    id: "gestao",
     icon: "pu",
-    label: "Pū",
-    subtitle: "Financeiro & Planos",
+    label: "Gestão",
+    subtitle: "Configuração do clube",
     sections: [
-      { hrefSuffix: "/financeiro", id: "financeiro", label: "Financeiro" },
+      { hrefSuffix: "/site", id: "site", label: "Página pública" },
       { hrefSuffix: "/configuracoes", id: "configuracoes", label: "Configurações" },
-      { hrefSuffix: "/site", id: "site", label: "Site público" },
+      { hrefSuffix: "/financeiro", id: "financeiro", label: "Financeiro" },
     ],
   },
 ];
 
 const groupModuleItems: AdminModuleItem[] = [
-  { id: "inicio", icon: "amuiraa", label: "Início", subtitle: "Visão do Grupo", sections: [{ hrefSuffix: "", id: "overview", label: "Início" }] },
-  { id: "agenda", icon: "mahana", label: "Agenda", subtitle: "Sessões Publicadas", sections: [{ hrefSuffix: "/agenda", id: "agenda", label: "Agenda" }] },
-  { id: "pessoas", icon: "taata", label: "Pessoas", subtitle: "Membros do Grupo", sections: [{ hrefSuffix: "/remadores", id: "remadores", label: "Pessoas" }] },
-  { id: "atividades", icon: "hoe", label: "Atividades", subtitle: "Remadas do Grupo", sections: [{ hrefSuffix: "/atividades", id: "atividades", label: "Atividades" }] },
+  { id: "inicio", icon: "amuiraa", label: "Visão geral", subtitle: "O grupo hoje", sections: [{ hrefSuffix: "", id: "overview", label: "Início" }] },
+  { id: "agenda", icon: "mahana", label: "Agenda", subtitle: "Sessões publicadas", sections: [{ hrefSuffix: "/agenda", id: "agenda", label: "Agenda" }] },
+  { id: "pessoas", icon: "taata", label: "Pessoas", subtitle: "Membros do grupo", sections: [{ hrefSuffix: "/remadores", id: "remadores", label: "Pessoas" }] },
+  { id: "atividades", icon: "hoe", label: "Atividades", subtitle: "Remadas do grupo", sections: [{ hrefSuffix: "/atividades", id: "atividades", label: "Atividades" }] },
 ];
 
 export function AdminShell({
   active,
   children,
   context,
-  eyebrow = "Painel do gestor",
+  eyebrow = "Gestão do clube",
   showSessionBar = true,
   subtitle,
   title,
@@ -116,9 +120,10 @@ export function AdminShell({
             <Link className={styles.brandLink} href="/">
               <BrandMark tone="light" variant="monochromeLight" />
             </Link>
-            <div className={styles.clubIdentity}>
-              <span>Pupu {company.organization_kind === "group" ? "Grupo" : "Clube"}</span>
+            <div aria-label={`Contexto atual: ${company.name}`} className={styles.clubIdentity}>
+              <span>Contexto atual · {company.organization_kind === "group" ? "Grupo" : "Clube"}</span>
               <strong>{company.name}</strong>
+              <small>{role || "Gestão"} · contextos e acessos no perfil</small>
             </div>
           </div>
 

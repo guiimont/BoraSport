@@ -8,16 +8,24 @@ export type GarminIntegrationStatus =
 const requiredServerVariables = [
   "GARMIN_CLIENT_ID",
   "GARMIN_CLIENT_SECRET",
-  "GARMIN_OAUTH_AUTHORIZE_URL",
-  "GARMIN_OAUTH_TOKEN_URL",
-  "GARMIN_WEBHOOK_SECRET",
+  "GARMIN_REDIRECT_URI",
 ] as const;
 
-export function getGarminIntegrationStatus(): GarminIntegrationStatus {
-  if (process.env.GARMIN_INTEGRATION_ENABLED !== "true") {
-    return "awaiting_approval";
-  }
+export const GARMIN_AUTHORIZE_URL =
+  process.env.GARMIN_OAUTH_AUTHORIZE_URL || "https://connect.garmin.com/oauth2Confirm";
+export const GARMIN_TOKEN_URL =
+  process.env.GARMIN_OAUTH_TOKEN_URL ||
+  "https://connectapi.garmin.com/di-oauth2-service/oauth/token";
 
+export function getGarminCredentials() {
+  return {
+    clientId: process.env.GARMIN_CLIENT_ID?.trim() || "",
+    clientSecret: process.env.GARMIN_CLIENT_SECRET?.trim() || "",
+    redirectUri: process.env.GARMIN_REDIRECT_URI?.trim() || "",
+  };
+}
+
+export function getGarminIntegrationStatus(): GarminIntegrationStatus {
   const configured = requiredServerVariables.every((name) =>
     Boolean(process.env[name]?.trim()),
   );
