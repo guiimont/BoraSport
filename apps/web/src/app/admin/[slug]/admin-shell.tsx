@@ -17,7 +17,17 @@ type AdminSection =
   | "site"
   | "treinos";
 
-type AdminModule = "agenda" | "atividades" | "gestao" | "inicio" | "operacao" | "pessoas" | "visao";
+type AdminModule =
+  | "agenda"
+  | "atividades"
+  | "configuracoes"
+  | "estrutura"
+  | "financeiro"
+  | "inicio"
+  | "pessoas"
+  | "site"
+  | "treinos"
+  | "visao";
 
 type AdminShellProps = {
   active: AdminSection;
@@ -43,9 +53,9 @@ const clubModuleItems: AdminModuleItem[] = [
     group: "rotina",
     id: "visao",
     icon: "mahana",
-    label: "Visão geral",
-    subtitle: "Mahana · o clube hoje",
-    sections: [{ hrefSuffix: "", id: "overview", label: "Visão do dia" }],
+    label: "Hoje",
+    subtitle: "Agenda e alertas do clube",
+    sections: [{ hrefSuffix: "", id: "overview", label: "Hoje" }],
   },
   {
     group: "rotina",
@@ -57,22 +67,18 @@ const clubModuleItems: AdminModuleItem[] = [
   },
   {
     group: "rotina",
-    id: "operacao",
+    id: "treinos",
     icon: "faatere",
-    label: "Operação",
-    subtitle: "Fa‘atere · canoas e treinos",
-    sections: [
-      { hrefSuffix: "/treinos", id: "treinos", label: "Treinos" },
-      { hrefSuffix: "/canoas", id: "canoas", label: "Canoas" },
-      { hrefSuffix: "/bases", id: "bases", label: "Bases" },
-    ],
+    label: "Treinos",
+    subtitle: "Planejamento e biblioteca",
+    sections: [{ hrefSuffix: "/treinos", id: "treinos", label: "Treinos" }],
   },
   {
     group: "rotina",
     id: "pessoas",
     icon: "taata",
-    label: "Pessoas",
-    subtitle: "Ta‘ata · remadores e equipe",
+    label: "Remadores",
+    subtitle: "Cadastro, histórico e presença",
     sections: [
       { hrefSuffix: "/remadores", id: "remadores", label: "Remadores" },
       { hrefSuffix: "/atividades", id: "atividades", label: "Presenças" },
@@ -80,15 +86,38 @@ const clubModuleItems: AdminModuleItem[] = [
   },
   {
     group: "administracao",
-    id: "gestao",
+    id: "financeiro",
     icon: "pu",
-    label: "Gestão",
-    subtitle: "Configuração do clube",
+    label: "Planos e pagamentos",
+    subtitle: "Mensalidades e aulas avulsas",
+    sections: [{ hrefSuffix: "/financeiro", id: "financeiro", label: "Financeiro" }],
+  },
+  {
+    group: "administracao",
+    id: "estrutura",
+    icon: "faatere",
+    label: "Estrutura",
+    subtitle: "Canoas e bases",
     sections: [
-      { hrefSuffix: "/site", id: "site", label: "Página pública" },
-      { hrefSuffix: "/configuracoes", id: "configuracoes", label: "Configurações" },
-      { hrefSuffix: "/financeiro", id: "financeiro", label: "Financeiro" },
+      { hrefSuffix: "/canoas", id: "canoas", label: "Canoas" },
+      { hrefSuffix: "/bases", id: "bases", label: "Bases" },
     ],
+  },
+  {
+    group: "administracao",
+    id: "site",
+    icon: "amuiraa",
+    label: "Página pública",
+    subtitle: "Apresentação do clube",
+    sections: [{ hrefSuffix: "/site", id: "site", label: "Página pública" }],
+  },
+  {
+    group: "administracao",
+    id: "configuracoes",
+    icon: "pu",
+    label: "Configurações",
+    subtitle: "Dados e preferências",
+    sections: [{ hrefSuffix: "/configuracoes", id: "configuracoes", label: "Configurações" }],
   },
 ];
 
