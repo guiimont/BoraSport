@@ -30,10 +30,10 @@ const destinations: Array<{
   label: string;
   subtitle: string;
 }> = [
-  { href: "/comunidade", icon: "amuiraa", id: "amuiraa", label: "Início", subtitle: "Resumo de hoje" },
-  { href: "/remadas", icon: "hoe", id: "hoe", label: "Atividades", subtitle: "Treinos e remadas" },
-  { href: "/descobrir", icon: "moana", id: "moana", label: "Clubes", subtitle: "Agenda e comunidade" },
-  { href: "/perfil", icon: "aito", id: "aito", label: "Perfil", subtitle: "Conta e integrações" },
+  { href: "/comunidade", icon: "amuiraa", id: "amuiraa", label: "Hoje", subtitle: "Seu resumo" },
+  { href: "/remadas", icon: "hoe", id: "hoe", label: "Remadas", subtitle: "Histórico e evolução" },
+  { href: "/descobrir", icon: "moana", id: "moana", label: "Clubes", subtitle: "Agenda e reservas" },
+  { href: "/perfil", icon: "aito", id: "aito", label: "Meu perfil", subtitle: "Conta e integrações" },
 ];
 
 export function MemberShell({
@@ -55,7 +55,10 @@ export function MemberShell({
         </div>
 
         <div className={styles.memberTopbar}>
-          <Link aria-label="BoraSport" href="/comunidade"><BrandMark /></Link>
+          <div className={styles.memberBrandContext}>
+            <Link aria-label="BoraSport" href="/comunidade"><BrandMark /></Link>
+            <span>Área do remador</span>
+          </div>
           <nav className={styles.memberNav} aria-label="Área do remador">
             {destinations.map((destination) => (
               <Link
