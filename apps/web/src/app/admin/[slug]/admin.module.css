@@ -32,7 +32,11 @@
   flex-direction: column;
   gap: 22px;
   min-width: 0;
-  padding: 22px;
+  padding: 20px 18px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
 }
 
 .sidebarTop {
@@ -71,7 +75,21 @@
 
 .sidebarNav {
   display: grid;
-  gap: 8px;
+  gap: 22px;
+}
+
+.navGroup {
+  display: grid;
+  gap: 7px;
+}
+
+.navGroupLabel {
+  color: rgba(238, 248, 247, 0.38);
+  font-size: 0.66rem;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  margin: 0 10px 2px;
+  text-transform: uppercase;
 }
 
 .sectionNav {
@@ -143,6 +161,10 @@
   color: #ffffff;
 }
 
+.navLinkActive {
+  box-shadow: inset 3px 0 var(--accent-lagoon);
+}
+
 .mainColumn {
   min-width: 0;
 }
@@ -157,7 +179,7 @@
   gap: clamp(18px, 4vw, 44px);
   justify-content: space-between;
   min-width: 0;
-  padding: clamp(22px, 5vw, 52px);
+  padding: clamp(20px, 3vw, 34px);
 }
 
 .topbarText {
@@ -166,7 +188,7 @@
 
 .topbar h1 {
   color: #ffffff;
-  font-size: clamp(2rem, 4.8vw, 4.3rem);
+  font-size: clamp(1.9rem, 3.4vw, 3.2rem);
   letter-spacing: 0;
   line-height: 0.98;
   margin: 8px 0 0;
