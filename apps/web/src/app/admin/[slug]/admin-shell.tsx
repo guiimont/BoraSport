@@ -30,6 +30,7 @@ type AdminShellProps = {
 };
 
 type AdminModuleItem = {
+  group: "administracao" | "rotina";
   id: AdminModule;
   icon: BrandIconName;
   label: string;
@@ -39,6 +40,7 @@ type AdminModuleItem = {
 
 const clubModuleItems: AdminModuleItem[] = [
   {
+    group: "rotina",
     id: "visao",
     icon: "mahana",
     label: "Visão geral",
@@ -46,6 +48,7 @@ const clubModuleItems: AdminModuleItem[] = [
     sections: [{ hrefSuffix: "", id: "overview", label: "Visão do dia" }],
   },
   {
+    group: "rotina",
     id: "agenda",
     icon: "mahana",
     label: "Agenda",
@@ -53,6 +56,7 @@ const clubModuleItems: AdminModuleItem[] = [
     sections: [{ hrefSuffix: "/agenda", id: "agenda", label: "Agenda" }],
   },
   {
+    group: "rotina",
     id: "operacao",
     icon: "faatere",
     label: "Operação",
@@ -64,6 +68,7 @@ const clubModuleItems: AdminModuleItem[] = [
     ],
   },
   {
+    group: "rotina",
     id: "pessoas",
     icon: "taata",
     label: "Pessoas",
@@ -74,6 +79,7 @@ const clubModuleItems: AdminModuleItem[] = [
     ],
   },
   {
+    group: "administracao",
     id: "gestao",
     icon: "pu",
     label: "Gestão",
@@ -87,10 +93,10 @@ const clubModuleItems: AdminModuleItem[] = [
 ];
 
 const groupModuleItems: AdminModuleItem[] = [
-  { id: "inicio", icon: "amuiraa", label: "Visão geral", subtitle: "O grupo hoje", sections: [{ hrefSuffix: "", id: "overview", label: "Início" }] },
-  { id: "agenda", icon: "mahana", label: "Agenda", subtitle: "Sessões publicadas", sections: [{ hrefSuffix: "/agenda", id: "agenda", label: "Agenda" }] },
-  { id: "pessoas", icon: "taata", label: "Pessoas", subtitle: "Membros do grupo", sections: [{ hrefSuffix: "/remadores", id: "remadores", label: "Pessoas" }] },
-  { id: "atividades", icon: "hoe", label: "Atividades", subtitle: "Remadas do grupo", sections: [{ hrefSuffix: "/atividades", id: "atividades", label: "Atividades" }] },
+  { group: "rotina", id: "inicio", icon: "amuiraa", label: "Visão geral", subtitle: "O grupo hoje", sections: [{ hrefSuffix: "", id: "overview", label: "Início" }] },
+  { group: "rotina", id: "agenda", icon: "mahana", label: "Agenda", subtitle: "Sessões publicadas", sections: [{ hrefSuffix: "/agenda", id: "agenda", label: "Agenda" }] },
+  { group: "rotina", id: "pessoas", icon: "taata", label: "Pessoas", subtitle: "Membros do grupo", sections: [{ hrefSuffix: "/remadores", id: "remadores", label: "Pessoas" }] },
+  { group: "rotina", id: "atividades", icon: "hoe", label: "Atividades", subtitle: "Remadas do grupo", sections: [{ hrefSuffix: "/atividades", id: "atividades", label: "Atividades" }] },
 ];
 
 export function AdminShell({
@@ -111,6 +117,10 @@ export function AdminShell({
   const activeLabel = activeModule.label;
   const profileInitial =
     userLabel.trim().charAt(0).toLocaleUpperCase("pt-BR") || "P";
+  const moduleGroups = [
+    { id: "rotina", label: "Rotina do clube" },
+    { id: "administracao", label: "Administração" },
+  ] as const;
 
   return (
     <main className={styles.page}>
@@ -121,26 +131,36 @@ export function AdminShell({
               <BrandMark tone="light" variant="monochromeLight" />
             </Link>
             <div aria-label={`Contexto atual: ${company.name}`} className={styles.clubIdentity}>
-              <span>Contexto atual · {company.organization_kind === "group" ? "Grupo" : "Clube"}</span>
+              <span>Área de gestão · {company.organization_kind === "group" ? "Grupo" : "Clube"}</span>
               <strong>{company.name}</strong>
-              <small>{role || "Gestão"} · contextos e acessos no perfil</small>
+              <small>{role || "Gestão"}</small>
             </div>
           </div>
 
           <nav className={styles.sidebarNav} aria-label="Módulos do gestor">
-            {moduleItems.map((item) => (
-              <Link
-                aria-current={activeModule.id === item.id ? "page" : undefined}
-                className={`${styles.navLink} ${
-                  activeModule.id === item.id ? styles.navLinkActive : ""
-                }`}
-                href={`${baseHref}${item.sections[0].hrefSuffix}`}
-                key={item.id}
-              >
-                <span className={styles.navGlyph} aria-hidden><BrandEmblem name={item.icon} /></span>
-                <span className={styles.navText}><strong>{item.label}</strong><small>{item.subtitle}</small></span>
-              </Link>
-            ))}
+            {moduleGroups.map((group) => {
+              const items = moduleItems.filter((item) => item.group === group.id);
+              if (!items.length) return null;
+
+              return (
+                <div className={styles.navGroup} key={group.id}>
+                  <p className={styles.navGroupLabel}>{group.label}</p>
+                  {items.map((item) => (
+                    <Link
+                      aria-current={activeModule.id === item.id ? "page" : undefined}
+                      className={`${styles.navLink} ${
+                        activeModule.id === item.id ? styles.navLinkActive : ""
+                      }`}
+                      href={`${baseHref}${item.sections[0].hrefSuffix}`}
+                      key={item.id}
+                    >
+                      <span className={styles.navGlyph} aria-hidden><BrandEmblem name={item.icon} /></span>
+                      <span className={styles.navText}><strong>{item.label}</strong><small>{item.subtitle}</small></span>
+                    </Link>
+                  ))}
+                </div>
+              );
+            })}
           </nav>
         </aside>
 
@@ -189,7 +209,7 @@ export function AdminShell({
             </div>
 
             <div className={styles.topbarText}>
-              <p className={styles.eyebrow}>{eyebrow}</p>
+              <p className={styles.eyebrow}>{company.name} · {eyebrow}</p>
               <h1>{title}</h1>
               {subtitle ? <p className={styles.headerText}>{subtitle}</p> : null}
               {showSessionBar ? (
